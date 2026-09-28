@@ -1,14 +1,14 @@
 {
-    "name":  "chamxanh-fe",
-    "private":  true,
-    "workspaces":  [
-                       "apps/web",
-                       "apps/admin"
-                   ],
-    "scripts":  {
-                    "dev:web":  "npm run dev -w @chamxanh/web",
-                    "dev:admin":  "npm run dev -w @chamxanh/admin",
-                    "build":  "npm run build --workspaces",
-                    "lint":  "npm run lint --workspaces"
-                }
+    "name": "chamxanh-fe",
+    "private": true,
+    "workspaces": [
+        "apps/web"
+    ],
+    "scripts": {
+        "dev": "npm run dev -w @chamxanh/web",
+        "dev:web": "npm run dev -w @chamxanh/web",
+        "build": "npm run build --workspaces",
+        "lint": "npm run lint --workspaces",
+        "test": "npm test -w @chamxanh/web"
+    }
 }

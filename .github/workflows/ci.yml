@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  web-admin:
+  web:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,8 +16,8 @@ jobs:
       - run: npm ci
       - run: npm run lint
       # Sinh kiểu route của Next (RouteContext, .next/types) trước khi kiểm tra kiểu.
-      - run: (cd apps/web && npx next typegen) && (cd apps/admin && npx next typegen)
-      - run: npx tsc --noEmit -p apps/web && npx tsc --noEmit -p apps/admin
+      - run: cd apps/web && npx next typegen
+      - run: npx tsc --noEmit -p apps/web
       - run: npm test -w @chamxanh/web
       - run: npm run build
 

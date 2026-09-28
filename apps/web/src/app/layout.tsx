@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/Header";
+import { SiteChrome } from "@/components/SiteChrome";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,8 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&display=swap" />
       </head>
       <body className="min-h-screen antialiased">
-        <Header />
-        <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10">{children}</main>
+        <SiteChrome header={<Header />} footer={
         <footer className="mt-16 border-t border-stone-200">
           <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-stone-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10">
             <span className="text-lg font-bold text-emerald-800">Chạm<span className="font-normal italic text-wood-600"> Xanh</span></span>
@@ -36,6 +36,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </nav>
           </div>
         </footer>
+        }>{children}</SiteChrome>
       </body>
     </html>
   );
