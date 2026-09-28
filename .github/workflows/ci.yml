@@ -15,6 +15,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
+      # Sinh kiểu route của Next (RouteContext, .next/types) trước khi kiểm tra kiểu.
+      - run: (cd apps/web && npx next typegen) && (cd apps/admin && npx next typegen)
       - run: npx tsc --noEmit -p apps/web && npx tsc --noEmit -p apps/admin
       - run: npm test -w @chamxanh/web
       - run: npm run build
@@ -24,13 +26,21 @@ jobs:
     defaults:
       run:
         working-directory: apps/mobile
+        shell: bash
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
       - run: npm ci
-      # Sinh kiểu route (.expo/types) trước khi kiểm tra kiểu.
-      - run: CI=1 timeout 90 npx expo start --offline || true
-      - run: npx tsc --noEmit
+      # expo-env.d.ts và .expo/types bị gitignore: sinh lại trên CI.
+      - run: echo '/// <reference types="expo/types" />' > expo-env.d.ts
+      - run: CI=1 timeout 120 npx expo start --offline || true
+      - run: ls -R .expo/types || echo "::warning::Chưa sinh được .expo/types"
+      - run: |
+          set +e
+          npx tsc --noEmit > tsc.log
+          code=$?
+          grep "error TS" tsc.log | head -20 | sed "s/^/::error::/"
+          exit $code
       - run: npx eslint src
