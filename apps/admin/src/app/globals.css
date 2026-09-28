@@ -12,12 +12,8 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Trang quản trị chỉ có giao diện sáng: form và thẻ đều nền trắng, nên không đổi màu chữ theo chế độ tối của máy. */
+:root { color-scheme: light; }
 
 body {
   background: var(--background);
