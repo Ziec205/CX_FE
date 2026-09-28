@@ -6,7 +6,7 @@ import { Alert, PageTitle, Pill, input } from "@/admin/components/ui";
 import { api, errorText, formatDate } from "@/admin/lib/api";
 
 interface Member {
-  id: string; phone: string; displayName: string; fullName?: string | null; status: string; activeViolationPoints: number; createdAt: string;
+  id: string; phone?: string | null; displayName: string; fullName?: string | null; status: string; activeViolationPoints: number; createdAt: string;
   flags: { hasVerifiedGarden: boolean; hasActivePlan: boolean; isProSeller: boolean };
 }
 
@@ -46,7 +46,7 @@ export default function MembersPage() {
           {rows?.map((m) => (
             <tr key={m.id} className="border-t border-stone-100">
               <td className="p-2"><Link href={`/quan-tri/members/${m.id}`} className="text-emerald-700 hover:underline">{m.displayName}</Link>{m.fullName && <span className="block text-xs text-stone-500">{m.fullName}</span>}</td>
-              <td className="font-mono text-xs">{m.phone}</td>
+              <td className="font-mono text-xs">{m.phone ?? "—"}</td>
               <td className="text-xs">{m.flags.hasVerifiedGarden ? "Nhà vườn ✓" : m.flags.isProSeller ? "Bán chuyên" : "Cá nhân"}{m.flags.hasActivePlan && " · Gói"}</td>
               <td><Pill value={m.status === "Active" ? "Active" : m.status === "Restricted" ? "PendingReview" : "Rejected"} label={STATUS[m.status] ?? m.status} /></td>
               <td className="text-right">{m.activeViolationPoints}</td>

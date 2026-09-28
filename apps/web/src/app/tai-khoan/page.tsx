@@ -117,18 +117,19 @@ function AccountInner() {
           ))}
         </div>
       </Section>
-      <DeleteAccount />
+      <DeleteAccount hasPhone={!!me.phone} />
       {promo && <PromoteDialog listing={promo} onClose={() => setPromo(undefined)} onDone={() => { setPromo(undefined); setMsg({ kind: "ok", text: "Đã áp dụng dịch vụ" }); refresh(); }} />}
     </div>
   );
 }
 
-/** BR-AUTH-05: cảnh báo Xu và gói bị hủy, chặn khi còn đơn đảm bảo mở, xác nhận bằng OTP. */
-function DeleteAccount() {
+/** BR-AUTH-05: cảnh báo Xu và gói bị hủy, chặn khi còn đơn đảm bảo mở, xác nhận bằng OTP (hoặc mật khẩu nếu tài khoản chưa có SĐT). */
+function DeleteAccount({ hasPhone }: { hasPhone: boolean }) {
   const router = useRouter();
   const [check, setCheck] = useState<{ canDelete: boolean; blockers: string[]; losses: { xu: number; planDaysLeft: number } }>();
   const [otpSent, setOtpSent] = useState(false);
   const [code, setCode] = useState("");
+  const [password, setPassword] = useState("");
   const [ack, setAck] = useState(false);
   const [error, setError] = useState<string>();
 
@@ -145,7 +146,7 @@ function DeleteAccount() {
   }
   async function confirmDelete() {
     try {
-      await api("me/account/delete", { method: "POST", json: { otpCode: code, acknowledgeLosses: ack } });
+      await api("me/account/delete", { method: "POST", json: hasPhone ? { otpCode: code, acknowledgeLosses: ack } : { password, acknowledgeLosses: ack } });
       await fetch("/api/auth/logout", { method: "POST" });
       router.replace("/");
       router.refresh();
@@ -166,7 +167,12 @@ function DeleteAccount() {
               Dữ liệu giao dịch được giữ theo thời hạn luật định.
             </Alert>
             <label className="flex items-center gap-2"><input type="checkbox" checked={ack} onChange={(e) => setAck(e.target.checked)} className="accent-red-700" />Tôi đã hiểu và đồng ý</label>
-            {!otpSent ? (
+            {!hasPhone ? (
+              <div className="flex gap-2">
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" placeholder="Nhập mật khẩu để xác nhận" className={field} />
+                <button onClick={confirmDelete} disabled={!ack || !password} className={btn.danger}>Xóa vĩnh viễn</button>
+              </div>
+            ) : !otpSent ? (
               <button onClick={sendOtp} disabled={!ack} className={btn.danger}>Gửi mã OTP xác nhận</button>
             ) : (
               <div className="flex gap-2">
@@ -182,6 +188,43 @@ function DeleteAccount() {
   );
 }
 
+/** Gắn SĐT bằng OTP. Không bắt buộc với thành viên thường, bắt buộc trước khi mở Nhà vườn/Shop. */
+function AttachPhone({ onSaved }: { onSaved: (m: Me) => void }) {
+  const [phone, setPhone] = useState("");
+  const [code, setCode] = useState("");
+  const [sent, setSent] = useState(false);
+  const [msg, setMsg] = useState<string>();
+  async function send() {
+    setMsg(undefined);
+    try {
+      const r = await api<{ devCode?: string }>("me/phone/request", { method: "POST", json: { phone } });
+      setSent(true);
+      if (r.devCode) setMsg(`Môi trường phát triển — mã OTP: ${r.devCode}`);
+    } catch (e) { setMsg(errorText(e)); }
+  }
+  async function verify() {
+    try { onSaved(await api<Me>("me/phone/verify", { method: "POST", json: { phone, code } })); }
+    catch (e) { setMsg(errorText(e)); }
+  }
+  return (
+    <div className="mt-1 space-y-2">
+      <p className="text-xs text-stone-500">Chưa có — chỉ cần khi đăng ký Nhà vườn/Shop.</p>
+      {!sent ? (
+        <div className="flex gap-2">
+          <input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" autoComplete="tel" placeholder="Số điện thoại" className={field} />
+          <button type="button" onClick={send} disabled={phone.trim().length < 9} className={btn.small}>Gửi mã</button>
+        </div>
+      ) : (
+        <div className="flex gap-2">
+          <input value={code} onChange={(e) => setCode(e.target.value)} inputMode="numeric" autoComplete="one-time-code" maxLength={6} placeholder="Mã OTP" className={field} />
+          <button type="button" onClick={verify} disabled={code.length !== 6} className={btn.small}>Xác nhận</button>
+        </div>
+      )}
+      {msg && <p className="text-xs text-stone-600">{msg}</p>}
+    </div>
+  );
+}
+
 function ProfileForm({ me, onSaved }: { me: Me; onSaved: (m: Me) => void }) {
   const [displayName, setDisplayName] = useState(me.displayName);
   const [hidePhone, setHidePhone] = useState(me.hidePhone);
@@ -193,7 +236,9 @@ function ProfileForm({ me, onSaved }: { me: Me; onSaved: (m: Me) => void }) {
   return (
     <div className="grid gap-3 text-sm sm:grid-cols-2">
       <div>
-        <p className="text-stone-500">Số điện thoại</p><p className="font-medium">{me.phone}</p>
+        {me.username && <><p className="text-stone-500">Tên đăng nhập</p><p className="mb-2 font-medium">{me.username}</p></>}
+        <p className="text-stone-500">Số điện thoại</p>
+        {me.phone ? <p className="font-medium">{me.phone}</p> : <AttachPhone onSaved={onSaved} />}
         <p className="mt-2 text-stone-500">Họ tên</p><p>{me.fullName}</p>
         <div className="mt-2 flex flex-wrap gap-1 text-xs">
           {me.flags.hasActivePlan && <span className="rounded bg-emerald-100 px-2 py-0.5 text-emerald-800">Nhà vườn/Shop</span>}

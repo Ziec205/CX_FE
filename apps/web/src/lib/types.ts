@@ -17,7 +17,7 @@ export interface ListingDetail {
   pickupOptions: string[]; wantInExchange?: string | null; neededBy?: string | null; quantity: number; views: number;
   firstPublishedAt?: string | null; expiresAt?: string | null; isOwner: boolean; rejectReason?: string | null;
   pendingRevision?: unknown; revisionRejectReason?: string | null; priorityUntil?: string | null; appealUsed: boolean;
-  lat?: number | null; lng?: number | null;
+  lat?: number | null; lng?: number | null; uses?: string[];
 }
 
 export interface AttributeDefinition {
@@ -32,7 +32,7 @@ export interface CategoryTree { id: string; name: string; children: { id: string
 export interface Species { id: string; commonName: string; aliases: string[]; scientificName?: string; light?: string; difficulty?: number; petToxicity?: string; description?: string }
 
 export interface Me {
-  id: string; phone: string; displayName: string; fullName?: string | null; provinceId?: string | null; wardId?: string | null;
+  id: string; phone?: string | null; username?: string | null; displayName: string; fullName?: string | null; provinceId?: string | null; wardId?: string | null;
   hidePhone: boolean; flags: { isProSeller: boolean; hasVerifiedGarden: boolean; hasActivePlan: boolean }; status: string; canPost: boolean;
 }
 

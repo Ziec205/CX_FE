@@ -69,6 +69,12 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
           <p className="whitespace-pre-line text-base leading-relaxed text-stone-700">{d.description}</p>
           {d.wantInExchange && <p className="mt-2 text-sm"><b>Muốn đổi lấy:</b> {d.wantInExchange}</p>}
           <p className="mt-3 text-sm"><b>Hình thức nhận:</b> {d.pickupOptions.map((p) => PICKUP[p] ?? p).join(" · ")}</p>
+          {d.uses && d.uses.length > 0 && (
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+              <b>Công dụng:</b>
+              {d.uses.map((u) => <Link key={u} href={`/cho-cay?use=${encodeURIComponent(u)}`} className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-800 hover:bg-emerald-100">{u}</Link>)}
+            </div>
+          )}
         </div>
 
         {species && (

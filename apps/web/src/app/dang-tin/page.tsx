@@ -6,6 +6,7 @@ import { PhotoPicker, type UploadedPhoto } from "@/components/PhotoPicker";
 import { ProfileGate } from "@/components/ProfileGate";
 import { Alert, btn, field, Label, Section } from "@/components/ui";
 import { api, errorText, type ApiError } from "@/lib/api";
+import { MAX_USES_PER_LISTING, PLANT_USES } from "@/lib/plantUses";
 import { PROVINCES } from "@/lib/provinces";
 import type { AttributeDefinition, Category, CategoryTree, ListingDetail, Me, Species } from "@/lib/types";
 
@@ -50,6 +51,7 @@ function PostListingForm() {
   const [quantity, setQuantity] = useState("1");
   const [unit, setUnit] = useState("cây");
   const [attrs, setAttrs] = useState<Record<string, unknown>>({});
+  const [uses, setUses] = useState<string[]>([]);
   const [photos, setPhotos] = useState<UploadedPhoto[]>([]);
   const [verification, setVerification] = useState<UploadedPhoto[]>([]);
   const [provinceId, setProvinceId] = useState("");
@@ -87,7 +89,7 @@ function PostListingForm() {
       setNeededBy(d.neededBy ? d.neededBy.slice(0, 10) : "");
       if (c.rent) setRent({ unit: c.rent.unit, pricePerUnit: String(c.rent.pricePerUnit), deposit: String(c.rent.deposit), minUnits: String(c.rent.minUnits) });
       setWant(d.wantInExchange ?? ""); setQuantity(String(d.quantity)); setUnit(c.unit); setProvinceId(c.provinceId);
-      setPickup(d.pickupOptions); setEscrow(c.escrow);
+      setPickup(d.pickupOptions); setEscrow(c.escrow); setUses(d.uses ?? []);
       if (d.lat != null && d.lng != null) setCoords({ lat: d.lat, lng: d.lng });
       setPhotos(d.photoUrls.map((u) => ({ id: u.split("/")[2], preview: u.replace("/full.webp", "/thumb.webp") })));
       setPendingAttrs(d.attributes);
@@ -168,7 +170,7 @@ function PostListingForm() {
       neededBy: type === "Buy" && neededBy ? new Date(neededBy).toISOString() : null,
       rent: type === "Rent" ? { unit: rent.unit, pricePerUnit: Number(rent.pricePerUnit), deposit: Number(rent.deposit), minUnits: Number(rent.minUnits) } : null,
       wantInExchange: type === "Give" ? wantInExchange : null,
-      quantity: Number(quantity), unit, attributes: attrs, provinceId, lat: coords?.lat ?? null, lng: coords?.lng ?? null,
+      quantity: Number(quantity), unit, attributes: attrs, uses, provinceId, lat: coords?.lat ?? null, lng: coords?.lng ?? null,
       pickupOptions: pickup, escrowEnabled: escrow, mediaIds: photos.map((p) => p.id), verificationMediaId: verification[0]?.id ?? null,
     };
     try {
@@ -259,6 +261,24 @@ function PostListingForm() {
               {visibleAttrs.map((a) => <AttributeInput key={a.key} def={a} value={attrs[a.key]} required={a.required && type !== "Buy"} onChange={(v) => setAttrs({ ...attrs, [a.key]: v })} />)}
             </div>
           )}
+
+          {/* Không dùng <Label>: <label> bọc nhiều nút sẽ kích hoạt nút đầu tiên khi bấm vào chữ. */}
+          <div role="group" aria-labelledby="uses-label" className="text-[15px]">
+            <span id="uses-label" className="mb-1.5 block font-bold text-stone-800">Công dụng (tối đa {MAX_USES_PER_LISTING})</span>
+            <div className="flex flex-wrap gap-2">
+              {PLANT_USES.map((u) => {
+                const on = uses.includes(u);
+                return (
+                  <button key={u} type="button" aria-pressed={on} disabled={!on && uses.length >= MAX_USES_PER_LISTING}
+                    onClick={() => setUses(on ? uses.filter((x) => x !== u) : [...uses, u])}
+                    className={`rounded-full border px-3 py-1 text-sm disabled:opacity-40 ${on ? "border-emerald-800 bg-emerald-800 text-stone-50" : "border-stone-300 bg-white hover:border-emerald-700"}`}>
+                    {u}
+                  </button>
+                );
+              })}
+            </div>
+            <span className="mt-1 block text-sm text-stone-500">Giúp người mua tìm thấy tin khi lọc trên Chợ cây</span>
+          </div>
         </div>
       </Section>
 

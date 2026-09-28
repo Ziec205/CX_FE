@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Alert, Card, PageTitle, btn, input } from "@/admin/components/ui";
 import { api, errorText, formatDate } from "@/admin/lib/api";
 
-interface UserInfo { id: string; phone: string; displayName: string; fullName?: string; status: string; activeViolationPoints: number }
+interface UserInfo { id: string; phone?: string | null; displayName: string; fullName?: string; status: string; activeViolationPoints: number }
 interface Lot { kind: string; amount: number; remaining: number; expiresAt?: string }
 interface Entry { id: string; amount: number; type: string; note?: string; createdAt: string }
 interface Adjustment { id: string; userId: string; amount: number; kind: string; reason: string; requestedById: string; status: string; createdAt: string }
@@ -84,7 +84,7 @@ export default function WalletsPage() {
 
       {user && wallet && (
         <div className="grid gap-4 lg:grid-cols-3">
-          <Card title={`${user.displayName} · ${user.phone}`} className="lg:col-span-2">
+          <Card title={`${user.displayName} · ${user.phone ?? "Chưa có SĐT"}`} className="lg:col-span-2">
             <p className="mb-2 text-sm">Số dư: <b>{live.reduce((s, l) => s + l.remaining, 0)} Xu</b>{wallet.wallet.frozen && <span className="ml-2 text-red-700">(đang đóng băng)</span>}</p>
             <table className="w-full text-sm">
               <thead className="text-left text-stone-500"><tr><th className="py-1">Thời gian</th><th>Loại</th><th>Số Xu</th><th>Ghi chú</th></tr></thead>

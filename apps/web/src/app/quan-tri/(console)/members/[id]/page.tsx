@@ -9,7 +9,7 @@ import { api, errorText, formatDate, formatVnd } from "@/admin/lib/api";
 import { ORDER_LABEL } from "@/admin/lib/escrow";
 
 interface Detail {
-  user: { id: string; phone: string; displayName: string; fullName?: string | null; status: string; activeViolationPoints: number;
+  user: { id: string; phone?: string | null; displayName: string; fullName?: string | null; status: string; activeViolationPoints: number;
     postingRestrictedUntil?: string | null; lockedUntil?: string | null; createdAt: string; lastSeenAt?: string | null;
     flags: { hasVerifiedGarden: boolean; hasActivePlan: boolean; isProSeller: boolean } };
   violations: { id: string; points: number; reasonCode: string; listingId?: string | null; createdAt: string; expiresAt: string }[];
@@ -48,7 +48,7 @@ export default function MemberPage() {
   const u = d.user;
   return (
     <div className="max-w-6xl space-y-4">
-      <PageTitle title={u.displayName} subtitle={`${u.phone} · ${u.status} · ${u.activeViolationPoints} điểm vi phạm`} action={<Link href="/quan-tri/members" className={btn.secondary}>← Danh sách</Link>} />
+      <PageTitle title={u.displayName} subtitle={`${u.phone ?? "Chưa có SĐT"} · ${u.status} · ${u.activeViolationPoints} điểm vi phạm`} action={<Link href="/quan-tri/members" className={btn.secondary}>← Danh sách</Link>} />
       {msg && <Alert kind={msg.kind}>{msg.text}</Alert>}
       <div className="grid gap-4 lg:grid-cols-2">
         <Card title="Hồ sơ">

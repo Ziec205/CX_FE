@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-export function NearMeButton() {
+export function NearMeButton({ basePath = "/tim-kiem" }: { basePath?: string }) {
   const router = useRouter();
   const sp = useSearchParams();
   const [msg, setMsg] = useState<string>();
@@ -19,7 +19,7 @@ export function NearMeButton() {
         n.set("radiusKm", n.get("radiusKm") ?? "20");
         n.set("sort", "Nearest");
         n.delete("page");
-        router.push(`/tim-kiem?${n}`);
+        router.push(`${basePath}?${n}`);
       },
       () => setMsg("Bạn chưa cho phép truy cập vị trí"),
     );
