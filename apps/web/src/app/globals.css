@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+/* Bộ màu "vườn trên giấy": xanh rêu làm chủ đạo, nền giấy kraft, điểm màu gỗ.
+   Ghi đè thang emerald/stone của Tailwind để mọi trang dùng chung một bộ màu. */
+@theme {
+  --font-sans: Calibri, Carlito, "Segoe UI", sans-serif;
+
+  --color-white: #fbf8f2;
+
+  --color-emerald-50: #eef3ea;
+  --color-emerald-100: #e4ebdd;
+  --color-emerald-200: #c8d6bf;
+  --color-emerald-300: #a9bc9a;
+  --color-emerald-400: #7e9c80;
+  --color-emerald-500: #5e7f63;
+  --color-emerald-600: #3e6b4a;
+  --color-emerald-700: #2c4a37;
+  --color-emerald-800: #1f3a2b;
+  --color-emerald-900: #172c20;
+  --color-emerald-950: #0f1d15;
+
+  --color-stone-50: #f4eee3;
+  --color-stone-100: #ede2cf;
+  --color-stone-200: #e2d6c2;
+  --color-stone-300: #dccdb5;
+  --color-stone-400: #a89c88;
+  --color-stone-500: #75756a;
+  --color-stone-600: #5e5d52;
+  --color-stone-700: #4b4f43;
+  --color-stone-800: #33362d;
+  --color-stone-900: #22271f;
+  --color-stone-950: #151812;
+
+  --color-wood-100: #ede2cf;
+  --color-wood-200: #e3cfae;
+  --color-wood-400: #c9a87c;
+  --color-wood-600: #8a6a45;
+  --color-wood-800: #5a3e22;
+}
+
+body {
+  background: var(--color-stone-50);
+  color: var(--color-stone-900);
+  font-family: var(--font-sans);
+  font-size: 16px;
+}
+
+::selection {
+  background: var(--color-emerald-200);
+}
