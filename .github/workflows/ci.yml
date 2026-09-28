@@ -37,10 +37,13 @@ jobs:
       - run: echo '/// <reference types="expo/types" />' > expo-env.d.ts
       - run: CI=1 timeout 120 npx expo start --offline || true
       - run: ls -R .expo/types || echo "::warning::Chưa sinh được .expo/types"
-      - run: |
+      - name: Type check
+        run: |
           set +e
-          npx tsc --noEmit > tsc.log
+          npx tsc --noEmit > tsc.log 2>&1
           code=$?
-          grep "error TS" tsc.log | head -20 | sed "s/^/::error::/"
+          cat tsc.log
+          # Mỗi dòng lỗi thành một annotation (xem được ở trang Summary).
+          head -30 tsc.log | sed "s/^/::error::/"
           exit $code
       - run: npx eslint src
