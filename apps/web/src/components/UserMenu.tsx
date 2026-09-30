@@ -16,10 +16,27 @@ export function UserMenu() {
   const router = useRouter();
   const pathname = usePathname();
   const pop = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
   const [me, setMe] = useState<Me>();
   const [leaving, setLeaving] = useState(false);
 
   useEffect(() => { api<Me>("me").then(setMe, () => {}); }, []);
+  // Mở ra: đặt menu ngay dưới nút tên, mép phải thẳng với mép phải của nút. Đổi cỡ cửa sổ thì đóng để khỏi lệch.
+  useEffect(() => {
+    const el = pop.current;
+    if (!el) return;
+    const place = (e: Event) => {
+      if ((e as ToggleEvent).newState !== "open" || !trigger.current) return;
+      const r = trigger.current.getBoundingClientRect();
+      el.style.top = `${Math.round(r.bottom + 8)}px`;
+      el.style.right = `${Math.max(12, Math.round(document.documentElement.clientWidth - r.right))}px`;
+    };
+    const close = () => el.hidePopover?.();
+    el.addEventListener("beforetoggle", place);
+    window.addEventListener("resize", close);
+    return () => { el.removeEventListener("beforetoggle", place); window.removeEventListener("resize", close); };
+  }, []);
+
   // Chuyển trang thì đóng menu.
   useEffect(() => { pop.current?.hidePopover?.(); }, [pathname]);
 
@@ -35,7 +52,7 @@ export function UserMenu() {
 
   return (
     <>
-      <button type="button" popoverTarget="user-menu" aria-haspopup="menu"
+      <button ref={trigger} type="button" popoverTarget="user-menu" aria-haspopup="menu"
         className="flex h-11 max-w-[14rem] items-center gap-2 rounded-full bg-white pl-1 pr-1 ring-1 ring-stone-300 hover:ring-emerald-700 sm:pr-4">
         <span aria-hidden className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-wood-400 font-display font-bold text-stone-900">
           {initial || <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="4" /><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" strokeLinecap="round" /></svg>}
@@ -45,7 +62,7 @@ export function UserMenu() {
       </button>
 
       <div ref={pop} id="user-menu" popover="auto" role="menu" aria-label="Menu tài khoản"
-        className="fixed inset-auto right-4 top-[4.25rem] m-0 w-72 rounded-3xl bg-white p-2 shadow-xl ring-1 ring-stone-200 sm:right-6 lg:right-10">
+        className="cx-pop fixed inset-auto m-0 w-72 max-w-[calc(100vw-1.5rem)] rounded-3xl bg-white p-2 shadow-xl ring-1 ring-stone-200">
         <div className="flex items-center gap-3 border-b border-stone-200 px-3 pb-3 pt-2">
           <span aria-hidden className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-wood-400 font-display text-lg font-bold text-stone-900">{initial}</span>
           <div className="min-w-0">
