@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { isSignedIn } from "@/lib/session";
 import { FeatureRail } from "./FeatureNav";
-import { LogoutButton } from "./LogoutButton";
 import { MobileMenu } from "./MobileMenu";
 import { NotificationBell } from "./NotificationBell";
+import { UserMenu } from "./UserMenu";
 
 export async function Header() {
   const signedIn = await isSignedIn();
@@ -31,27 +31,17 @@ export async function Header() {
         <nav aria-label="Tài khoản" className="ml-auto flex items-center gap-3 text-[15px] lg:gap-5">
           {signedIn ? (
             <>
-              <Link href="/tin-nhan" className="hidden hover:text-emerald-700 lg:inline">Tin nhắn</Link>
-              <Link href="/don-hang" className="hidden hover:text-emerald-700 xl:inline">Đơn hàng</Link>
               <NotificationBell />
-              <Link href="/tai-khoan" className="hidden hover:text-emerald-700 lg:inline">Tài khoản</Link>
-              <span className="hidden xl:inline"><LogoutButton /></span>
+              <UserMenu />
             </>
           ) : (
-            <Link href="/dang-nhap" className="hidden hover:text-emerald-700 lg:inline">Đăng nhập</Link>
+            <Link href="/dang-nhap" className="font-semibold hover:text-emerald-700">Đăng nhập</Link>
           )}
           <Link href="/dang-tin" className="cx-press hidden rounded-full bg-emerald-800 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700 sm:inline-block">Đăng tin</Link>
           <MobileMenu signedIn={signedIn} links={[
             { href: "/thu-vien", label: "Thư viện cây" },
             { href: "/ban-do", label: "Bản đồ nhà vườn" },
             { href: "/tim-bang-anh", label: "Tìm bằng ảnh" },
-            ...(signedIn ? [
-              { href: "/tin-nhan", label: "Tin nhắn" },
-              { href: "/don-hang", label: "Đơn hàng" },
-              { href: "/yeu-thich", label: "Yêu thích" },
-              { href: "/thong-bao", label: "Thông báo" },
-              { href: "/tai-khoan", label: "Tài khoản" },
-            ] : []),
           ]} />
         </nav>
       </div>

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { LogoutButton } from "./LogoutButton";
 
 export interface MenuLink { href: string; label: string }
 
@@ -24,7 +23,7 @@ export function MobileMenu({ links, signedIn }: { links: MenuLink[]; signedIn: b
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} aria-label="Mở menu: thư viện, bản đồ và tài khoản" aria-expanded={open}
+      <button type="button" onClick={() => setOpen(true)} aria-label="Mở menu: thư viện cây, bản đồ, tìm bằng ảnh" aria-expanded={open}
         className="flex h-11 w-11 items-center justify-center rounded-full border border-stone-300 bg-white">
         <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
           <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
@@ -55,9 +54,7 @@ export function MobileMenu({ links, signedIn }: { links: MenuLink[]; signedIn: b
         </nav>
         <div className="space-y-3 border-t border-stone-200 p-5">
           <Link href="/dang-tin" className="block rounded-full bg-emerald-800 py-3 text-center font-bold text-stone-50 hover:bg-emerald-700">Đăng tin</Link>
-          {signedIn
-            ? <div className="text-center"><LogoutButton /></div>
-            : <Link href="/dang-nhap" className="block rounded-full border border-emerald-800/30 bg-white py-3 text-center font-bold text-emerald-900">Đăng nhập / Tạo tài khoản</Link>}
+          {!signedIn && <Link href="/dang-nhap" className="block rounded-full border border-emerald-800/30 bg-white py-3 text-center font-bold text-emerald-900">Đăng nhập / Tạo tài khoản</Link>}
         </div>
       </dialog>
     </>
