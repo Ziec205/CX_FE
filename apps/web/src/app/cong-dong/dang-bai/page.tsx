@@ -56,7 +56,7 @@ export default function NewPostPage() {
 
   return (
     <form onSubmit={submit} className="mx-auto max-w-2xl space-y-5">
-      <h1 className="text-4xl tracking-tight text-emerald-800">Đăng bài cộng đồng</h1>
+      <h1 className="text-4xl font-extrabold text-emerald-900">Đăng bài cộng đồng</h1>
       <div className="grid gap-2 sm:grid-cols-3">
         {TYPES.map(([t, label, hint]) => (
           <button key={t} type="button" onClick={() => setType(t)} className={`rounded-xl border p-3 text-left ${type === t ? "border-emerald-600 bg-emerald-50" : "border-stone-200 bg-white"}`}>

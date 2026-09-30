@@ -12,7 +12,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-4xl tracking-tight text-emerald-800">Khám phá</h1>
+        <h1 className="text-4xl font-extrabold text-emerald-900">Khám phá</h1>
         <p className="mt-2 text-stone-600">Mỗi ngày một loài cây ít người biết.</p>
       </div>
       {!data && <p className="text-red-700">Không tải được dữ liệu từ máy chủ.</p>}

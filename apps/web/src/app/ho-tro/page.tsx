@@ -65,7 +65,7 @@ function Support() {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="space-y-5">
-        <h1 className="text-4xl tracking-tight text-emerald-800">Trung tâm trợ giúp</h1>
+        <h1 className="text-4xl font-extrabold text-emerald-900">Trung tâm trợ giúp</h1>
         <div className="space-y-2">
           {FAQ.map(([q, a]) => (
             <details key={q} className="rounded-xl border border-stone-200 bg-white p-4">

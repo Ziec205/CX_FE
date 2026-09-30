@@ -48,25 +48,32 @@ function MyGarden() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-4xl tracking-tight text-emerald-800">Hồ sơ vườn</h1>
+          <h1 className="text-4xl font-extrabold text-emerald-900 sm:text-5xl">Hồ sơ vườn</h1>
           <p className="mt-1 text-stone-600">Lưu các cây bạn đang trồng và đặt lịch nhắc tưới, bón phân.</p>
         </div>
         <button onClick={() => setEditing("new")} className={btn.primary}>+ Thêm cây</button>
       </div>
       {error && <Alert>{error}</Alert>}
 
-      {upcoming.length > 0 && (
-        <Section title="Sắp tới">
-          <ul className="divide-y divide-stone-100">
+      <section id="lich-nhac" aria-labelledby="lich-nhac-title" className="scroll-mt-40 rounded-3xl bg-water-500 p-5 text-white sm:p-6">
+        <h2 id="lich-nhac-title" className="text-2xl font-bold">Lịch nhắc sắp tới</h2>
+        {plants && upcoming.length === 0 && (
+          <p className="mt-2 text-water-50">
+            {plants.length === 0 ? "Thêm một cây vào vườn, rồi bấm Đặt nhắc để hẹn giờ tưới." : "Chưa có lời nhắc nào. Bấm Đặt nhắc ở từng cây để hẹn giờ tưới, bón phân."}
+          </p>
+        )}
+        {upcoming.length > 0 && (
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {upcoming.map((r) => (
-              <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
-                <span><b>{KIND_LABEL[r.kind]}</b> · {r.plantName}{r.note && <span className="text-stone-500"> — {r.note}</span>}</span>
-                <span className="text-sm text-emerald-800">{when(r.nextAt)}</span>
+              <li key={r.id} className="rounded-2xl bg-white px-4 py-3 text-stone-900">
+                <p className="font-display text-lg font-bold text-water-700">{when(r.nextAt)}</p>
+                <p><b>{KIND_LABEL[r.kind]}</b> cho {r.plantName}</p>
+                {r.note && <p className="text-sm text-stone-500">{r.note}</p>}
               </li>
             ))}
           </ul>
-        </Section>
-      )}
+        )}
+      </section>
 
       {editing && <PlantForm plant={editing === "new" ? undefined : editing} onClose={() => setEditing(undefined)} onSaved={() => { setEditing(undefined); load(); }} />}
 
@@ -181,9 +188,9 @@ function PlantCard({ plant, highlighted, onEdit, onChanged }: { plant: MyPlant; 
           ))}
         </div>
       )}
-      <div className="border-t border-stone-100 bg-stone-50 p-4">
+      <div className="border-t border-water-100 bg-water-50 p-4">
         <div className="mb-2 flex items-center justify-between">
-          <h3 className="font-bold text-stone-800">Lời nhắc</h3>
+          <h3 className="font-sans text-base font-bold tracking-normal text-water-700">Lời nhắc chăm cây</h3>
           {!adding && <button onClick={() => setAdding("new")} className={btn.small}>+ Đặt nhắc</button>}
         </div>
         {error && <Alert>{error}</Alert>}

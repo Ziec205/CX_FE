@@ -78,7 +78,7 @@ export function MarketFeed({ query, initial, groupByDate }: { query: string; ini
       {groupByDate
         ? groupByDay(items).map((g, i) => (
           <section key={`${g.label}-${i}`} className="space-y-4">
-            <h2 className="z-10 md:sticky md:top-[76px] -mx-1 flex items-center gap-3 bg-stone-50/95 px-1 py-2 text-sm font-bold uppercase tracking-wider text-wood-700 backdrop-blur">
+            <h2 className="z-10 md:sticky md:top-[132px] -mx-1 flex items-center gap-3 bg-stone-50/95 px-1 py-2 font-display text-lg font-bold text-emerald-900 backdrop-blur">
               {g.label}<span className="h-px flex-1 bg-stone-200" /><span className="font-normal normal-case tracking-normal text-stone-500">{g.items.length} tin</span>
             </h2>
             <ListingGrid items={g.items} />
@@ -86,13 +86,30 @@ export function MarketFeed({ query, initial, groupByDate }: { query: string; ini
         ))
         : <ListingGrid items={items} />}
 
+      {loading && <SkeletonGrid />}
       <div ref={sentinel} aria-live="polite" className="py-6 text-center text-sm text-stone-500">
-        {loading && "Đang tải thêm tin…"}
+        {loading && <span className="sr-only">Đang tải thêm tin…</span>}
         {error && (
           <span>{error} · <button type="button" onClick={() => setError(undefined)} className="font-bold text-emerald-800 underline">Thử lại</button></span>
         )}
         {done && !error && "Bạn đã xem hết tin phù hợp."}
       </div>
+    </div>
+  );
+}
+
+/** Khung chờ cùng bố cục với ListingGrid trong lúc tải trang tiếp theo. */
+function SkeletonGrid() {
+  return (
+    <div aria-hidden className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-7">
+      {Array.from({ length: 4 }, (_, i) => (
+        <div key={i} className="flex flex-col gap-3">
+          <div className="cx-shimmer aspect-[4/5] rounded-2xl" />
+          <div className="cx-shimmer h-3 w-1/2 rounded-full" />
+          <div className="cx-shimmer h-4 w-5/6 rounded-full" />
+          <div className="cx-shimmer h-5 w-1/3 rounded-full" />
+        </div>
+      ))}
     </div>
   );
 }

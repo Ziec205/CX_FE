@@ -50,7 +50,7 @@ function NewRental() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
-      <h1 className="text-4xl tracking-tight text-emerald-800">Đặt lịch thuê cây</h1>
+      <h1 className="text-4xl font-extrabold text-emerald-900">Đặt lịch thuê cây</h1>
       {listing && <Section title={listing.card.title}><p className="text-stone-600">{priceLabel(listing.card)} · Cọc {vnd(listing.card.rent?.deposit)} · Có {listing.quantity} {listing.card.unit}</p></Section>}
       {cal && cal.busyDays.length > 0 && (
         <Section title="Ngày đã kín lịch">

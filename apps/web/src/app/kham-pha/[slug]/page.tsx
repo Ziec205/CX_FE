@@ -19,8 +19,8 @@ export default async function ArticlePage({ params }: Props) {
     <article className="mx-auto max-w-3xl space-y-6">
       <Link href="/kham-pha" className="text-sm text-emerald-700 hover:underline">← Khám phá</Link>
       <header className="space-y-3">
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-wood-600">{a.publishAt && new Date(a.publishAt).toLocaleDateString("vi-VN")}</p>
-        <h1 className="text-4xl leading-tight tracking-tight text-emerald-800 sm:text-5xl">{a.title}</h1>
+        <p className="text-sm font-semibold text-emerald-700">{a.publishAt && new Date(a.publishAt).toLocaleDateString("vi-VN")}</p>
+        <h1 className="text-4xl font-extrabold text-emerald-900 sm:text-5xl">{a.title}</h1>
         {a.summary && <p className="text-xl italic text-stone-600">{a.summary}</p>}
       </header>
       {cover && (

@@ -19,7 +19,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-4xl tracking-tight text-emerald-800">Thư viện cây</h1>
+        <h1 className="text-4xl font-extrabold text-emerald-900">Thư viện cây</h1>
         <p className="mt-1 text-stone-600">Tra cứu theo tên thường gọi, tên khác hoặc tên khoa học — gõ không dấu cũng được.</p>
       </div>
       <form action="/thu-vien" className="flex flex-wrap gap-2">

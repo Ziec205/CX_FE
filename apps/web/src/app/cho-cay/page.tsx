@@ -131,8 +131,7 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-wood-600">Chợ cây</p>
-          <h1 className="text-4xl tracking-tight text-emerald-800 sm:text-5xl">{leaf?.name ?? root?.name ?? "Cây đang được rao bán"}</h1>
+          <h1 className="text-4xl font-extrabold text-emerald-900 sm:text-6xl">{leaf?.name ?? root?.name ?? "Cây đang được rao bán"}</h1>
           <p className="mt-1 text-stone-600">
             {result ? `${result.total.toLocaleString("vi-VN")} tin` : "—"} · tin mới đăng hiển thị trước
           </p>
@@ -186,9 +185,9 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
 
           {!result && <p className="rounded-2xl bg-red-50 p-4 text-red-800">Không tải được danh sách tin. Máy chủ có thể đang khởi động, hãy tải lại trang sau ít phút.</p>}
           {result && result.priority.length > 0 && (
-            <div className="rounded-2xl bg-wood-100 p-4">
-              <p className="mb-3 text-xs font-bold uppercase tracking-wider text-wood-800">Tin ưu tiên</p>
-              <ListingGrid items={result.priority} />
+            <div className="rounded-2xl bg-wood-100 p-4 ring-1 ring-wood-200">
+              <p className="mb-3 font-display text-lg font-bold text-wood-800">Tin ưu tiên</p>
+              <ListingGrid items={result.priority} morph={false} />
             </div>
           )}
           {result && <MarketFeed key={query} query={query} initial={result} groupByDate={!sort} />}

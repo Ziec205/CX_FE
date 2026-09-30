@@ -58,7 +58,7 @@ function NewOrder() {
   const items = unit * qty;
   return (
     <div className="mx-auto max-w-2xl space-y-5">
-      <h1 className="text-4xl tracking-tight text-emerald-800">{offerId ? "Tạo đơn đảm bảo từ đề nghị giá" : "Mua qua Giao dịch đảm bảo"}</h1>
+      <h1 className="text-4xl font-extrabold text-emerald-900">{offerId ? "Tạo đơn đảm bảo từ đề nghị giá" : "Mua qua Giao dịch đảm bảo"}</h1>
       {offerId && <p className="text-stone-600">Nhập hình thức giao, địa chỉ và phí ship đã thỏa thuận với người mua. Người mua có 24 giờ để thanh toán.</p>}
       <Alert kind="info">Tiền của bạn được đối tác thanh toán giữ đến khi bạn xác nhận đã nhận cây đúng mô tả. Có vấn đề thì khiếu nại trong 48 giờ.</Alert>
       {listing && (

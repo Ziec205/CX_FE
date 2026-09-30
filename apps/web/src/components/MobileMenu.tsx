@@ -24,8 +24,8 @@ export function MobileMenu({ links, signedIn }: { links: MenuLink[]; signedIn: b
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} aria-label="Mở menu" aria-expanded={open}
-        className="flex h-11 w-11 items-center justify-center rounded-full border border-stone-300 bg-white lg:hidden">
+      <button type="button" onClick={() => setOpen(true)} aria-label="Mở menu: thư viện, bản đồ và tài khoản" aria-expanded={open}
+        className="flex h-11 w-11 items-center justify-center rounded-full border border-stone-300 bg-white">
         <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
           <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
         </svg>
@@ -34,9 +34,9 @@ export function MobileMenu({ links, signedIn }: { links: MenuLink[]; signedIn: b
       <dialog ref={ref} onClose={() => setOpen(false)} aria-label="Menu"
         // Bấm nền mờ hoặc bấm một liên kết (chuyển trang) thì đóng menu.
         onClick={(e) => { if (e.target === e.currentTarget || (e.target as HTMLElement).closest("a")) setOpen(false); }}
-        className="m-0 ml-auto h-dvh max-h-none w-[min(20rem,85vw)] max-w-none bg-stone-50 p-0 backdrop:bg-stone-900/40 open:flex open:flex-col">
+        className="cx-drawer m-0 ml-auto h-dvh max-h-none w-[min(20rem,85vw)] max-w-none bg-stone-50 p-0 backdrop:bg-stone-900/40 open:flex open:flex-col">
         <div className="flex items-center justify-between border-b border-stone-200 px-5 py-4">
-          <span className="text-xl font-bold text-emerald-800">Chạm<span className="font-normal italic text-wood-600"> Xanh</span></span>
+          <span className="font-display text-xl font-extrabold text-emerald-800">Chạm Xanh</span>
           <button type="button" onClick={() => setOpen(false)} aria-label="Đóng menu" className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-stone-200">
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden><path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" /></svg>
           </button>

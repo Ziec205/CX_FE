@@ -33,7 +33,7 @@ export default function RentalsPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-4xl tracking-tight text-emerald-800">Lịch thuê cây</h1>
+      <h1 className="text-4xl font-extrabold text-emerald-900">Lịch thuê cây</h1>
       <div className="flex gap-2">
         {(["renter", "owner"] as const).map((r) => (
           <button key={r} onClick={() => { setItems(undefined); setRole(r); }} className={`rounded-full px-4 py-2 ${role === r ? "bg-emerald-800 text-white" : "border border-stone-300 bg-white"}`}>

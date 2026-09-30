@@ -33,8 +33,6 @@ function PostListingForm() {
   const [type, setType] = useState<ListingType>("Sell");
   const [categoryId, setCategoryId] = useState("");
   const [category, setCategory] = useState<Category>();
-  const [speciesQ, setSpeciesQ] = useState("");
-  const [speciesList, setSpeciesList] = useState<Species[]>([]);
   const [species, setSpecies] = useState<{ id: string; name: string }>();
   const [title, setTitle] = useState(params.get("title") ?? "");
   const [description, setDescription] = useState("");
@@ -112,33 +110,9 @@ function PostListingForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- pendingAttrs chỉ đọc một lần khi nạp tin để sửa
   }, [categoryId]);
 
-  useEffect(() => {
-    if (!categoryId || species) return;
-    let cancelled = false;
-    const t = setTimeout(() => {
-      api<Species[]>(`species?categoryId=${categoryId}&q=${encodeURIComponent(speciesQ)}&limit=8`).then((r) => { if (!cancelled) setSpeciesList(r); }, () => {});
-    }, 250);
-    return () => { cancelled = true; clearTimeout(t); };
-  }, [speciesQ, categoryId, species]);
-
-  // AI gợi ý loài từ ảnh đầu tiên (BR-AI-01: chỉ gợi ý, người dùng tự chọn; BR-AI-02: lựa chọn được lưu làm nhãn).
-  const [ai, setAi] = useState<{ requestId: string; recognized: boolean; suggestions: { speciesId: string; commonName: string; confidence: number }[]; message?: string }>();
-  const firstPhoto = photos[0]?.id;
-  useEffect(() => {
-    if (!firstPhoto || species || !category?.isLivePlant || editId) return;
-    let cancelled = false;
-    api<NonNullable<typeof ai>>("ai/identify", { method: "POST", json: { mediaId: firstPhoto } }).then((r) => { if (!cancelled) setAi(r); }, () => {});
-    return () => { cancelled = true; };
-  }, [firstPhoto, species, category?.isLivePlant, editId]);
-  function pickSpecies(s: { id: string; name: string }) {
-    setSpecies(s);
-    if (ai && s.id !== "khac") api(`ai/identify/${ai.requestId}/label`, { method: "POST", json: { speciesId: s.id } }).catch(() => {});
-  }
-
   const effectivePrice = type === "Sell" ? Number(priceMode === "Negotiable" ? refMax : price) || 0 : 0;
   const needsVerification = type === "Sell" && effectivePrice >= VERIFY_THRESHOLD;
-  const minPhotos = type === "Buy" ? 0 : category?.isLivePlant ? 3 : 1;
-  const needsSpecies = !!category?.isLivePlant && type !== "Buy";
+  const minPhotos = type === "Buy" ? 0 : 1;
   const visibleAttrs = useMemo(() => [...(category?.attributes ?? [])].sort((a, b) => (a.required === b.required ? 0 : a.required ? -1 : 1)), [category]);
 
   if (!me) return error ? <Alert>{error[0]}</Alert> : <p className="text-stone-500">Đang tải…</p>;
@@ -155,7 +129,6 @@ function PostListingForm() {
     setError(undefined);
     const problems: string[] = [];
     if (!categoryId) problems.push("Chọn danh mục");
-    if (needsSpecies && !species) problems.push("Chọn loài cây (hoặc \"Khác / không rõ\")");
     if (photos.length < minPhotos) problems.push(`Cần ít nhất ${minPhotos} ảnh`);
     if (needsVerification && verification.length === 0) problems.push("Tin từ 20 triệu cần 1 ảnh xác minh");
     if (problems.length) return setError(problems);
@@ -210,44 +183,12 @@ function PostListingForm() {
       <Section title="Cây / hàng hóa">
         <div className="space-y-3">
           <Label text="Danh mục" required>
-            <select required value={categoryId} onChange={(e) => { setCategoryId(e.target.value); setSpecies(undefined); setSpeciesQ(""); }} className={field}>
+            <select required value={categoryId} onChange={(e) => { setCategoryId(e.target.value); setSpecies(undefined); }} className={field}>
               <option value="">— Chọn danh mục —</option>
               {tree.map((c) => <optgroup key={c.id} label={c.name}>{c.children.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</optgroup>)}
             </select>
           </Label>
           {category?.requiresManualReview && <Alert kind="warn">Danh mục hàng hạn chế: tin sẽ được người duyệt kiểm tra giấy tờ trước khi hiển thị.</Alert>}
-
-          {categoryId && category?.isLivePlant && (
-            <Label text="Loài cây" required={needsSpecies} hint="Chọn đúng loài giúp người mua tìm thấy tin của bạn, kể cả khi họ gõ tên khác">
-              {species ? (
-                <div className="flex items-center gap-2"><span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-800">{species.name}</span>
-                  <button type="button" onClick={() => setSpecies(undefined)} className="text-xs text-stone-500 underline">đổi</button></div>
-              ) : (
-                <div>
-                  {ai && (ai.recognized ? (
-                    <div className="mb-2 flex flex-wrap items-center gap-1 text-sm">
-                      <span className="text-stone-600">AI gợi ý từ ảnh đầu tiên:</span>
-                      {ai.suggestions.map((s) => (
-                        <button type="button" key={s.speciesId} onClick={() => pickSpecies({ id: s.speciesId, name: s.commonName })}
-                          className="rounded-full border border-emerald-600 bg-emerald-50 px-3 py-1 text-emerald-800 hover:bg-emerald-100">
-                          {s.commonName} · {Math.round(s.confidence * 100)}%
-                        </button>
-                      ))}
-                    </div>
-                  ) : <p className="mb-2 text-sm text-stone-500">{ai.message ?? "Chưa nhận ra, bạn chọn giúp nhé."}</p>)}
-                  <input value={speciesQ} onChange={(e) => setSpeciesQ(e.target.value)} placeholder="Gõ tên cây, vd: kim tiền, lưỡi hổ…" className={field} />
-                  <div className="mt-1 flex flex-wrap gap-1">
-                    {speciesList.map((s) => (
-                      <button type="button" key={s.id} onClick={() => pickSpecies({ id: s.id, name: s.commonName })} className="rounded-full bg-stone-100 px-3 py-1 text-xs hover:bg-emerald-50">
-                        {s.commonName}{s.aliases.length > 0 && <span className="text-stone-400"> ({s.aliases[0]})</span>}
-                      </button>
-                    ))}
-                    <button type="button" onClick={() => setSpecies({ id: "khac", name: "Khác / không rõ" })} className="rounded-full bg-stone-100 px-3 py-1 text-xs">Khác / không rõ</button>
-                  </div>
-                </div>
-              )}
-            </Label>
-          )}
 
           <Label text="Tiêu đề" required hint="10–70 ký tự, không ghi số điện thoại">
             <input required minLength={10} maxLength={70} value={title} onChange={(e) => setTitle(e.target.value)} className={field} placeholder="vd: Sen đá kim tuyến chậu 10cm, lên màu đẹp" />
@@ -348,8 +289,8 @@ function PostListingForm() {
 
       {type !== "Buy" && (
         <Section title={`Ảnh (${photos.length}/12)`}>
-          <p className="mb-2 text-xs text-stone-500">Tối thiểu {minPhotos} ảnh. Ảnh chụp trực tiếp bằng nút “Chụp ảnh” sẽ được gắn nhãn “Ảnh chụp thực tế”, giúp tin đáng tin hơn.</p>
-          <PhotoPicker value={photos} onChange={setPhotos} />
+          <p className="mb-2 text-xs text-stone-500">Tối thiểu {minPhotos} ảnh. Ảnh đầu tiên là ảnh bìa.</p>
+          <PhotoPicker value={photos} onChange={setPhotos} camera={false} />
           {needsVerification && (
             <div className="mt-4 rounded-lg bg-wood-100 p-3">
               <p className="mb-2 text-sm text-wood-800"><b>Ảnh xác minh</b> (bắt buộc cho tin từ 20 triệu): chụp cây kèm tờ giấy ghi <b>tên tài khoản “{me.displayName}”</b> và <b>ngày hôm nay</b>.</p>

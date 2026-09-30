@@ -64,7 +64,7 @@ export default function NotificationsPage() {
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-4xl tracking-tight text-emerald-800">Thông báo</h1>
+          <h1 className="text-4xl font-extrabold text-emerald-900">Thông báo</h1>
           <button onClick={readAll} className={btn.small}>Đánh dấu đã đọc hết</button>
         </div>
         {error && <Alert>{error}</Alert>}

@@ -49,7 +49,7 @@ export default function FavoritesPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-4xl tracking-tight text-emerald-800">Đã lưu</h1>
+      <h1 className="text-4xl font-extrabold text-emerald-900">Đã lưu</h1>
       {error && <Alert>{error}</Alert>}
 
       <Section title={`Tìm kiếm đã lưu (${searches.length}/20)`}>

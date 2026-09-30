@@ -86,8 +86,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             </div>
             {result.priority.length > 0 && (
               <div className="rounded-xl bg-wood-100 p-3">
-                <p className="mb-2 text-xs font-medium uppercase text-wood-800">Tin ưu tiên</p>
-                <ListingGrid items={result.priority} />
+                <p className="mb-2 font-display text-lg font-bold text-wood-800">Tin ưu tiên</p>
+                <ListingGrid items={result.priority} morph={false} />
               </div>
             )}
             {result.items.length === 0 ? <p className="py-10 text-center text-stone-500">Không tìm thấy tin phù hợp. Thử bỏ bớt bộ lọc?</p> : <ListingGrid items={result.items} />}

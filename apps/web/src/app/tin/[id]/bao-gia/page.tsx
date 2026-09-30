@@ -59,7 +59,7 @@ export default function QuotesPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-5">
       <Link href={`/tin/${id}`} className="text-sm text-emerald-700 hover:underline">← {listing?.card.title ?? "Tin cần mua"}</Link>
-      <h1 className="text-4xl tracking-tight text-emerald-800">{isOwner ? "Báo giá nhận được" : "Gửi báo giá"}</h1>
+      <h1 className="text-4xl font-extrabold text-emerald-900">{isOwner ? "Báo giá nhận được" : "Gửi báo giá"}</h1>
       {error && <Alert>{error}</Alert>}
 
       {!isOwner && listing && (

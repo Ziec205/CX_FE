@@ -26,7 +26,7 @@ export default function OrdersPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-4xl tracking-tight text-emerald-800">Đơn đảm bảo</h1>
+      <h1 className="text-4xl font-extrabold text-emerald-900">Đơn đảm bảo</h1>
       <div className="flex gap-2">
         {(["buyer", "seller"] as const).map((r) => (
           <button key={r} onClick={() => { setItems(undefined); setRole(r); }}

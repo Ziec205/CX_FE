@@ -52,7 +52,7 @@ export default async function SpeciesPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div>
         <Link href="/thu-vien" className="text-sm text-emerald-700 hover:underline">← Thư viện cây</Link>
-        <h1 className="mt-2 text-4xl tracking-tight text-emerald-800 sm:text-5xl">{s.commonName}</h1>
+        <h1 className="mt-2 text-4xl font-extrabold text-emerald-900 sm:text-5xl">{s.commonName}</h1>
         {s.scientificName && <p className="text-lg italic text-stone-500">{s.scientificName}</p>}
         {s.aliases.length > 0 && <p className="mt-1 text-stone-600">Còn gọi là: {s.aliases.join(", ")}</p>}
       </div>

@@ -1,50 +1,175 @@
 @import "tailwindcss";
 
-/* Bộ màu "vườn trên giấy": xanh rêu làm chủ đạo, nền giấy kraft, điểm màu gỗ.
-   Ghi đè thang emerald/stone của Tailwind để mọi trang dùng chung một bộ màu. */
+/* Bộ màu "nhà lưới miền Tây": nền sương sớm, xanh diệp lục làm chủ đạo,
+   vàng mai cho thẻ giá & Chợ cây, xanh nước riêng cho lịch tưới.
+   Ghi đè thang emerald/stone/wood của Tailwind để mọi trang dùng chung một bộ màu. */
 @theme {
-  --font-sans: Calibri, Carlito, "Segoe UI", sans-serif;
+  --font-sans: "Be Vietnam Pro", "Segoe UI", sans-serif;
+  --font-display: "Bricolage Grotesque", "Be Vietnam Pro", sans-serif;
 
-  --color-white: #fbf8f2;
+  --color-white: #ffffff;
 
-  --color-emerald-50: #eef3ea;
-  --color-emerald-100: #e4ebdd;
-  --color-emerald-200: #c8d6bf;
-  --color-emerald-300: #a9bc9a;
-  --color-emerald-400: #7e9c80;
-  --color-emerald-500: #5e7f63;
-  --color-emerald-600: #3e6b4a;
-  --color-emerald-700: #2c4a37;
-  --color-emerald-800: #1f3a2b;
-  --color-emerald-900: #172c20;
-  --color-emerald-950: #0f1d15;
+  --color-emerald-50: #e9f3ea;
+  --color-emerald-100: #d3e8d6;
+  --color-emerald-200: #a9d2b0;
+  --color-emerald-300: #7cb98a;
+  --color-emerald-400: #4f9c63;
+  --color-emerald-500: #2f8249;
+  --color-emerald-600: #1f6b3a;
+  --color-emerald-700: #19582f;
+  --color-emerald-800: #144726;
+  --color-emerald-900: #10361e;
+  --color-emerald-950: #0a2414;
 
-  --color-stone-50: #f4eee3;
-  --color-stone-100: #ede2cf;
-  --color-stone-200: #e2d6c2;
-  --color-stone-300: #dccdb5;
-  --color-stone-400: #a89c88;
-  --color-stone-500: #75756a;
-  --color-stone-600: #5e5d52;
-  --color-stone-700: #4b4f43;
-  --color-stone-800: #33362d;
-  --color-stone-900: #22271f;
-  --color-stone-950: #151812;
+  --color-stone-50: #eef2ea;
+  --color-stone-100: #e3e9de;
+  --color-stone-200: #d3dccd;
+  --color-stone-300: #bcc8b5;
+  --color-stone-400: #8f9c89;
+  --color-stone-500: #66725f;
+  --color-stone-600: #4f5a49;
+  --color-stone-700: #3b4536;
+  --color-stone-800: #283126;
+  --color-stone-900: #14281b;
+  --color-stone-950: #0b170f;
 
-  --color-wood-100: #ede2cf;
-  --color-wood-200: #e3cfae;
-  --color-wood-400: #c9a87c;
-  --color-wood-600: #8a6a45;
-  --color-wood-800: #5a3e22;
+  /* "wood" giữ tên cũ để các trang không phải sửa, nay là thang vàng mai. */
+  --color-wood-100: #fdf3cf;
+  --color-wood-200: #f9e08a;
+  --color-wood-400: #f2c230;
+  --color-wood-600: #8a6400;
+  --color-wood-800: #5a4000;
+
+  /* Xanh nước: chỉ dùng cho lịch tưới/chăm cây. */
+  --color-water-50: #e8f1f9;
+  --color-water-100: #cfe2f2;
+  --color-water-500: #2a6fae;
+  --color-water-700: #1d5388;
+  --color-water-900: #123456;
 }
 
+@layer base {
 body {
   background: var(--color-stone-50);
   color: var(--color-stone-900);
   font-family: var(--font-sans);
   font-size: 16px;
+  line-height: 1.55;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-wood-400);
+  outline-offset: 2px;
+}
+}
+
+@layer components {
+/* Thẻ giá treo cành như ở nhà vườn: vàng mai, có lỗ xỏ dây. */
+.cx-tag {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.85rem 0.3rem 1.5rem;
+  background: var(--color-wood-400);
+  color: var(--color-stone-900);
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  clip-path: polygon(0.75rem 0, 100% 0, 100% 100%, 0.75rem 100%, 0 50%);
+  border-radius: 0 0.4rem 0.4rem 0;
+}
+.cx-tag::before {
+  content: "";
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  width: 0.42rem;
+  height: 0.42rem;
+  margin-top: -0.21rem;
+  border-radius: 50%;
+  background: var(--color-stone-50);
+}
 }
 
 ::selection {
   background: var(--color-emerald-200);
 }
+
+/* ---------- Chuyển động (không dùng thư viện) ----------
+   Mọi hiệu ứng chỉ bật khi người dùng không yêu cầu giảm chuyển động. */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Ảnh tin bay từ lưới sang trang chi tiết (React <ViewTransition share="morph">). */
+  ::view-transition-group(.morph) {
+    animation-duration: 380ms;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  ::view-transition-image-pair(.morph) {
+    animation-name: cx-via-blur;
+  }
+
+  /* Đổi trang: nội dung cũ mờ đi, trang mới trồi nhẹ lên. */
+  ::view-transition-old(root) {
+    animation: 160ms ease-in both cx-fade-out;
+  }
+  ::view-transition-new(root) {
+    animation: 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both cx-rise-in;
+  }
+
+  /* Thẻ tin hiện dần khi cuộn tới (scroll-driven, trình duyệt chưa hỗ trợ thì hiện ngay). */
+  @supports (animation-timeline: view()) {
+    .cx-reveal {
+      animation: cx-rise-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+
+  /* Ngăn kéo menu điện thoại trượt từ phải vào, nền mờ dần. */
+  dialog.cx-drawer {
+    transition: translate 280ms cubic-bezier(0.2, 0.8, 0.2, 1), display 280ms allow-discrete, overlay 280ms allow-discrete;
+    translate: 100% 0;
+  }
+  dialog.cx-drawer[open] {
+    translate: 0 0;
+  }
+  dialog.cx-drawer::backdrop {
+    transition: opacity 280ms, display 280ms allow-discrete, overlay 280ms allow-discrete;
+    opacity: 0;
+  }
+  dialog.cx-drawer[open]::backdrop {
+    opacity: 1;
+  }
+  @starting-style {
+    dialog.cx-drawer[open] { translate: 100% 0; }
+    dialog.cx-drawer[open]::backdrop { opacity: 0; }
+  }
+
+  /* Khung chờ lấp lánh khi đang tải thêm tin. */
+  .cx-shimmer {
+    background: linear-gradient(100deg, var(--color-stone-100) 30%, var(--color-stone-50) 50%, var(--color-stone-100) 70%) 0 0 / 300% 100%;
+    animation: cx-shimmer 1.4s ease-in-out infinite;
+  }
+
+  /* Nút lún nhẹ khi bấm. */
+  .cx-press {
+    transition: scale 120ms ease, background-color 150ms ease;
+  }
+  .cx-press:active {
+    scale: 0.96;
+  }
+}
+
+.cx-shimmer { background-color: var(--color-stone-100); }
+
+@keyframes cx-via-blur { 35% { filter: blur(3px); } }
+@keyframes cx-fade-out { to { opacity: 0; } }
+@keyframes cx-rise-in { from { opacity: 0; translate: 0 12px; } }
+@keyframes cx-shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }

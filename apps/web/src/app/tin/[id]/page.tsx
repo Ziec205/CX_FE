@@ -39,20 +39,11 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-14">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
-      <div className="space-y-4">
-        <Gallery urls={d.photoUrls} title={l.title} />
+      <div className="order-1 min-w-0 lg:col-start-1 lg:row-start-1">
+        <Gallery urls={d.photoUrls} title={l.title} vtName={`listing-${l.id}`} />
+      </div>
+      <div className="order-3 min-w-0 space-y-4 lg:col-start-1 lg:row-start-2">
         <div className="space-y-5">
-          <div className="flex flex-wrap gap-2 text-sm">
-            <span className="rounded-full bg-emerald-100 px-3 py-1 font-bold text-emerald-700">{TYPE_LABEL[l.type]}</span>
-            {l.status === "SoldOut" && <span className="rounded-full bg-stone-200 px-3 py-1 font-bold">Đã bán hết</span>}
-            {l.realPhoto && <span className="rounded-full bg-wood-100 px-3 py-1 font-bold text-wood-800">Ảnh chụp thực tế</span>}
-            {l.escrow && <span className="rounded-full bg-emerald-800 px-3 py-1 font-bold text-stone-50">Giao dịch đảm bảo</span>}
-          </div>
-          <h1 className="text-4xl leading-tight tracking-tight text-emerald-800 lg:text-5xl">{l.title}</h1>
-          <p className="text-3xl font-bold text-emerald-600">{priceLabel(l)}</p>
-          {l.rent && <p className="text-sm text-stone-600">Cọc {l.rent.deposit.toLocaleString("vi-VN")}đ · thuê tối thiểu {l.rent.minUnits}</p>}
-          <p className="mt-1 text-sm text-stone-500">{provinceName(l.provinceId)} · đăng {timeAgo(l.bumpedAt)} · {d.views} lượt xem</p>
-
           <dl className="grid rounded-2xl border border-stone-200 bg-white p-5 grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
             {species && <div><dt className="text-stone-500">Loài</dt><dd><Link href={`/thu-vien/${species.id}`} className="text-emerald-700 hover:underline">{species.commonName}</Link></dd></div>}
             {category && <div><dt className="text-stone-500">Danh mục</dt><dd><Link href={`/tim-kiem?categoryId=${category.id}`} className="hover:underline">{category.name}</Link></dd></div>}
@@ -65,7 +56,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
             {d.neededBy && <div><dt className="text-stone-500">Cần trước</dt><dd>{new Date(d.neededBy).toLocaleDateString("vi-VN")}</dd></div>}
           </dl>
 
-          <h2 className="text-3xl text-emerald-800">Mô tả</h2>
+          <h2 className="text-2xl font-bold text-emerald-900">Mô tả</h2>
           <p className="whitespace-pre-line text-base leading-relaxed text-stone-700">{d.description}</p>
           {d.wantInExchange && <p className="mt-2 text-sm"><b>Muốn đổi lấy:</b> {d.wantInExchange}</p>}
           <p className="mt-3 text-sm"><b>Hình thức nhận:</b> {d.pickupOptions.map((p) => PICKUP[p] ?? p).join(" · ")}</p>
@@ -90,10 +81,23 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
         )}
       </div>
 
-      <aside className="space-y-5 lg:sticky lg:top-28 lg:self-start">
+      <aside className="order-2 space-y-5 lg:sticky lg:top-36 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
+        <div className="space-y-3">
+          <div className="flex flex-wrap gap-2 text-sm">
+            <span className="rounded-full bg-emerald-100 px-3 py-1 font-bold text-emerald-700">{TYPE_LABEL[l.type]}</span>
+            {l.status === "SoldOut" && <span className="rounded-full bg-stone-200 px-3 py-1 font-bold">Đã bán hết</span>}
+            {l.realPhoto && <span className="rounded-full bg-wood-100 px-3 py-1 font-bold text-wood-800">Ảnh chụp thực tế</span>}
+            {l.escrow && <span className="rounded-full bg-emerald-800 px-3 py-1 font-bold text-stone-50">Giao dịch đảm bảo</span>}
+          </div>
+          <h1 className="text-3xl font-bold text-stone-900 lg:text-4xl">{l.title}</h1>
+          <p><span className="cx-tag text-2xl lg:text-3xl">{priceLabel(l)}</span></p>
+          {l.rent && <p className="text-sm text-stone-600">Cọc {l.rent.deposit.toLocaleString("vi-VN")}đ · thuê tối thiểu {l.rent.minUnits}</p>}
+          <p className="mt-1 text-sm text-stone-500">{provinceName(l.provinceId)}, đăng {timeAgo(l.bumpedAt)}, {d.views} lượt xem</p>
+
+        </div>
         <ContactBox listing={l} isOwner={d.isOwner} />
         <div className="rounded-2xl bg-wood-100 p-6 text-[15px] text-wood-800">
-          <p className="mb-2 text-xl italic">Mua bán an toàn</p>
+          <p className="mb-2 font-display text-xl font-bold">Mua bán an toàn</p>
           <ul className="list-disc space-y-1 pl-4">
             <li>Xem cây tận mắt trước khi trả tiền, hoặc chọn tin có <b>Giao dịch đảm bảo</b>.</li>
             <li>Không chuyển cọc cho người lạ, không đọc mã OTP cho bất kỳ ai.</li>

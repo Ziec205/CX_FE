@@ -27,6 +27,7 @@ export function ContactBox({ listing, isOwner: ownerFromServer }: { listing: Lis
   const [reporting, setReporting] = useState(false);
   const [reason, setReason] = useState("Scam");
   const [note, setNote] = useState("");
+  const [opening, setOpening] = useState(false);
 
   function handle(e: unknown) {
     if ((e as ApiError).status === 401) router.push(`/dang-nhap?next=/tin/${listing.id}`);
@@ -37,10 +38,12 @@ export function ContactBox({ listing, isOwner: ownerFromServer }: { listing: Lis
     try { setPhone((await api<{ phone: string }>(`listings/${listing.id}/phone`)).phone); } catch (e) { handle(e); }
   }
   async function chat() {
+    if (opening) return;
+    setOpening(true);
     try {
       const c = await api<{ id: string }>("conversations", { method: "POST", json: { listingId: listing.id } });
       router.push(`/tin-nhan?c=${c.id}`);
-    } catch (e) { handle(e); }
+    } catch (e) { handle(e); setOpening(false); }
   }
   async function save() {
     try { await api(`me/favorites/${listing.id}`, { method: "PUT" }); setSaved(true); } catch (e) { handle(e); }
@@ -55,7 +58,7 @@ export function ContactBox({ listing, isOwner: ownerFromServer }: { listing: Lis
 
   const s = listing.seller;
   return (
-    <div className="space-y-3 rounded-xl border border-stone-200 bg-white p-4">
+    <div className="space-y-3 rounded-3xl bg-white p-5 ring-1 ring-stone-200">
       <div>
         <p className="font-semibold">{s.displayName}</p>
         <div className="mt-1 flex flex-wrap gap-1 text-xs">
@@ -75,11 +78,11 @@ export function ContactBox({ listing, isOwner: ownerFromServer }: { listing: Lis
       ) : (
         <>
           {listing.escrow && listing.type === "Sell" && listing.priceMode !== "Negotiable" && listing.available > 0 && (
-            <Link href={`/don-hang/moi?listing=${listing.id}`} className={`${btn.primary} block text-center`}>🛡 Mua đảm bảo</Link>
+            <Link href={`/don-hang/moi?listing=${listing.id}`} className={`${btn.primary} block text-center`}>Mua đảm bảo</Link>
           )}
           {listing.type === "Rent" && <Link href={`/thue/moi?listing=${listing.id}`} className={`${btn.primary} block text-center`}>Đặt lịch thuê</Link>}
           {listing.type === "Buy" && <Link href={`/tin/${listing.id}/bao-gia`} className={`${btn.primary} block text-center`}>Gửi báo giá</Link>}
-          <button onClick={chat} className={`${listing.escrow || listing.type === "Rent" || listing.type === "Buy" ? btn.secondary : btn.primary} w-full`}>Nhắn tin cho người bán</button>
+          <button onClick={chat} disabled={opening} className={`${listing.escrow || listing.type === "Rent" || listing.type === "Buy" ? btn.secondary : btn.primary} w-full`}>{opening ? "Đang mở cuộc trò chuyện…" : "Nhắn tin cho người bán"}</button>
           {phone ? (
             <a href={`tel:${phone}`} className={`${btn.secondary} block text-center text-base font-semibold`}>Gọi {phone}</a>
           ) : (

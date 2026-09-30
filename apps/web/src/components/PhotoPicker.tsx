@@ -5,9 +5,9 @@ import { errorText, uploadPhoto } from "@/lib/api";
 
 export interface UploadedPhoto { id: string; preview: string }
 
-/** Chọn ảnh từ thư viện hoặc chụp bằng camera (ảnh chụp trong app được gắn nhãn "ảnh chụp thực tế"). */
-export function PhotoPicker({ value, onChange, max = 12, kind = "ListingPhoto", label = "Thêm ảnh" }: {
-  value: UploadedPhoto[]; onChange: (v: UploadedPhoto[]) => void; max?: number; kind?: string; label?: string;
+/** Chọn ảnh từ thư viện hoặc chụp bằng camera (ảnh chụp trong app được gắn nhãn "ảnh chụp thực tế"). camera=false: chỉ còn ô thêm ảnh. */
+export function PhotoPicker({ value, onChange, max = 12, kind = "ListingPhoto", label = "Thêm ảnh", camera = true }: {
+  value: UploadedPhoto[]; onChange: (v: UploadedPhoto[]) => void; max?: number; kind?: string; label?: string; camera?: boolean;
 }) {
   const [busy, setBusy] = useState(0);
   const [error, setError] = useState<string>();
@@ -45,10 +45,12 @@ export function PhotoPicker({ value, onChange, max = 12, kind = "ListingPhoto", 
         {busy > 0 && <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-stone-100 text-xs text-stone-500">Đang tải {busy}…</div>}
         {value.length < max && (
           <>
-            <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-emerald-400 text-xs text-emerald-700">
-              Chụp ảnh
-              <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => { add(e.target.files, true); e.target.value = ""; }} />
-            </label>
+            {camera && (
+              <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-emerald-400 text-xs text-emerald-700">
+                Chụp ảnh
+                <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => { add(e.target.files, true); e.target.value = ""; }} />
+              </label>
+            )}
             <label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-stone-300 text-xs text-stone-600">
               {label}
               <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => { add(e.target.files, false); e.target.value = ""; }} />

@@ -36,7 +36,7 @@ export default function RentalPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-5">
       <Link href="/thue" className="text-sm text-emerald-700 hover:underline">← Lịch thuê</Link>
-      <h1 className="text-3xl tracking-tight text-emerald-800">{STATUS[r.status] ?? r.status}</h1>
+      <h1 className="text-3xl font-extrabold text-emerald-900">{STATUS[r.status] ?? r.status}</h1>
       {error && <Alert>{error}</Alert>}
       <Section title="Chi tiết">
         <dl className="space-y-1.5 text-[15px]">

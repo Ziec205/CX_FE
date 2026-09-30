@@ -48,7 +48,7 @@ export default function OrderPage() {
       <div className="space-y-5">
         <div>
           <Link href="/don-hang" className="text-sm text-emerald-700 hover:underline">← Đơn đảm bảo</Link>
-          <h1 className="mt-1 text-3xl tracking-tight text-emerald-800">Đơn {o.code}</h1>
+          <h1 className="mt-1 text-3xl font-extrabold text-emerald-900">Đơn {o.code}</h1>
           <span className={`mt-2 inline-block rounded-full px-3 py-1 text-sm ${TONE_CLASS[s.tone]}`}>{s.label}</span>
         </div>
         {error && <Alert>{error}</Alert>}

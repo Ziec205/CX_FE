@@ -36,7 +36,7 @@ export default function ImageSearchPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-4xl tracking-tight text-emerald-800">Tìm bằng ảnh</h1>
+        <h1 className="text-4xl font-extrabold text-emerald-900">Tìm bằng ảnh</h1>
         <p className="mt-1 text-stone-600">Chụp cây bạn thấy ngoài đường hay nhà bạn bè — Chạm Xanh gợi ý tên loài và tin đang bán.</p>
       </div>
       <div className="flex flex-wrap items-center gap-4">
