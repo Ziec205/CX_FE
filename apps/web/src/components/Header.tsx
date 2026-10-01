@@ -8,7 +8,7 @@ import { UserMenu } from "./UserMenu";
 export async function Header() {
   const signedIn = await isSignedIn();
   return (
-    <header className="sticky top-0 z-30 border-b border-stone-200 bg-stone-50/95 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-stone-200 bg-stone-50 md:bg-stone-50/95 md:backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-5 gap-y-3 px-4 py-3 sm:px-6 lg:px-10">
         <Link href="/" className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-emerald-800">
           <svg viewBox="0 0 32 32" className="h-8 w-8" aria-hidden>

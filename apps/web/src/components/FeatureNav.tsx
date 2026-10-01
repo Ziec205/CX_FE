@@ -63,7 +63,7 @@ export function FeatureRail() {
 export function FeatureTabBar() {
   const active = useActive();
   return (
-    <nav aria-label="Tính năng chính" className="fixed inset-x-0 bottom-0 z-30 border-t border-stone-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+    <nav aria-label="Tính năng chính" className="fixed inset-x-0 bottom-0 z-30 border-t border-stone-200 bg-white pb-[env(safe-area-inset-bottom)] [transform:translateZ(0)] md:hidden">
       <ul className="grid grid-cols-5">
         {FEATURES.map((f) => {
           const on = active(f.key, f.href);
