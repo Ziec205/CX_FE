@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { MoneyInput } from "@/components/MoneyInput";
 import { Alert, Label, Section, btn, field } from "@/components/ui";
 import { api, errorText, type ApiError } from "@/lib/api";
 import { DELIVERY } from "@/lib/escrow";
@@ -85,7 +86,7 @@ function NewOrder() {
           <>
             <Label text="Địa chỉ nhận hàng" required><textarea required value={address} onChange={(e) => setAddress(e.target.value)} rows={2} className={field} /></Label>
             <Label text="Phí giao hàng đã thỏa thuận (đ)" hint="Nhập 0 nếu người bán miễn phí giao">
-              <input type="number" min={0} step={1000} value={shippingFee} onChange={(e) => setShippingFee(Math.max(0, Number(e.target.value) || 0))} className={field} />
+              <MoneyInput value={String(shippingFee)} onChange={(d) => setShippingFee(Number(d) || 0)} />
             </Label>
           </>
         )}

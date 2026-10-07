@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { PhotoPicker, type UploadedPhoto } from "@/components/PhotoPicker";
+import { MoneyInput } from "@/components/MoneyInput";
 import { Alert, Label, Section, btn, field } from "@/components/ui";
 import { api, errorText, type ApiError } from "@/lib/api";
 import { vnd } from "@/lib/format";
@@ -65,7 +66,7 @@ export default function QuotesPage() {
       {!isOwner && listing && (
         <Section title={mine ? "Cập nhật báo giá của bạn" : "Báo giá của bạn"}>
           <form onSubmit={send} className="grid gap-3 sm:grid-cols-2">
-            <Label text="Đơn giá (đ)" required><input type="number" min={1000} step={1000} required value={price || ""} onChange={(e) => setPrice(Number(e.target.value))} className={field} /></Label>
+            <Label text="Đơn giá (đ)" required><MoneyInput required value={price ? String(price) : ""} onChange={(d) => setPrice(Number(d) || 0)} /></Label>
             <Label text="Số lượng" required><input type="number" min={1} required value={qty} onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))} className={field} /></Label>
             <div className="sm:col-span-2"><Label text="Ghi chú"><textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} maxLength={1000} className={field} placeholder="Kích thước, tình trạng, thời gian có hàng…" /></Label></div>
             <div className="sm:col-span-2"><PhotoPicker value={photos} onChange={setPhotos} max={6} /></div>

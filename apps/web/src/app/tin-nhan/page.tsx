@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { api, errorText, uploadPhoto, type ApiError } from "@/lib/api";
+import { groupThousands } from "@/components/MoneyInput";
 import { shortVnd, timeAgo, vnd } from "@/lib/format";
 import { createChatConnection } from "@/lib/realtime";
 
@@ -276,7 +277,7 @@ function Thread({ conv, meId, msgs, setMsgs, error, setError, onBack }: {
             <form onSubmit={sendOffer} className="flex items-center gap-2 rounded-2xl bg-wood-100 p-2 ring-1 ring-wood-200">
               <label htmlFor="offer" className="sr-only shrink-0 pl-2 text-sm font-semibold text-wood-800 sm:not-sr-only">Giá bạn muốn trả</label>
               <input id="offer" inputMode="numeric" autoFocus value={offer} placeholder="Giá bạn muốn trả, đ"
-                onChange={(e) => { const n = e.target.value.replace(/\D/g, ""); setOffer(n ? Number(n).toLocaleString("vi-VN") : ""); }}
+                onChange={(e) => { const n = e.target.value.replace(/\D/g, ""); setOffer(n ? groupThousands(n.replace(/^0+(?=\d)/, "")) : ""); }}
                 className="h-10 min-w-0 flex-1 rounded-full bg-white px-4 focus:outline-none" />
               <button disabled={!offer || sending} className="h-10 shrink-0 rounded-full bg-stone-900 px-4 text-sm font-semibold text-wood-400 disabled:opacity-40">Gửi giá</button>
               <button type="button" onClick={() => setOfferOpen(false)} aria-label="Đóng ô trả giá" className="h-10 w-10 shrink-0 rounded-full text-stone-600 hover:bg-white">✕</button>
@@ -329,7 +330,7 @@ function OfferBubble({ m, mine, canRespond, canCreateOrder, onRespond }: {
         {canRespond && countering && (
           <form onSubmit={(e) => { e.preventDefault(); onRespond(m.id, false, Number(counter.replace(/\D/g, "")) || undefined); }} className="space-y-2">
             <input inputMode="numeric" autoFocus value={counter} placeholder={`Vd: ${shortVnd(Math.round(o.amount * 1.1))}`} aria-label="Giá bạn muốn bán"
-              onChange={(e) => { const n = e.target.value.replace(/\D/g, ""); setCounter(n ? Number(n).toLocaleString("vi-VN") : ""); }}
+              onChange={(e) => { const n = e.target.value.replace(/\D/g, ""); setCounter(n ? groupThousands(n.replace(/^0+(?=\d)/, "")) : ""); }}
               className="h-10 w-full rounded-full border border-stone-300 px-4 focus:border-emerald-600 focus:outline-none" />
             <div className="flex gap-2">
               <button className="flex-1 rounded-full bg-stone-900 py-2 font-semibold text-wood-400">{counter ? "Gửi giá này" : "Từ chối"}</button>

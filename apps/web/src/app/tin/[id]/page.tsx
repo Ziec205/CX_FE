@@ -5,6 +5,7 @@ import { priceLabel, timeAgo, TYPE_LABEL } from "@/lib/format";
 import { provinceName } from "@/lib/provinces";
 import { publicGet } from "@/lib/server";
 import type { Category, ListingDetail, Species } from "@/lib/types";
+import { ListingAiBox } from "@/components/CompareTools";
 import { ContactBox } from "./ContactBox";
 import { Gallery } from "./Gallery";
 
@@ -96,6 +97,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
 
         </div>
         <ContactBox listing={l} isOwner={d.isOwner} />
+        <ListingAiBox card={l} />
         <div className="rounded-2xl bg-wood-100 p-6 text-[15px] text-wood-800">
           <p className="mb-2 font-display text-xl font-bold">Mua bán an toàn</p>
           <ul className="list-disc space-y-1 pl-4">

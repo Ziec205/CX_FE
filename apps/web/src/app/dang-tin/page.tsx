@@ -3,7 +3,10 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { PhotoPicker, type UploadedPhoto } from "@/components/PhotoPicker";
+import { MoneyInput } from "@/components/MoneyInput";
+import { useMyPlan } from "@/components/PlanGate";
 import { ProfileGate } from "@/components/ProfileGate";
+import { AiPriceHelper, AiWriteHelper } from "@/components/SellerAiTools";
 import { Alert, btn, field, Label } from "@/components/ui";
 import { api, errorText, type ApiError } from "@/lib/api";
 import { priceLabel } from "@/lib/format";
@@ -24,21 +27,6 @@ const TITLE_MIN = 10, TITLE_MAX = 70, DESC_MIN = 20, DESC_MAX = 3000;
 
 export default function PostListingPage() {
   return <Suspense><PostListingForm /></Suspense>;
-}
-
-/** Ô tiền: người dùng gõ số, hiển thị có dấu chấm hàng nghìn; state giữ chuỗi chữ số thuần. */
-function MoneyInput({ value, onChange, id, required, placeholder, suffix = "đ", ...rest }: {
-  value: string; onChange: (digits: string) => void; id?: string; required?: boolean; placeholder?: string; suffix?: string; "aria-label"?: string;
-}) {
-  return (
-    <div className="relative">
-      <input id={id} inputMode="numeric" required={required} placeholder={placeholder} aria-label={rest["aria-label"]}
-        value={value ? Number(value).toLocaleString("vi-VN") : ""}
-        onChange={(e) => onChange(e.target.value.replace(/\D/g, "").replace(/^0+(?=\d)/, "").slice(0, 12))}
-        className={`${field} pr-10 font-semibold`} />
-      <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-stone-500">{suffix}</span>
-    </div>
-  );
 }
 
 /** Khối form có đánh số: các bước đăng tin thực sự là một trình tự. */
@@ -100,6 +88,7 @@ function PostListingForm() {
   const [busy, setBusy] = useState(false);
   const [pendingAttrs, setPendingAttrs] = useState<Record<string, unknown>>();
   const errorRef = useRef<HTMLDivElement>(null);
+  const [plan] = useMyPlan();
 
   useEffect(() => {
     let cancelled = false;
@@ -296,6 +285,11 @@ function PostListingForm() {
               </div>
               {category?.requiresManualReview && <Alert kind="warn">Danh mục hàng hạn chế: người duyệt sẽ kiểm tra giấy tờ trước khi tin hiển thị.</Alert>}
 
+              {type !== "Buy" && (
+                <AiWriteHelper plan={plan} mediaIds={photos.map((p) => p.id)} categoryId={categoryId} hasText={!!(title.trim() || description.trim())}
+                  onResult={(t, d) => { setTitle(t); setDescription(d); }} />
+              )}
+
               <div>
                 <div className="mb-1.5 flex items-baseline justify-between">
                   <label htmlFor="f-title" className="font-semibold text-stone-800">Tiêu đề <span className="text-red-700">*</span></label>
@@ -349,11 +343,15 @@ function PostListingForm() {
                     </div>
                   )}
                   {priceMode === "Fixed" ? (
-                    <div>
-                      <label htmlFor="f-price" className="mb-1.5 block font-semibold text-stone-800">Giá bán <span className="text-red-700">*</span></label>
-                      <MoneyInput id="f-price" required value={price} onChange={setPrice} placeholder="Vd: 350.000" />
-                      <label className="mt-2 flex items-center gap-2 text-sm"><input type="checkbox" checked={negotiable} onChange={(e) => setNegotiable(e.target.checked)} className="h-4 w-4 accent-emerald-700" />Cho phép người mua trả giá</label>
-                    </div>
+                    <>
+                      <div>
+                        <label htmlFor="f-price" className="mb-1.5 block font-semibold text-stone-800">Giá bán <span className="text-red-700">*</span></label>
+                        <MoneyInput id="f-price" required value={price} onChange={setPrice} placeholder="Vd: 350.000" />
+                        <label className="mt-2 flex items-center gap-2 text-sm"><input type="checkbox" checked={negotiable} onChange={(e) => setNegotiable(e.target.checked)} className="h-4 w-4 accent-emerald-700" />Cho phép người mua trả giá</label>
+                      </div>
+                      <AiPriceHelper plan={plan} categoryId={categoryId} title={title} description={description} attributes={attrs}
+                        mediaIds={photos.map((p) => p.id)} onPick={(v) => setPrice(String(v))} />
+                    </>
                   ) : (
                     <div className="sm:col-span-2">
                       <span className="mb-1.5 block font-semibold text-stone-800">Khoảng giá tham khảo <span className="text-red-700">*</span></span>
@@ -505,25 +503,57 @@ function AttributeInput({ def, value, required, onChange }: { def: AttributeDefi
     case "Number":
       return <Label text={label} required={required}><input type="number" required={required} min={def.min ?? undefined} max={def.max ?? undefined} step="any"
         value={(value as number | undefined) ?? ""} onChange={(e) => onChange(e.target.value === "" ? undefined : Number(e.target.value))} className={field} /></Label>;
-    case "SingleSelect":
-      return <Label text={label} required={required}><select required={required} value={(value as string) ?? ""} onChange={(e) => onChange(e.target.value || undefined)} className={field}>
-        <option value="">Chọn</option>{def.options.map((o) => <option key={o}>{o}</option>)}</select></Label>;
-    case "MultiSelect": {
-      // Không bọc trong <label>: bấm vào chữ sẽ bật nhầm ô đầu tiên.
-      const arr = (value as string[]) ?? [];
+    case "SingleSelect": {
+      // Gợi ý chỉ để bấm nhanh: người bán gõ thông tin riêng của cây mình cũng được.
+      const text = (value as string) ?? "";
+      const id = `attr-${def.key}`;
       return (
-        <div role="group" aria-label={label} className="sm:col-span-2">
-          <span className="mb-1.5 block font-semibold text-stone-800">{label}{required && <span className="text-red-700"> *</span>}</span>
-          <div className="flex flex-wrap gap-2">{def.options.map((o) => {
-            const on = arr.includes(o);
-            return <button type="button" key={o} aria-pressed={on} onClick={() => onChange(on ? arr.filter((x) => x !== o) : [...arr, o])} className={chip(on)}>{o}</button>;
-          })}</div>
+        <div className="sm:col-span-2">
+          <label htmlFor={id} className="mb-1.5 block font-semibold text-stone-800">{label}{required ? <span className="text-red-700"> *</span> : <span className="font-normal text-stone-500"> (không bắt buộc)</span>}</label>
+          <input id={id} required={required} maxLength={100} value={text} onChange={(e) => onChange(e.target.value || undefined)} className={field}
+            placeholder={def.options.length > 0 ? `Gõ tự do hoặc chọn gợi ý, vd: ${def.options[0]}` : undefined} />
+          {def.options.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5" aria-label={`Gợi ý cho ${def.label}`}>
+              {def.options.map((o) => (
+                <button type="button" key={o} aria-pressed={text === o} onClick={() => onChange(text === o ? undefined : o)} className={chip(text === o)}>{o}</button>
+              ))}
+            </div>
+          )}
         </div>
       );
     }
+    case "MultiSelect":
+      return <MultiChoice def={def} label={label} required={required} value={(value as string[]) ?? []} onChange={onChange} />;
     case "Boolean":
       return <label className="flex items-center gap-2 self-end rounded-2xl px-1 py-2.5 text-[15px]"><input type="checkbox" checked={!!value} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 accent-emerald-700" />{def.label}</label>;
     default:
       return <Label text={label} required={required}><input required={required} maxLength={200} value={(value as string) ?? ""} onChange={(e) => onChange(e.target.value || undefined)} className={field} /></Label>;
   }
+}
+
+/** Nhiều lựa chọn: bấm gợi ý hoặc tự thêm mục riêng. */
+function MultiChoice({ def, label, required, value, onChange }: { def: AttributeDefinition; label: string; required: boolean; value: string[]; onChange: (v: unknown) => void }) {
+  const [draft, setDraft] = useState("");
+  const set = (next: string[]) => onChange(next.length > 0 ? next : undefined);
+  const add = () => {
+    const t = draft.trim().replace(/\s+/g, " ");
+    if (t && !value.includes(t)) set([...value, t]);
+    setDraft("");
+  };
+  const options = [...def.options, ...value.filter((v) => !def.options.includes(v))];
+  return (
+    // Không bọc trong <label>: bấm vào chữ sẽ bật nhầm ô đầu tiên.
+    <div role="group" aria-label={label} className="sm:col-span-2">
+      <span className="mb-1.5 block font-semibold text-stone-800">{label}{required ? <span className="text-red-700"> *</span> : <span className="font-normal text-stone-500"> (không bắt buộc)</span>}</span>
+      <div className="flex flex-wrap gap-2">{options.map((o) => {
+        const on = value.includes(o);
+        return <button type="button" key={o} aria-pressed={on} onClick={() => set(on ? value.filter((x) => x !== o) : [...value, o])} className={chip(on)}>{o}</button>;
+      })}</div>
+      <div className="mt-2 flex gap-2">
+        <input value={draft} maxLength={100} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add(); } }}
+          aria-label={`Thêm mục khác cho ${def.label}`} placeholder="Thêm mục khác…" className={`${field} max-w-xs`} />
+        <button type="button" onClick={add} disabled={!draft.trim()} className={btn.small}>Thêm</button>
+      </div>
+    </div>
+  );
 }

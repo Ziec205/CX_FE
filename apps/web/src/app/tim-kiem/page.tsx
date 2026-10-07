@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+import { MoneyInput } from "@/components/MoneyInput";
 import { ListingGrid } from "@/components/ListingCardView";
 import { field } from "@/components/ui";
 import { PROVINCES } from "@/lib/provinces";
@@ -57,8 +58,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             {PROVINCES.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
           <div className="flex gap-2">
-            <input name="priceMin" type="number" min={0} defaultValue={v("priceMin")} placeholder="Giá từ" className={field} />
-            <input name="priceMax" type="number" min={0} defaultValue={v("priceMax")} placeholder="đến" className={field} />
+            <MoneyInput name="priceMin" defaultValue={v("priceMin")} placeholder="Giá từ" aria-label="Giá từ" suffix="" className={field} wrapClassName="min-w-0 flex-1" />
+            <MoneyInput name="priceMax" defaultValue={v("priceMax")} placeholder="đến" aria-label="Giá đến" suffix="" className={field} wrapClassName="min-w-0 flex-1" />
           </div>
           <label className="flex items-center gap-2"><input type="checkbox" name="gardenOnly" value="true" defaultChecked={v("gardenOnly") === "true"} />Chỉ Nhà vườn/Shop</label>
           <label className="flex items-center gap-2"><input type="checkbox" name="escrowOnly" value="true" defaultChecked={v("escrowOnly") === "true"} />Có Giao dịch đảm bảo</label>

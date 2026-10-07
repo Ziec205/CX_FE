@@ -3,21 +3,14 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Alert, Section, btn } from "@/components/ui";
+import { Alert, btn } from "@/components/ui";
 import { api, errorText, type ApiError } from "@/lib/api";
 import { timeAgo } from "@/lib/format";
 import type { AppNotification } from "@/lib/types";
 
-const GROUP_LABEL: Record<string, string> = {
-  chat: "Tin nhắn", listing: "Tin đăng, báo giá, thuê cây", discovery: "Tìm kiếm đã lưu, yêu thích, theo dõi",
-  community: "Cộng đồng", care: "Nhắc chăm cây", marketing: "Khuyến mãi, gợi ý",
-  transaction: "Giao dịch (không tắt được)", security: "Bảo mật tài khoản (không tắt được)",
-};
-
 export default function NotificationsPage() {
   const router = useRouter();
   const [items, setItems] = useState<AppNotification[]>();
-  const [groups, setGroups] = useState<Record<string, boolean>>();
   const [error, setError] = useState<string>();
   const [more, setMore] = useState(true);
 
@@ -31,7 +24,6 @@ export default function NotificationsPage() {
       if ((e as ApiError).status === 401) router.push("/dang-nhap?next=/thong-bao");
       else if (!cancelled) setError(errorText(e));
     });
-    api<Record<string, boolean>>("me/notifications/settings").then((g) => { if (!cancelled) setGroups(g); }, () => {});
     return () => { cancelled = true; };
   }, [router]);
 
@@ -54,18 +46,15 @@ export default function NotificationsPage() {
     setItems(items?.map((x) => ({ ...x, readAt: x.readAt ?? new Date().toISOString() })));
   }
 
-  async function toggle(group: string) {
-    if (!groups || group === "transaction" || group === "security") return;
-    try { setGroups(await api<Record<string, boolean>>("me/notifications/settings", { method: "PUT", json: { groups: { [group]: !groups[group] } } })); }
-    catch (e) { setError(errorText(e)); }
-  }
-
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+    <div className="mx-auto max-w-3xl">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h1 className="text-4xl font-extrabold text-emerald-900">Thông báo</h1>
-          <button onClick={readAll} className={btn.small}>Đánh dấu đã đọc hết</button>
+          <div className="flex gap-2">
+            <Link href="/cai-dat" className={btn.small}>Cài đặt</Link>
+            <button onClick={readAll} className={btn.small}>Đánh dấu đã đọc hết</button>
+          </div>
         </div>
         {error && <Alert>{error}</Alert>}
         {items?.length === 0 && <p className="text-stone-500">Chưa có thông báo nào.</p>}
@@ -85,22 +74,6 @@ export default function NotificationsPage() {
         </ul>
         {more && items && items.length > 0 && <button onClick={loadMore} className={btn.secondary}>Xem thêm</button>}
       </div>
-      <aside>
-        <Section title="Cài đặt">
-          <p className="mb-3 text-sm text-stone-500">Chọn nhóm thông báo muốn nhận trên điện thoại. Thông báo trong app luôn được lưu tại đây.</p>
-          <ul className="space-y-2">
-            {groups && Object.entries(GROUP_LABEL).map(([g, label]) => (
-              <li key={g}>
-                <label className="flex items-center gap-2 text-[15px]">
-                  <input type="checkbox" checked={groups[g] ?? true} disabled={g === "transaction" || g === "security"} onChange={() => toggle(g)} className="h-4 w-4 accent-emerald-700" />
-                  {label}
-                </label>
-              </li>
-            ))}
-          </ul>
-          <Link href="/vuon-cua-toi" className="mt-4 block text-sm text-emerald-700 hover:underline">Quản lý lịch nhắc chăm cây →</Link>
-        </Section>
-      </aside>
     </div>
   );
 }

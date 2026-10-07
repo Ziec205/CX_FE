@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+import { MoneyInput } from "@/components/MoneyInput";
 import { ListingGrid } from "@/components/ListingCardView";
 import { field } from "@/components/ui";
 import { PLANT_USES } from "@/lib/plantUses";
@@ -74,8 +75,8 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
       <fieldset className="space-y-2">
         <legend className="mb-1 font-bold text-stone-800">Giá (đ)</legend>
         <div className="flex gap-2">
-          <input name="priceMin" type="number" min={0} step={1000} defaultValue={v("priceMin")} placeholder="Từ" className={field} aria-label="Giá từ" />
-          <input name="priceMax" type="number" min={0} step={1000} defaultValue={v("priceMax")} placeholder="Đến" className={field} aria-label="Giá đến" />
+          <MoneyInput name="priceMin" defaultValue={v("priceMin")} placeholder="Từ" aria-label="Giá từ" suffix="" className={field} wrapClassName="min-w-0 flex-1" />
+          <MoneyInput name="priceMax" defaultValue={v("priceMax")} placeholder="Đến" aria-label="Giá đến" suffix="" className={field} wrapClassName="min-w-0 flex-1" />
         </div>
       </fieldset>
 

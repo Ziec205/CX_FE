@@ -34,6 +34,8 @@ export interface Species { id: string; commonName: string; aliases: string[]; sc
 export interface Me {
   id: string; phone?: string | null; username?: string | null; displayName: string; fullName?: string | null; provinceId?: string | null; wardId?: string | null;
   hidePhone: boolean; flags: { isProSeller: boolean; hasVerifiedGarden: boolean; hasActivePlan: boolean }; status: string; canPost: boolean;
+  /** Email nhận nhắc lịch chăm cây; chưa có thì không đặt được lời nhắc. */
+  email?: string | null;
 }
 
 export interface PublicPricing {
@@ -59,6 +61,8 @@ export interface CareReminder {
 export interface MyPlant {
   id: string; name: string; speciesId?: string | null; speciesName?: string | null; location?: string | null; acquiredAt?: string | null;
   note?: string | null; createdAt: string; photos: MediaDto[]; reminders: CareReminder[];
+  /** Vượt số cây của gói hiện tại (gói đã hết hạn): xem/xóa được, không sửa, nhắc lịch tạm dừng. */
+  locked: boolean;
 }
 
 export interface AppNotification { id: string; type: string; title: string; body?: string | null; link?: string | null; readAt?: string | null; createdAt: string }
@@ -97,3 +101,33 @@ export interface PostSummary {
   id: string; type: PostType; title: string; excerpt: string; speciesIds: string[]; topics: string[]; likes: number; comments: number;
   answered: boolean; createdAt: string; lastActivityAt: string; thumbUrl?: string | null; author?: CommunityAuthor;
 }
+
+export type PlanCode = "Free" | "Plus" | "Pro";
+export interface PlanInfo {
+  code: PlanCode; name: string; tagline: string; monthlyVnd: number; yearlyVnd: number;
+  gardenPlants: number; aiPerDay: number; marketCompare: boolean; sellerAi: boolean;
+}
+export interface MyPlan { plan: PlanInfo; endAt?: string | null; usage: { gardenPlants: number; aiToday: number; aiRemaining: number } }
+export interface PlanPayment {
+  id: string; plan: PlanCode; months: number; amountVnd: number; orderCode: number; gateway: string; checkoutUrl?: string | null;
+  status: "Pending" | "Paid" | "Cancelled" | "Expired"; createdAt: string; expiresAt: string; paidAt?: string | null;
+  appliedPlan?: PlanCode | null; appliedEndAt?: string | null;
+}
+
+export interface AiQuota { used: number; limit: number; remaining: number }
+export interface AiConversation { id: string; title: string; createdAt: string; updatedAt: string; expireAt: string }
+export interface AiMessage { id: string; role: "user" | "assistant"; text: string; offTopic: boolean; createdAt: string; photos: string[] }
+export interface AiChatResult { conversation: AiConversation; question: AiMessage; reply: AiMessage; counted: boolean; quota: AiQuota }
+export interface PriceStats { count: number; min: number; median: number; max: number }
+export interface AiCompareResult {
+  verdict: string; recommendedId?: string | null; tips: string[]; listings: ListingCard[]; quota: AiQuota;
+  items: { listingId: string; highlights: string[]; concerns: string[]; valueScore?: number | null }[];
+}
+export interface AiMarketCheck {
+  position: string; summary: string; suggestedMin: number; suggestedMax: number; suggestions: string[];
+  myPrice?: number | null; stats?: PriceStats | null; similar: ListingCard[]; quota: AiQuota;
+}
+export interface AiPriceSuggestion {
+  low: number; recommended: number; high: number; reasoning: string; confidence: string; stats?: PriceStats | null; similar: ListingCard[]; quota: AiQuota;
+}
+export interface AiListingDraft { title: string; description: string; missing: string[]; quota: AiQuota }

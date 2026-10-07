@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { PhotoPicker, type UploadedPhoto } from "@/components/PhotoPicker";
+import { MoneyInput } from "@/components/MoneyInput";
 import { Alert, Label, Section, btn, field } from "@/components/ui";
 import { api, errorText, type ApiError } from "@/lib/api";
 import { DELIVERY, DISPUTE_REASON, ORDER_STATUS, TONE_CLASS } from "@/lib/escrow";
@@ -301,7 +302,7 @@ function DisputeBox({ d, act }: { d: Detail; act: (p: string, j?: unknown, done?
             <option value="OfferReplacement">Đề xuất đổi cây</option>
             <option value="Reject">Phản bác (kèm bằng chứng)</option>
           </select>
-          {response === "OfferPartialRefund" && <input type="number" min={1000} step={1000} value={amount} onChange={(e) => setAmount(Number(e.target.value))} className={field} placeholder="Số tiền hoàn" />}
+          {response === "OfferPartialRefund" && <MoneyInput value={amount ? String(amount) : ""} onChange={(d) => setAmount(Number(d) || 0)} placeholder="Số tiền hoàn" aria-label="Số tiền hoàn" />}
           <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} className={field} placeholder="Ghi chú cho người mua / CSKH" />
           <button onClick={() => act("dispute/respond", { response, amount: response === "OfferPartialRefund" ? amount : null, note })} className={btn.primary}>Gửi phản hồi</button>
         </div>

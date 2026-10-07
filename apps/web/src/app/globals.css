@@ -183,6 +183,14 @@ h1, h2, h3, .font-display {
   .cx-press:active {
     scale: 0.96;
   }
+
+  /* Khung Trợ lý AI nổi: trồi lên khi mở. */
+  .cx-ai-panel {
+    transition: opacity 200ms ease, translate 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  @starting-style {
+    .cx-ai-panel { opacity: 0; translate: 0 16px; }
+  }
 }
 
 .cx-shimmer { background-color: var(--color-stone-100); }

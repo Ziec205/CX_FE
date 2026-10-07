@@ -178,6 +178,7 @@ function ListingRow({ item, act, onPromote }: { item: MyListing; act: Act; onPro
 
       <div className="mt-3 flex flex-wrap gap-2 sm:pl-32">
         {l.status === "Active" && l.type !== "Give" && <button onClick={onPromote} className="rounded-full bg-wood-400 px-3.5 py-1.5 text-sm font-semibold text-stone-900 hover:bg-wood-200">Tăng hiển thị</button>}
+        {l.status === "Active" && l.type === "Sell" && <Link href={`/tin/${l.id}#so-cho`} className={btn.small}>So với chợ (AI)</Link>}
         {l.status === "Expired" && <button disabled={busy} onClick={() => run("renew", undefined, "Đã gia hạn tin")} className="rounded-full bg-emerald-700 px-3.5 py-1.5 text-sm font-semibold text-white">Gia hạn miễn phí</button>}
         {["Active", "Hidden", "SoldOut", "Draft", "Rejected"].includes(l.status) && !hasPendingRevision && <Link href={`/dang-tin?id=${l.id}`} className={btn.small}>Sửa</Link>}
         {l.status === "Active" && <button disabled={busy} onClick={() => run("hide", undefined, "Đã ẩn tin")} className={btn.small}>Ẩn</button>}

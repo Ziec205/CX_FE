@@ -4,7 +4,9 @@ import { usePathname } from "next/navigation";
 
 /** Header/footer của trang người dùng; khu quản trị (/quan-tri) có sidebar riêng nên ẩn đi.
  *  Cột flex cao tối thiểu một màn hình: trang ít nội dung thì footer vẫn nằm sát đáy. */
-export function SiteChrome({ header, footer, tabBar, children }: { header: React.ReactNode; footer: React.ReactNode; tabBar?: React.ReactNode; children: React.ReactNode }) {
+export function SiteChrome({ header, footer, tabBar, assistant, children }: {
+  header: React.ReactNode; footer: React.ReactNode; tabBar?: React.ReactNode; assistant?: React.ReactNode; children: React.ReactNode;
+}) {
   const admin = usePathname().startsWith("/quan-tri");
   if (admin) return <>{children}</>;
   return (
@@ -14,6 +16,7 @@ export function SiteChrome({ header, footer, tabBar, children }: { header: React
       {/* Chừa chỗ cho thanh tab dưới đáy trên điện thoại. */}
       <div className="pb-16 md:pb-0">{footer}</div>
       {tabBar}
+      {assistant}
     </div>
   );
 }
