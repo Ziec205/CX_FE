@@ -45,7 +45,7 @@ function Plans() {
   async function buy(code: PlanCode) {
     setBusy(code); setError(undefined);
     try {
-      const pay = await api<PlanPayment>("plans/checkout", { method: "POST", json: { plan: code, months } });
+      const pay = await api<PlanPayment>("plans/checkout", { method: "POST", json: { plan: code, months, returnOrigin: window.location.origin } });
       if (pay.checkoutUrl) window.location.assign(pay.checkoutUrl);
     } catch (e) {
       setError((e as ApiError).status === 401 ? "Vui lòng đăng nhập để mua gói." : errorText(e));

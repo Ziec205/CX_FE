@@ -11,7 +11,7 @@ type Mode = "login" | "register" | "phone" | "code" | "admin";
  * Trang đăng nhập chung:
  * - Thành viên: tên đăng nhập + mật khẩu (đăng ký chỉ cần nhập mật khẩu 2 lần, không cần SĐT/CCCD).
  * - Nhà vườn/Shop: đăng nhập bằng SĐT → OTP.
- * - Quản trị: tên đăng nhập + mật khẩu + 2FA, chuyển vào /quan-tri.
+ * - Quản trị: tên đăng nhập + mật khẩu (không dùng 2FA), chuyển vào /quan-tri.
  */
 function LoginForm() {
   const router = useRouter();
@@ -23,7 +23,6 @@ function LoginForm() {
   const [confirm, setConfirm] = useState("");
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
-  const [totp, setTotp] = useState("");
   const [devCode, setDevCode] = useState<string | null>(null);
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
@@ -65,12 +64,12 @@ function LoginForm() {
   const verifyOtp = run(async () => memberDone((await post("/api/auth/otp/verify", { phone, code })).user));
 
   const adminLogin = run(async () => {
-    await post("/api/admin-auth/login", { username: username.trim(), password, totpCode: totp || null });
+    await post("/api/admin-auth/login", { username: username.trim(), password, totpCode: null });
     router.replace(next.startsWith("/quan-tri") ? next : "/quan-tri");
     router.refresh();
   });
 
-  const go = (m: Mode) => { setMode(m); setError(undefined); setPassword(""); setConfirm(""); setTotp(""); setCode(""); };
+  const go = (m: Mode) => { setMode(m); setError(undefined); setPassword(""); setConfirm(""); setCode(""); };
 
   const tab = (m: Mode, label: string) => (
     <button type="button" role="tab" aria-selected={mode === m} onClick={() => go(m)}
@@ -148,7 +147,6 @@ function LoginForm() {
           <p className="text-sm text-stone-500">Dành cho đội vận hành Chạm Xanh.</p>
           <input value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" required placeholder="Tên đăng nhập" aria-label="Tên đăng nhập" className={field} />
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required placeholder="Mật khẩu" aria-label="Mật khẩu" className={field} />
-          <input value={totp} onChange={(e) => setTotp(e.target.value)} inputMode="numeric" autoComplete="one-time-code" maxLength={6} placeholder="Mã 2FA (nếu đã bật)" aria-label="Mã 2FA" className={field} />
           {error && <Alert>{error}</Alert>}
           <button disabled={busy} className={`${btn.primary} w-full`}>{busy ? "Đang đăng nhập…" : "Đăng nhập"}</button>
         </form>

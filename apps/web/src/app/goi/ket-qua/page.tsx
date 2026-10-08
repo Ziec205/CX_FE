@@ -12,10 +12,12 @@ export default function PaymentResultPage() {
   return <Suspense><PaymentResult /></Suspense>;
 }
 
-/** PayOS đưa người dùng về đây sau khi thanh toán (hoặc bấm hủy). Hỏi BE vài lần vì tiền có thể về chậm vài giây. */
+/** PayOS đưa người dùng về đây sau khi thanh toán (hoặc bấm hủy). Hỏi BE vài lần vì tiền có thể về chậm vài giây.
+ *  Link có mã số đơn (ma) nên xem được kể cả khi trình duyệt mất phiên đăng nhập. */
 function PaymentResult() {
   const params = useSearchParams();
   const id = params.get("thanhToan");
+  const ma = params.get("ma") ?? params.get("orderCode");
   const cancelled = params.get("huy") === "1" || params.get("cancel") === "true";
   const [payment, setPayment] = useState<PlanPayment>();
   const [error, setError] = useState<string>();
@@ -28,9 +30,11 @@ function PaymentResult() {
     let timer: ReturnType<typeof setTimeout>;
     const poll = async () => {
       try {
+        const base = ma ? `plans/payments/${id}/status` : `plans/payments/${id}`;
+        const q = ma ? `?ma=${encodeURIComponent(ma)}` : "";
         const p = cancelled
-          ? await api<PlanPayment>(`plans/payments/${id}/cancel`, { method: "POST" })
-          : await api<PlanPayment>(`plans/payments/${id}`);
+          ? await api<PlanPayment>(`${base}/cancel${q}`, { method: "POST" })
+          : await api<PlanPayment>(`${base}${q}`);
         if (stop) return;
         setPayment(p);
         if (p.status === "Pending" && !cancelled) {
@@ -41,7 +45,7 @@ function PaymentResult() {
     };
     poll();
     return () => { stop = true; clearTimeout(timer); };
-  }, [id, cancelled]);
+  }, [id, ma, cancelled]);
 
   if (!id) return <Message tone="err" title="Thiếu mã thanh toán">Hãy mở lại từ trang <Link href="/goi" className="font-semibold underline">Gói</Link>.</Message>;
   if (error) return <Message tone="err" title="Không xem được đơn thanh toán">{error}</Message>;
@@ -55,6 +59,7 @@ function PaymentResult() {
         <div className="mt-5 flex flex-wrap justify-center gap-2">
           <Link href="/vuon-cua-toi" className="rounded-full bg-emerald-800 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700">Mở Hồ sơ vườn</Link>
           <Link href="/tro-ly-ai" className="rounded-full bg-white px-5 py-2.5 font-semibold text-emerald-900 ring-1 ring-stone-300 hover:ring-emerald-700">Hỏi Trợ lý AI</Link>
+          <Link href="/" className="rounded-full bg-white px-5 py-2.5 font-semibold text-emerald-900 ring-1 ring-stone-300 hover:ring-emerald-700">Về trang chủ</Link>
         </div>
       </Message>
     );

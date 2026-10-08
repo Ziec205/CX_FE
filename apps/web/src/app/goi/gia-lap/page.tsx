@@ -27,7 +27,7 @@ function SimulatedCheckout() {
     setBusy(true);
     try {
       await api(`plans/payments/${payment.id}/simulate`, { method: "POST" });
-      router.replace(`/goi/ket-qua?thanhToan=${payment.id}`);
+      router.replace(`/goi/ket-qua?thanhToan=${payment.id}&ma=${payment.orderCode}`);
     } catch (e) { setError(errorText(e)); setBusy(false); }
   }
 
@@ -53,10 +53,10 @@ function SimulatedCheckout() {
                 <button type="button" onClick={pay} disabled={busy} className="cx-press rounded-full bg-emerald-800 py-3 font-semibold text-white hover:bg-emerald-700 disabled:bg-stone-300">
                   {busy ? "Đang xác nhận…" : "Xác nhận đã chuyển khoản (giả lập)"}
                 </button>
-                <button type="button" onClick={() => router.replace(`/goi/ket-qua?thanhToan=${payment.id}&huy=1`)} className="py-2 font-semibold text-stone-600 hover:text-red-700">Hủy</button>
+                <button type="button" onClick={() => router.replace(`/goi/ket-qua?thanhToan=${payment.id}&ma=${payment.orderCode}&huy=1`)} className="py-2 font-semibold text-stone-600 hover:text-red-700">Hủy</button>
               </div>
             ) : (
-              <button type="button" onClick={() => router.replace(`/goi/ket-qua?thanhToan=${payment.id}`)} className="mt-6 font-semibold text-emerald-800 underline">Xem kết quả</button>
+              <button type="button" onClick={() => router.replace(`/goi/ket-qua?thanhToan=${payment.id}&ma=${payment.orderCode}`)} className="mt-6 font-semibold text-emerald-800 underline">Xem kết quả</button>
             )}
           </>
         )}

@@ -66,9 +66,6 @@ export function Sidebar() {
         <div className="border-t border-stone-100 pt-3 text-xs text-stone-500">
           <div className="font-medium text-stone-800">{me.displayName}</div>
           <div>{me.roles.join(", ")}</div>
-          {!me.totpEnabled && (
-            <Link href="/quan-tri/security" className="mt-2 block rounded bg-amber-50 px-2 py-1 text-amber-800">⚠ Chưa bật 2FA — bật ngay</Link>
-          )}
           <div className="mt-2 flex gap-3">
             <Link href="/quan-tri/security" className="hover:text-emerald-700">Bảo mật</Link>
             <button onClick={logout} className="hover:text-red-700">Đăng xuất</button>
