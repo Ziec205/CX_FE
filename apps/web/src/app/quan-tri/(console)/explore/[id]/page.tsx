@@ -27,6 +27,8 @@ export default function ArticleEditor() {
   const [summary, setSummary] = useState("");
   const [body, setBody] = useState("");
   const [speciesId, setSpeciesId] = useState("");
+  const [speciesList, setSpeciesList] = useState<{ id: string; commonName: string; scientificName?: string | null }[]>([]);
+  useEffect(() => { api<{ id: string; commonName: string; scientificName?: string | null }[]>("species?limit=500").then(setSpeciesList, () => {}); }, []);
   const [tags, setTags] = useState("");
   const [status, setStatus] = useState("Draft");
   const [publishAt, setPublishAt] = useState(toLocalInput());
@@ -127,7 +129,14 @@ export default function ArticleEditor() {
               <label className="block">Tóm tắt (≤ 300 ký tự)<input value={summary} onChange={(e) => setSummary(e.target.value)} maxLength={300} className={`${input} mt-1 w-full`} /></label>
               <label className="block">Nội dung (đoạn cách nhau bằng 1 dòng trống)<textarea value={body} onChange={(e) => setBody(e.target.value)} rows={14} className={`${input} mt-1 w-full`} /></label>
               <div className="grid grid-cols-2 gap-2">
-                <label className="block">Mã loài (Thư viện)<input value={speciesId} onChange={(e) => setSpeciesId(e.target.value)} className={`${input} mt-1 w-full`} placeholder="trau-ba" /></label>
+                <label className="block">Loài cây (Thư viện)
+                  <select value={speciesId} onChange={(e) => setSpeciesId(e.target.value)} className={`${input} mt-1 w-full`}>
+                    <option value="">— Không gắn loài —</option>
+                    {/* Bài cũ gắn mã loài không còn trong Thư viện: vẫn hiện để không mất dữ liệu. */}
+                    {speciesId && !speciesList.some((s) => s.id === speciesId) && <option value={speciesId}>{speciesId}</option>}
+                    {speciesList.map((s) => <option key={s.id} value={s.id}>{s.commonName}{s.scientificName ? ` (${s.scientificName})` : ""}</option>)}
+                  </select>
+                </label>
                 <label className="block">Thẻ (cách nhau dấu phẩy)<input value={tags} onChange={(e) => setTags(e.target.value)} className={`${input} mt-1 w-full`} /></label>
               </div>
             </div>
