@@ -4,7 +4,7 @@ import { publicGet } from "@/lib/server";
 import { timeAgo } from "@/lib/format";
 import type { Article, CategoryTree, PostSummary, SearchResult } from "@/lib/types";
 
-const QUICK = [["Tặng & trao đổi", "/tim-kiem?type=Give"], ["Cho thuê", "/tim-kiem?type=Rent"], ["Cần mua", "/tim-kiem?type=Buy"], ["Chỉ nhà vườn", "/cho-cay?gardenOnly=true"], ["Gần tôi", "/ban-do"]];
+const QUICK = [["Tặng & trao đổi", "/tim-kiem?type=Give"], ["Cho thuê", "/tim-kiem?type=Rent"], ["Cần mua", "/tim-kiem?type=Buy"]];
 
 export default async function Home() {
   const [categories, latest, today, campaigns, posts] = await Promise.all([
@@ -123,12 +123,12 @@ export default async function Home() {
 
       <section className="flex flex-col items-start gap-5 rounded-3xl border-2 border-stone-900 bg-wood-100 p-8 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-xl space-y-2">
-          <h2 className="text-3xl font-bold text-stone-900">Bạn có nhà vườn hoặc shop cây?</h2>
-          <p className="text-stone-700">Xác minh một lần để có gian hàng riêng, tick xanh và vị trí trên bản đồ nhà vườn.</p>
+          <h2 className="cx-h2">Bán cây thường xuyên?</h2>
+          <p className="text-stone-700">Mỗi tháng được 3 tin miễn phí. Gói Xanh Plus 30 tin, Xanh Pro 100 tin, kèm Trợ lý AI chăm cây.</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <Link href="/nha-vuon" className="cx-press rounded-full bg-stone-900 px-6 py-3 font-semibold text-wood-400 hover:bg-emerald-900">Mở gian hàng</Link>
-          <Link href="/ban-do" className="rounded-full border-2 border-stone-900 px-6 py-2.5 font-semibold hover:bg-white">Xem bản đồ</Link>
+          <Link href="/goi" className="cx-press rounded-full bg-stone-900 px-6 py-3 font-semibold text-wood-400 hover:bg-emerald-900">Xem gói Plus / Pro</Link>
+          <Link href="/dang-tin" className="rounded-full border-2 border-stone-900 px-6 py-2.5 font-semibold hover:bg-white">Đăng tin ngay</Link>
         </div>
       </section>
     </div>
@@ -138,7 +138,7 @@ export default async function Home() {
 function ExplorePeek({ article }: { article: Article }) {
   const cover = article.cover ?? article.photos?.[0];
   return (
-    <Link href={`/kham-pha/${article.slug}`} className="group flex gap-4 self-start rounded-3xl bg-white p-3 ring-1 ring-stone-200 hover:ring-emerald-600 lg:flex-col lg:p-4">
+    <Link href={`/kham-pha/${article.slug}`} className="group flex gap-4 self-start cx-card p-3 hover:ring-emerald-600 lg:flex-col lg:p-4">
       {cover && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={cover.urls.card} alt="" className="h-24 w-24 shrink-0 rounded-2xl object-cover lg:h-40 lg:w-full" />

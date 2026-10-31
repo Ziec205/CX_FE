@@ -17,7 +17,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   return { title: q ? `Tìm "${q}"` : "Tìm kiếm cây trồng" };
 }
 
-const KEYS = ["q", "type", "categoryId", "rootCategoryId", "provinceId", "priceMin", "priceMax", "gardenOnly", "escrowOnly", "realPhotoOnly", "sort", "page", "lat", "lng", "radiusKm", "sellerId", "speciesId"];
+const KEYS = ["q", "type", "categoryId", "rootCategoryId", "provinceId", "priceMin", "priceMax", "realPhotoOnly", "sort", "page", "lat", "lng", "radiusKm", "sellerId", "speciesId"];
 
 export default async function SearchPage({ searchParams }: { searchParams: Promise<SP> }) {
   const sp = await searchParams;
@@ -61,8 +61,6 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             <MoneyInput name="priceMin" defaultValue={v("priceMin")} placeholder="Giá từ" aria-label="Giá từ" suffix="" className={field} wrapClassName="min-w-0 flex-1" />
             <MoneyInput name="priceMax" defaultValue={v("priceMax")} placeholder="đến" aria-label="Giá đến" suffix="" className={field} wrapClassName="min-w-0 flex-1" />
           </div>
-          <label className="flex items-center gap-2"><input type="checkbox" name="gardenOnly" value="true" defaultChecked={v("gardenOnly") === "true"} />Chỉ Nhà vườn/Shop</label>
-          <label className="flex items-center gap-2"><input type="checkbox" name="escrowOnly" value="true" defaultChecked={v("escrowOnly") === "true"} />Có Giao dịch đảm bảo</label>
           <label className="flex items-center gap-2"><input type="checkbox" name="realPhotoOnly" value="true" defaultChecked={v("realPhotoOnly") === "true"} />Ảnh chụp thực tế</label>
           <select name="sort" defaultValue={v("sort")} className={field}>
             <option value="">Mới nhất</option><option value="PriceAsc">Giá thấp → cao</option><option value="PriceDesc">Giá cao → thấp</option>
@@ -85,12 +83,6 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <p className="text-sm text-stone-500">{result.total.toLocaleString("vi-VN")} tin{v("q") && <> cho “<b>{v("q")}</b>”</>}</p>
               {!v("sellerId") && <SaveSearchButton params={Object.fromEntries(params)} label={v("q") || "Tìm kiếm đã lưu"} />}
             </div>
-            {result.priority.length > 0 && (
-              <div className="rounded-xl bg-wood-100 p-3">
-                <p className="mb-2 font-display text-lg font-bold text-wood-800">Tin ưu tiên</p>
-                <ListingGrid items={result.priority} morph={false} />
-              </div>
-            )}
             {result.items.length === 0 ? <p className="py-10 text-center text-stone-500">Không tìm thấy tin phù hợp. Thử bỏ bớt bộ lọc?</p> : <ListingGrid items={result.items} />}
             {totalPages > 1 && (
               <div className="flex justify-center gap-2 text-sm">

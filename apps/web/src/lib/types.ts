@@ -1,4 +1,4 @@
-export interface SellerSummary { id: string; displayName: string; avatarMediaId?: string; isGarden: boolean; isVerifiedGarden: boolean; isProSeller: boolean }
+export interface SellerSummary { id: string; displayName: string; avatarMediaId?: string }
 
 export interface RentTerms { unit: string; pricePerUnit: number; deposit: number; minUnits: number }
 
@@ -6,18 +6,20 @@ export interface ListingCard {
   id: string; type: "Sell" | "Buy" | "Rent" | "Give"; title: string; price?: number | null; priceMode: string;
   priceRefMin?: number | null; priceRefMax?: number | null; budgetMin?: number | null; budgetMax?: number | null; rent?: RentTerms | null;
   categoryId: string; speciesId?: string | null; provinceId: string; wardId?: string | null; thumbUrl?: string | null; photoCount: number;
-  realPhoto: boolean; escrow: boolean; isPriority: boolean; highlight?: string | null; bumpedAt?: string | null; status: string;
+  realPhoto: boolean; bumpedAt?: string | null; status: string;
   available: number; unit: string; distanceKm?: number | null; seller: SellerSummary;
 }
 
-export interface SearchResult { priority: ListingCard[]; items: ListingCard[]; total: number; page: number; pageSize: number }
+export interface SearchResult { items: ListingCard[]; total: number; page: number; pageSize: number }
 
 export interface ListingDetail {
   card: ListingCard; description: string; attributes: Record<string, unknown>; photoUrls: string[]; verificationPhotoUrl?: string | null;
   pickupOptions: string[]; wantInExchange?: string | null; neededBy?: string | null; quantity: number; views: number;
   firstPublishedAt?: string | null; expiresAt?: string | null; isOwner: boolean; rejectReason?: string | null;
-  pendingRevision?: unknown; revisionRejectReason?: string | null; priorityUntil?: string | null; appealUsed: boolean;
+  pendingRevision?: unknown; revisionRejectReason?: string | null; appealUsed: boolean;
   lat?: number | null; lng?: number | null; uses?: string[];
+  /** Số ngày hiển thị theo gói lúc đăng (Miễn phí 30, Plus/Pro 60). */
+  listingDays?: number;
 }
 
 export interface AttributeDefinition {
@@ -33,15 +35,13 @@ export interface Species { id: string; commonName: string; aliases: string[]; sc
 
 export interface Me {
   id: string; phone?: string | null; username?: string | null; displayName: string; fullName?: string | null; provinceId?: string | null; wardId?: string | null;
-  hidePhone: boolean; flags: { isProSeller: boolean; hasVerifiedGarden: boolean; hasActivePlan: boolean }; status: string; canPost: boolean;
+  hidePhone: boolean; status: string; canPost: boolean;
   /** Email nhận nhắc lịch chăm cây; chưa có thì không đặt được lời nhắc. */
   email?: string | null;
 }
 
 export interface PublicPricing {
   version: number;
-  listingServices: { code: string; enabled: boolean; days?: number | null; perDay?: number | null; labelName?: string | null; prices: Record<string, number> }[];
-  gardenPlans: { months: number; priceVnd: number; enabled: boolean }[];
   topUpPackages: { code: string; name: string; priceVnd: number; xu: number; bonusXu: number; popular: boolean }[];
 }
 
@@ -67,34 +67,8 @@ export interface MyPlant {
 
 export interface AppNotification { id: string; type: string; title: string; body?: string | null; link?: string | null; readAt?: string | null; createdAt: string }
 
-export type OrderStatus = "AwaitingPayment" | "AwaitingSellerConfirm" | "Paid" | "Shipping" | "Delivered" | "Disputed" | "AwaitingReturn"
-  | "Completed" | "PartiallyRefunded" | "Refunded" | "Settled" | "Cancelled" | "CancelledRefunded";
-export type DeliveryMethod = "SellerDelivery" | "BuyerPickup" | "SelfArrangedCarrier" | "PlatformCarrier";
-export interface ShipmentInfo { carrier?: string | null; trackingCode?: string | null; mediaIds: string[]; expectedArrival?: string | null }
-export interface Dispute {
-  reason: string; description: string; mediaIds: string[]; hasUnboxingVideo: boolean; openedAt: string; sellerDueAt: string;
-  sellerResponse?: string | null; sellerOfferAmount?: number | null; sellerNote?: string | null; sellerRespondedAt?: string | null;
-  outcome?: string | null; resolvedRefund?: number | null; resolutionNote?: string | null; resolvedAt?: string | null;
-  return?: ShipmentInfo | null; returnShippedAt?: string | null;
-}
-export interface EscrowOrder {
-  id: string; code: string; listingId: string; listingTitle: string; thumbMediaId?: string | null; buyerId: string; sellerId: string;
-  source: string; quantity: number; unitPrice: number; itemAmount: number; shippingFee: number; total: number; fee: number; feePayer: string;
-  delivery: DeliveryMethod; shipWithinDays: number; pickupDate?: string | null; deliveryAddress?: string | null; status: OrderStatus;
-  paymentDueAt?: string | null; sellerConfirmDueAt?: string | null; shipDueAt?: string | null; paidAt?: string | null;
-  shipment?: ShipmentInfo | null; shippedAt?: string | null; deliveredAt?: string | null; inspectionDueAt?: string | null;
-  completedAt?: string | null; dispute?: Dispute | null; refundAmount: number; cancelReason?: string | null; settlementHold: boolean;
-  payoutEligibleAt?: string | null; payoutAmount?: number | null; settledAt?: string | null; reviewed: boolean;
-  history: { status: string; actorId: string; note?: string | null; at: string }[]; createdAt: string; updatedAt: string;
-}
-export interface OrderSummary {
-  id: string; code: string; listingId: string; listingTitle: string; thumbUrl?: string | null; role: "buyer" | "seller";
-  status: OrderStatus; total: number; quantity: number; delivery: DeliveryMethod; createdAt: string; updatedAt: string;
-}
-
 export interface CommunityAuthor {
   id: string; name: string; avatarMediaId?: string | null; points: number; badge: string; expert: boolean; expertTitle?: string | null;
-  gardenSlug?: string | null; verified: boolean;
 }
 export type PostType = "Question" | "Showcase" | "Guide";
 export interface PostSummary {
@@ -106,6 +80,13 @@ export type PlanCode = "Free" | "Plus" | "Pro";
 export interface PlanInfo {
   code: PlanCode; name: string; tagline: string; monthlyVnd: number; yearlyVnd: number;
   gardenPlants: number; aiPerDay: number; marketCompare: boolean; sellerAi: boolean;
+  /** Số tin đăng miễn phí mỗi tháng, Xu cho mỗi tin vượt mức, số ngày tin hiển thị. */
+  listingsPerMonth: number; extraListingXu: number; listingDays: number;
+}
+/** Hạn mức đăng tin tháng này (GET /me/listing-quota). */
+export interface ListingQuota {
+  plan: PlanCode; planName: string; monthlyQuota: number; usedThisMonth: number; remaining: number; extraListingXu: number;
+  nextCostXu: number; listingDays: number; walletBalance: number; month: string;
 }
 export interface MyPlan { plan: PlanInfo; endAt?: string | null; usage: { gardenPlants: number; aiToday: number; aiRemaining: number } }
 export interface PlanPayment {

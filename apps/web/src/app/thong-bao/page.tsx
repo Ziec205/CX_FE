@@ -50,7 +50,7 @@ export default function NotificationsPage() {
     <div className="mx-auto max-w-3xl">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-4xl font-extrabold text-emerald-900">Thông báo</h1>
+          <h1 className="cx-h1">Thông báo</h1>
           <div className="flex gap-2">
             <Link href="/cai-dat" className={btn.small}>Cài đặt</Link>
             <button onClick={readAll} className={btn.small}>Đánh dấu đã đọc hết</button>
@@ -58,7 +58,7 @@ export default function NotificationsPage() {
         </div>
         {error && <Alert>{error}</Alert>}
         {items?.length === 0 && <p className="text-stone-500">Chưa có thông báo nào.</p>}
-        <ul className="divide-y divide-stone-100 overflow-hidden rounded-2xl border border-stone-200 bg-white">
+        <ul className="divide-y divide-stone-100 overflow-hidden cx-card-flush">
           {items?.map((n) => (
             <li key={n.id}>
               <button onClick={() => open(n)} className={`flex w-full gap-3 px-4 py-3 text-left hover:bg-stone-50 ${n.readAt ? "" : "bg-emerald-50/60"}`}>

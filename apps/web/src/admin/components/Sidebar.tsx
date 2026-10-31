@@ -11,8 +11,6 @@ const NAV: { group: string; items: { href: string; label: string; perm: string }
   { group: "Vận hành", items: [
     { href: "/quan-tri/moderation", label: "Kiểm duyệt tin", perm: "listing.moderate" },
     { href: "/quan-tri/members", label: "Người dùng", perm: "user.sanction" },
-    { href: "/quan-tri/gardens", label: "Duyệt Nhà vườn/Shop", perm: "garden.verify" },
-    { href: "/quan-tri/escrow", label: "Đơn đảm bảo & tranh chấp", perm: "reports.view" },
     { href: "/quan-tri/support", label: "Hỗ trợ khách hàng", perm: "dispute.resolve" },
   ] },
   { group: "Nội dung", items: [
@@ -23,7 +21,6 @@ const NAV: { group: string; items: { href: string; label: string; perm: string }
   { group: "Doanh thu", items: [
     { href: "/quan-tri/pricing", label: "Bảng giá & phí", perm: "pricing.view" },
     { href: "/quan-tri/wallets", label: "Ví Xu người dùng", perm: "wallet.adjust" },
-    { href: "/quan-tri/payouts", label: "Quyết toán người bán", perm: "payout.approve" },
   ] },
   { group: "Hệ thống", items: [
     { href: "/quan-tri/features", label: "Bật/tắt tính năng", perm: "admin.manage" },

@@ -9,10 +9,9 @@ import { api, errorText, formatVnd } from "@/admin/lib/api";
 interface Dashboard {
   listings: { active: number; newToday: number; pendingReview: number };
   moderationCasesOpen: number;
-  users: { total: number; newToday: number; newWeek: number; verifiedGardens: number };
-  revenue7d: { topUpVnd: number; topUpCount: number };
-  escrow7d: { gmv: number; orders: number };
-  disputesOpen: number; payoutsPending: number; ticketsOverdue: number; communityPostsWeek: number;
+  users: { total: number; newToday: number; newWeek: number; plus: number; pro: number };
+  revenue7d: { planVnd: number; planPayments: number; topUpVnd: number; topUpCount: number; listingFeeXu: number; paidListings: number };
+  ticketsOverdue: number; communityPostsWeek: number;
 }
 interface Liquidity { category: string; province: string; listings: number; liquidity: number }
 
@@ -53,7 +52,7 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-6xl space-y-6">
-      <PageTitle title="Dashboard" subtitle="Số liệu vận hành sàn (7 ngày gần nhất với doanh thu & GMV)" />
+      <PageTitle title="Dashboard" subtitle="Số liệu vận hành sàn (doanh thu tính 7 ngày gần nhất)" />
       {error && <Alert>{error}</Alert>}
       {d && (
         <>
@@ -63,11 +62,10 @@ export default function DashboardPage() {
             <Stat label="Hồ sơ kiểm duyệt mở" value={d.moderationCasesOpen} href="/quan-tri/moderation" warn={d.moderationCasesOpen > 50} />
             <Stat label="Người dùng mới (7 ngày)" value={d.users.newWeek} />
             <Stat label="Nạp Xu (7 ngày)" value={formatVnd(d.revenue7d.topUpVnd)} />
-            <Stat label="GMV đảm bảo (7 ngày)" value={formatVnd(d.escrow7d.gmv)} />
-            <Stat label="Khiếu nại đang mở" value={d.disputesOpen} href="/quan-tri/escrow?status=Disputed" warn={d.disputesOpen > 0} />
-            <Stat label="Chờ quyết toán" value={d.payoutsPending} href="/quan-tri/payouts" warn={d.payoutsPending > 0} />
+            <Stat label="Bán gói Plus/Pro (7 ngày)" value={`${formatVnd(d.revenue7d.planVnd)} · ${d.revenue7d.planPayments} lượt`} />
+            <Stat label="Phí đăng tin (7 ngày)" value={`${d.revenue7d.listingFeeXu.toLocaleString("vi-VN")} Xu · ${d.revenue7d.paidListings} tin`} />
             <Stat label="Ticket quá hạn SLA" value={d.ticketsOverdue} href="/quan-tri/support" warn={d.ticketsOverdue > 0} />
-            <Stat label="Nhà vườn đã xác minh" value={d.users.verifiedGardens} />
+            <Stat label="Đang dùng Plus / Pro" value={`${d.users.plus} / ${d.users.pro}`} />
             <Stat label="Tổng người dùng" value={d.users.total.toLocaleString("vi-VN")} />
             <Stat label="Bài cộng đồng (7 ngày)" value={d.communityPostsWeek} />
           </div>
@@ -95,9 +93,9 @@ export default function DashboardPage() {
             <input type="date" value={from} onChange={(e) => setFrom(e.target.value)} className={input} />
             <span>→</span>
             <input type="date" value={to} onChange={(e) => setTo(e.target.value)} className={input} />
-            <button onClick={() => exportCsv("escrow-orders")} className={btn.secondary}>Đơn đảm bảo</button>
+            <button onClick={() => exportCsv("plan-payments")} className={btn.secondary}>Thanh toán gói</button>
             <button onClick={() => exportCsv("topups")} className={btn.secondary}>Nạp Xu</button>
-            <button onClick={() => exportCsv("sellers")} className={btn.secondary}>Doanh thu người bán (thuế)</button>
+            <button onClick={() => exportCsv("listing-fees")} className={btn.secondary}>Phí đăng tin</button>
           </div>
         </Card>
       )}

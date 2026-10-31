@@ -14,7 +14,9 @@ export function AiMarkdown({ text }: { text: string }) {
     );
     list = null;
   };
-  for (const raw of text.replace(/\r/g, "").split("\n")) {
+  // Câu trả lời cũ có thể chứa chữ "\n" (Gemini thoát ký tự 2 lần) thay vì dấu xuống dòng thật.
+  const clean = text.replace(/\\r\\n|\\n/g, "\n").replace(/\\t/g, " ").replace(/\\"/g, '"').replace(/\r/g, "");
+  for (const raw of clean.split("\n")) {
     const line = raw.trim();
     const bullet = /^[-*•]\s+(.*)$/.exec(line);
     const numbered = /^\d+[.)]\s+(.*)$/.exec(line);

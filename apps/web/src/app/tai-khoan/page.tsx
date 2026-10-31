@@ -2,16 +2,15 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { ProfileGate } from "@/components/ProfileGate";
 import { Alert, btn, field } from "@/components/ui";
-import { api, errorText, newIdempotencyKey } from "@/lib/api";
+import { api, errorText, type ApiError } from "@/lib/api";
 import { priceLabel } from "@/lib/format";
 import { provinceName } from "@/lib/provinces";
-import type { ListingCard, Me, PublicPricing } from "@/lib/types";
+import type { ListingCard, Me } from "@/lib/types";
 
 interface MyListing { card: ListingCard; rejectReason?: string | null; hasPendingRevision: boolean; expiresAt?: string | null }
-interface Quote { finalPrice: number; priceBookVersion: number; factor: number }
 
 const STATUS: Record<string, [string, string]> = {
   Active: ["Đang hiển thị", "bg-emerald-100 text-emerald-800"], PendingReview: ["Chờ duyệt", "bg-wood-200 text-wood-800"],
@@ -26,7 +25,7 @@ const POSTED: Record<string, string> = {
 };
 const LINKS: [string, string, string][] = [
   ["/vuon-cua-toi", "Hồ sơ vườn", "Cây đang trồng và lịch nhắc"], ["/tin-nhan", "Tin nhắn", "Trò chuyện với người mua, người bán"],
-  ["/don-hang", "Đơn đảm bảo", "Đơn mua, bán qua Chạm Xanh"], ["/thue", "Lịch thuê cây", "Cây đang thuê, cho thuê"],
+  ["/thue", "Lịch thuê cây", "Cây đang thuê, cho thuê"],
   ["/yeu-thich", "Tin đã lưu", "Cây bạn đang để ý"], ["/vi", "Ví Xu Xanh", "Nạp Xu, lịch sử dùng Xu"],
   ["/thong-bao", "Thông báo", "Thông báo và cài đặt nhận tin"], ["/ho-tro", "Trợ giúp", "Câu hỏi thường gặp, liên hệ"],
 ];
@@ -40,7 +39,6 @@ function AccountInner() {
   const [items, setItems] = useState<MyListing[]>();
   const [filter, setFilter] = useState("");
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string }>();
-  const [promo, setPromo] = useState<ListingCard>();
 
   const load = useCallback(() => Promise.all([api<Me>("me"), api<MyListing[]>(`me/listings${filter ? `?status=${filter}` : ""}`)]), [filter]);
   const refresh = () => load().then(([m, l]) => { setMe(m); setItems(l); }, (e) => setMsg({ kind: "err", text: errorText(e) }));
@@ -65,7 +63,11 @@ function AccountInner() {
       setMsg({ kind: "ok", text: done });
       await refresh();
       return true;
-    } catch (e) { setMsg({ kind: "err", text: errorText(e) }); return false; }
+    } catch (e) {
+      // Hết lượt đăng miễn phí: để nơi gọi hỏi người dùng có trả Xu không.
+      if ((e as ApiError).code === "LISTING_FEE_REQUIRED") throw e;
+      setMsg({ kind: "err", text: errorText(e) }); return false;
+    }
   }
 
   if (!me) return msg ? <Alert>{msg.text}</Alert> : (
@@ -87,7 +89,7 @@ function AccountInner() {
       <div className="grid gap-6 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-8">
         <aside className="space-y-6 lg:sticky lg:top-36 lg:self-start">
           <ProfileCard me={me} onSaved={setMe} />
-          <nav aria-label="Tiện ích tài khoản" className="rounded-3xl bg-white p-2 ring-1 ring-stone-200">
+          <nav aria-label="Tiện ích tài khoản" className="cx-card p-2">
             <ul>
               {LINKS.map(([href, label, sub]) => (
                 <li key={href}>
@@ -104,13 +106,13 @@ function AccountInner() {
         <div className="min-w-0 space-y-6">
           {!me.canPost && (
             <div className="rounded-3xl bg-wood-100 p-5 ring-1 ring-wood-200 sm:p-6">
-              <h2 className="mb-1 text-2xl font-bold text-stone-900">Hoàn tất thông tin để đăng tin</h2>
+              <h2 className="mb-1 cx-h2">Hoàn tất thông tin để đăng tin</h2>
               <p className="mb-4 text-stone-700">Chỉ cần họ tên và tỉnh/thành, không cần CCCD.</p>
               <ProfileGate me={me} onDone={afterProfile} />
             </div>
           )}
 
-          <section aria-labelledby="my-listings" className="rounded-3xl bg-white p-5 ring-1 ring-stone-200 sm:p-7">
+          <section aria-labelledby="my-listings" className="cx-card">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <h1 id="my-listings" className="text-3xl font-extrabold text-emerald-900">Tin của tôi</h1>
               {me.canPost && <Link href="/dang-tin" className={btn.primary}>Đăng tin mới</Link>}
@@ -130,7 +132,7 @@ function AccountInner() {
               </div>
             )}
             <ul className="divide-y divide-stone-200">
-              {items?.map((it) => <ListingRow key={it.card.id} item={it} act={act} onPromote={() => setPromo(it.card)} />)}
+              {items?.map((it) => <ListingRow key={it.card.id} item={it} act={act} />)}
             </ul>
           </section>
 
@@ -138,7 +140,6 @@ function AccountInner() {
         </div>
       </div>
 
-      {promo && <PromoteDialog listing={promo} onClose={() => setPromo(undefined)} onDone={() => { setPromo(undefined); setMsg({ kind: "ok", text: "Đã áp dụng dịch vụ cho tin" }); refresh(); }} />}
     </div>
   );
 }
@@ -146,7 +147,7 @@ function AccountInner() {
 type Act = (id: string, action: string, body?: unknown, done?: string) => Promise<boolean>;
 
 /** Một tin: thông tin bên trái, thao tác bên phải. Các thao tác cần nhập thêm (nhập hàng, khiếu nại, xóa) mở ngay dưới tin. */
-function ListingRow({ item, act, onPromote }: { item: MyListing; act: Act; onPromote: () => void }) {
+function ListingRow({ item, act }: { item: MyListing; act: Act }) {
   const { card: l, rejectReason, hasPendingRevision, expiresAt } = item;
   const [label, cls] = STATUS[l.status] ?? [l.status, "bg-stone-100"];
   const [panel, setPanel] = useState<"restock" | "appeal" | "delete">();
@@ -154,6 +155,15 @@ function ListingRow({ item, act, onPromote }: { item: MyListing; act: Act; onPro
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
   const run = async (action: string, body?: unknown, done?: string) => { setBusy(true); if (await act(l.id, action, body, done)) setPanel(undefined); setBusy(false); };
+  /** Đăng lại tính như một tin mới: hết lượt miễn phí thì hỏi trước khi trừ Xu. */
+  const renew = async () => {
+    try { await run("renew", undefined, "Đã đăng lại tin"); }
+    catch (e) {
+      const xu = ((e as ApiError).details as { xu: number }).xu;
+      if (confirm(`Bạn đã hết lượt đăng miễn phí tháng này. Trả ${xu} Xu để đăng lại tin?`)) await run("renew", { acceptFeeXu: xu }, "Đã đăng lại tin").catch(() => {});
+      setBusy(false);
+    }
+  };
   const toggle = (p: typeof panel) => setPanel(panel === p ? undefined : p);
 
   return (
@@ -166,7 +176,6 @@ function ListingRow({ item, act, onPromote }: { item: MyListing; act: Act; onPro
         <div className="min-w-0 flex-1 space-y-1.5">
           <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
             <span className={`rounded-full px-2.5 py-0.5 ${cls}`}>{label}</span>
-            {l.isPriority && <span className="rounded-full bg-stone-900 px-2.5 py-0.5 text-wood-400">Đang ưu tiên</span>}
             {hasPendingRevision && <span className="rounded-full bg-water-50 px-2.5 py-0.5 text-water-700">Bản sửa chờ duyệt</span>}
           </div>
           <Link href={`/tin/${l.id}`} className="line-clamp-2 font-semibold leading-snug hover:text-emerald-700">{l.title}</Link>
@@ -177,9 +186,8 @@ function ListingRow({ item, act, onPromote }: { item: MyListing; act: Act; onPro
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2 sm:pl-32">
-        {l.status === "Active" && l.type !== "Give" && <button onClick={onPromote} className="rounded-full bg-wood-400 px-3.5 py-1.5 text-sm font-semibold text-stone-900 hover:bg-wood-200">Tăng hiển thị</button>}
         {l.status === "Active" && l.type === "Sell" && <Link href={`/tin/${l.id}#so-cho`} className={btn.small}>So với chợ (AI)</Link>}
-        {l.status === "Expired" && <button disabled={busy} onClick={() => run("renew", undefined, "Đã gia hạn tin")} className="rounded-full bg-emerald-700 px-3.5 py-1.5 text-sm font-semibold text-white">Gia hạn miễn phí</button>}
+        {l.status === "Expired" && <button disabled={busy} onClick={renew} className="rounded-full bg-emerald-700 px-3.5 py-1.5 text-sm font-semibold text-white">Đăng lại (dùng 1 lượt)</button>}
         {["Active", "Hidden", "SoldOut", "Draft", "Rejected"].includes(l.status) && !hasPendingRevision && <Link href={`/dang-tin?id=${l.id}`} className={btn.small}>Sửa</Link>}
         {l.status === "Active" && <button disabled={busy} onClick={() => run("hide", undefined, "Đã ẩn tin")} className={btn.small}>Ẩn</button>}
         {l.status === "Hidden" && <button disabled={busy} onClick={() => run("unhide", undefined, "Tin đã hiện lại")} className={btn.small}>Hiện lại</button>}
@@ -191,7 +199,7 @@ function ListingRow({ item, act, onPromote }: { item: MyListing; act: Act; onPro
 
       {panel === "restock" && (
         <form onSubmit={(e) => { e.preventDefault(); const q = Number(qty); if (q > 0) run("restock", { quantity: q }, "Đã nhập thêm hàng, tin hiển thị lại"); }}
-          className="mt-3 flex flex-wrap items-center gap-2 rounded-2xl bg-stone-50 p-3 sm:ml-32">
+          className="mt-3 flex flex-wrap items-center gap-2 cx-soft sm:ml-32">
           <label htmlFor={`q-${l.id}`} className="text-sm font-semibold">Số lượng mới</label>
           <input id={`q-${l.id}`} type="number" min={1} autoFocus value={qty} onChange={(e) => setQty(e.target.value)} className={`${field} w-28`} />
           <button disabled={busy || !(Number(qty) > 0)} className={btn.primary}>Lưu</button>
@@ -200,7 +208,7 @@ function ListingRow({ item, act, onPromote }: { item: MyListing; act: Act; onPro
       )}
       {panel === "appeal" && (
         <form onSubmit={(e) => { e.preventDefault(); if (reason.trim()) run("appeal", { reason: reason.trim() }, "Đã gửi khiếu nại, đội kiểm duyệt sẽ xem lại"); }}
-          className="mt-3 space-y-2 rounded-2xl bg-stone-50 p-3 sm:ml-32">
+          className="mt-3 space-y-2 cx-soft sm:ml-32">
           <label htmlFor={`a-${l.id}`} className="block text-sm font-semibold">Vì sao tin này nên được duyệt lại?</label>
           <textarea id={`a-${l.id}`} rows={3} autoFocus maxLength={1000} value={reason} onChange={(e) => setReason(e.target.value)} className={field}
             placeholder="Vd: cây này không thuộc danh mục hàng cấm, tôi có giấy tờ nguồn gốc…" />
@@ -245,11 +253,6 @@ function ProfileCard({ me, onSaved }: { me: Me; onSaved: (m: Me) => void }) {
           {me.username && <p className="truncate text-sm text-emerald-200">@{me.username}</p>}
         </div>
       </div>
-      <div className="mt-3 flex flex-wrap gap-1.5 text-xs font-semibold">
-        {me.flags.hasActivePlan && <span className="rounded-full bg-wood-400 px-2.5 py-0.5 text-stone-900">Nhà vườn/Shop</span>}
-        {me.flags.isProSeller && <span className="rounded-full bg-emerald-700 px-2.5 py-0.5">Bán chuyên</span>}
-        {!me.flags.hasActivePlan && !me.flags.isProSeller && <span className="rounded-full bg-emerald-800 px-2.5 py-0.5 text-emerald-100">Cá nhân</span>}
-      </div>
 
       <dl className="mt-5 space-y-3 text-sm">
         {me.fullName && <div><dt className="text-emerald-300">Họ tên (không công khai)</dt><dd className="font-medium">{me.fullName}</dd></div>}
@@ -280,14 +283,13 @@ function ProfileCard({ me, onSaved }: { me: Me; onSaved: (m: Me) => void }) {
       ) : (
         <div className="mt-5 flex flex-wrap gap-2">
           <button onClick={() => setEditing(true)} className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-emerald-900 hover:bg-emerald-50">Sửa hồ sơ</button>
-          {!me.flags.hasVerifiedGarden && <Link href="/nha-vuon" className="rounded-full px-4 py-2 text-sm font-semibold text-wood-400 ring-1 ring-wood-400 hover:bg-emerald-800">Mở gian hàng Nhà vườn</Link>}
         </div>
       )}
     </section>
   );
 }
 
-/** Gắn SĐT bằng OTP. Không bắt buộc với thành viên thường, bắt buộc trước khi mở Nhà vườn/Shop. */
+/** Gắn SĐT bằng OTP. Không bắt buộc, giúp người mua gọi trực tiếp và dùng để xác nhận khi xóa tài khoản. */
 function AttachPhone({ onSaved }: { onSaved: (m: Me) => void }) {
   const [open, setOpen] = useState(false);
   const [phone, setPhone] = useState("");
@@ -309,7 +311,7 @@ function AttachPhone({ onSaved }: { onSaved: (m: Me) => void }) {
   }
   if (!open) return (
     <span className="block">
-      <span className="text-emerald-100">Chưa có. Chỉ cần khi mở Nhà vườn/Shop.</span>{" "}
+      <span className="text-emerald-100">Chưa có, không bắt buộc.</span>{" "}
       <button onClick={() => setOpen(true)} className="font-semibold text-wood-400 underline">Thêm số</button>
     </span>
   );
@@ -363,7 +365,7 @@ function DeleteAccount({ hasPhone }: { hasPhone: boolean }) {
   }
 
   return (
-    <details className="group rounded-3xl bg-white ring-1 ring-stone-200">
+    <details className="group cx-card-flush">
       <summary className="flex cursor-pointer list-none items-center justify-between p-5 sm:px-7">
         <span className="font-semibold text-stone-700">Xóa tài khoản</span>
         <span aria-hidden className="text-stone-400 transition-transform group-open:rotate-180">▾</span>
@@ -380,7 +382,7 @@ function DeleteAccount({ hasPhone }: { hasPhone: boolean }) {
             {check.canDelete && <>
               <Alert kind="warn">
                 Toàn bộ tin đăng sẽ bị gỡ, hồ sơ được ẩn danh. <b>{check.losses.xu} Xu</b> còn lại
-                {check.losses.planDaysLeft > 0 && <> và <b>{check.losses.planDaysLeft} ngày Gói Nhà vườn</b></>} sẽ bị hủy, không hoàn lại.
+                {check.losses.planDaysLeft > 0 && <> và <b>{check.losses.planDaysLeft} ngày gói Plus/Pro</b></>} sẽ bị hủy, không hoàn lại.
                 Dữ liệu giao dịch được giữ theo thời hạn luật định.
               </Alert>
               <label className="flex items-center gap-2"><input type="checkbox" checked={ack} onChange={(e) => setAck(e.target.checked)} className="h-4 w-4 accent-red-700" />Tôi đã hiểu và muốn xóa tài khoản</label>
@@ -403,98 +405,6 @@ function DeleteAccount({ hasPhone }: { hasPhone: boolean }) {
         {error && <Alert>{error}</Alert>}
       </div>
     </details>
-  );
-}
-
-const SERVICE: Record<string, [string, string]> = {
-  BUMP: ["Đẩy tin lên đầu", "Tin lên lại đầu Chợ cây như vừa đăng"],
-  AUTO_BUMP: ["Đẩy tự động", "Tự đẩy lên đầu nhiều lần mỗi ngày"],
-  PRIORITY: ["Tin Ưu tiên", "Hiện trong khung Ưu tiên phía trên kết quả"],
-  LABEL: ["Nhãn nổi bật", "Gắn nhãn màu lên ảnh tin"],
-};
-
-function PromoteDialog({ listing, onClose, onDone }: { listing: ListingCard; onClose: () => void; onDone: () => void }) {
-  const ref = useRef<HTMLDialogElement>(null);
-  const [pricing, setPricing] = useState<PublicPricing>();
-  const [balance, setBalance] = useState<number>();
-  const [choice, setChoice] = useState<{ code: string; days?: number | null }>();
-  const [quote, setQuote] = useState<Quote>();
-  const [error, setError] = useState<string>();
-  const [busy, setBusy] = useState(false);
-  const [key] = useState(newIdempotencyKey);
-
-  // <dialog> có sẵn khóa focus và phím Esc.
-  useEffect(() => { ref.current?.showModal(); }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    Promise.all([api<PublicPricing>("pricing/current"), api<{ balance: number }>("wallet")])
-      .then(([p, w]) => { if (!cancelled) { setPricing(p); setBalance(w.balance); } }, (e) => { if (!cancelled) setError(errorText(e)); });
-    return () => { cancelled = true; };
-  }, []);
-
-  useEffect(() => {
-    if (!choice) return;
-    let cancelled = false;
-    api<Quote>(`pricing/quote?service=${choice.code}${choice.days ? `&days=${choice.days}` : ""}&categoryId=${listing.categoryId}`)
-      .then((q) => { if (!cancelled) setQuote(q); }, (e) => { if (!cancelled) setError(errorText(e)); });
-    return () => { cancelled = true; };
-  }, [choice, listing.categoryId]);
-
-  async function buy() {
-    if (!choice || !quote) return;
-    setBusy(true); setError(undefined);
-    try {
-      await api(`listings/${listing.id}/promotions`, { method: "POST", json: {
-        service: choice.code, days: choice.days ?? null, expectedPriceBookVersion: quote.priceBookVersion, expectedPrice: quote.finalPrice, idempotencyKey: key,
-      } });
-      onDone();
-    } catch (e) { setError(errorText(e)); setBusy(false); }
-  }
-
-  const short = quote && balance !== undefined && balance < quote.finalPrice;
-  return (
-    <dialog ref={ref} onClose={onClose} aria-labelledby="promo-title"
-      onClick={(e) => { if (e.target === e.currentTarget) ref.current?.close(); }}
-      className="m-0 mt-auto w-full max-w-none rounded-t-3xl bg-white p-0 backdrop:bg-stone-900/50 sm:m-auto sm:max-w-md sm:rounded-3xl">
-      <div className="space-y-4 p-5 sm:p-6">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h2 id="promo-title" className="text-2xl font-bold text-emerald-900">Tăng hiển thị</h2>
-            <p className="truncate text-sm text-stone-500">{listing.title}</p>
-          </div>
-          <button onClick={() => ref.current?.close()} aria-label="Đóng" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full hover:bg-stone-100">✕</button>
-        </div>
-        <p className="flex items-center justify-between rounded-2xl bg-stone-50 px-4 py-2.5 text-sm">
-          <span>Số dư: <b>{balance ?? "…"} Xu</b></span>
-          <Link href="/vi" className="font-semibold text-emerald-700 underline">Nạp Xu</Link>
-        </p>
-        <div role="radiogroup" aria-label="Dịch vụ" className="max-h-[50dvh] space-y-2 overflow-y-auto">
-          {!pricing && !error && [0, 1, 2].map((i) => <div key={i} className="cx-shimmer h-16 rounded-2xl" />)}
-          {pricing?.listingServices.filter((s) => s.enabled).map((s) => {
-            const selected = choice?.code === s.code && (choice.days ?? null) === (s.days ?? null);
-            const [name, desc] = SERVICE[s.code] ?? [s.code, ""];
-            return (
-              <button key={`${s.code}-${s.days}-${s.labelName}`} role="radio" aria-checked={selected}
-                onClick={() => { setQuote(undefined); setChoice({ code: s.code, days: s.days }); }}
-                className={`flex w-full items-center justify-between gap-3 rounded-2xl p-3.5 text-left ring-1 ${selected ? "bg-emerald-50 ring-2 ring-emerald-700" : "ring-stone-300 hover:ring-emerald-700"}`}>
-                <span>
-                  <b className="block">{name}{s.days ? `, ${s.days} ngày` : ""}{s.labelName && ` “${s.labelName}”`}</b>
-                  <span className="block text-sm text-stone-600">{desc}{s.code === "AUTO_BUMP" && s.perDay ? ` (${s.perDay} lần/ngày)` : ""}</span>
-                </span>
-                {selected && <span className="shrink-0 font-display text-lg font-bold text-emerald-800">{quote ? `${quote.finalPrice} Xu` : "…"}</span>}
-              </button>
-            );
-          })}
-        </div>
-        {quote && quote.factor > 1 && <p className="text-sm text-wood-800">Giá đang nhân ×{quote.factor} theo mùa vụ.</p>}
-        {short && <Alert kind="warn">Số dư chưa đủ. <Link href="/vi" className="font-semibold underline">Nạp thêm Xu</Link> rồi quay lại.</Alert>}
-        {error && <Alert>{error}</Alert>}
-        <button onClick={buy} disabled={!quote || busy || !!short} className={`${btn.primary} w-full py-3`}>
-          {busy ? "Đang thanh toán…" : quote ? `Thanh toán ${quote.finalPrice} Xu` : "Chọn một dịch vụ"}
-        </button>
-      </div>
-    </dialog>
   );
 }
 

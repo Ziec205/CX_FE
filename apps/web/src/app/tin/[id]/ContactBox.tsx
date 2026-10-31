@@ -58,14 +58,9 @@ export function ContactBox({ listing, isOwner: ownerFromServer }: { listing: Lis
 
   const s = listing.seller;
   return (
-    <div className="space-y-3 rounded-3xl bg-white p-5 ring-1 ring-stone-200">
+    <div className="space-y-3 cx-card">
       <div>
         <p className="font-semibold">{s.displayName}</p>
-        <div className="mt-1 flex flex-wrap gap-1 text-xs">
-          {s.isGarden ? <span className="rounded bg-emerald-50 px-2 py-0.5 text-emerald-700">Nhà vườn/Shop đã xác minh</span>
-            : s.isProSeller ? <span className="rounded bg-stone-100 px-2 py-0.5">Bán chuyên</span>
-            : <span className="rounded bg-stone-100 px-2 py-0.5">Cá nhân</span>}
-        </div>
         <Link href={`/nguoi-ban/${s.id}`} className="text-xs text-emerald-700 hover:underline">Xem trang người bán, đánh giá &amp; tin khác</Link>
       </div>
       {msg && <Alert kind={msg.kind}>{msg.text}</Alert>}
@@ -77,12 +72,9 @@ export function ContactBox({ listing, isOwner: ownerFromServer }: { listing: Lis
         </>
       ) : (
         <>
-          {listing.escrow && listing.type === "Sell" && listing.priceMode !== "Negotiable" && listing.available > 0 && (
-            <Link href={`/don-hang/moi?listing=${listing.id}`} className={`${btn.primary} block text-center`}>Mua đảm bảo</Link>
-          )}
           {listing.type === "Rent" && <Link href={`/thue/moi?listing=${listing.id}`} className={`${btn.primary} block text-center`}>Đặt lịch thuê</Link>}
           {listing.type === "Buy" && <Link href={`/tin/${listing.id}/bao-gia`} className={`${btn.primary} block text-center`}>Gửi báo giá</Link>}
-          <button onClick={chat} disabled={opening} className={`${listing.escrow || listing.type === "Rent" || listing.type === "Buy" ? btn.secondary : btn.primary} w-full`}>{opening ? "Đang mở cuộc trò chuyện…" : "Nhắn tin cho người bán"}</button>
+          <button onClick={chat} disabled={opening} className={`${listing.type === "Rent" || listing.type === "Buy" ? btn.secondary : btn.primary} w-full`}>{opening ? "Đang mở cuộc trò chuyện…" : "Nhắn tin cho người bán"}</button>
           {phone ? (
             <a href={`tel:${phone}`} className={`${btn.secondary} block text-center text-base font-semibold`}>Gọi {phone}</a>
           ) : (

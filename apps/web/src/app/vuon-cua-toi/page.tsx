@@ -58,7 +58,7 @@ function MyGarden() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-4xl font-extrabold text-emerald-900 sm:text-5xl">Hồ sơ vườn</h1>
+          <h1 className="cx-h1">Hồ sơ vườn</h1>
           <p className="mt-1 text-stone-600">Lưu các cây bạn đang trồng và đặt lịch nhắc tưới, bón phân.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -205,7 +205,7 @@ function PlantCard({ plant, highlighted, canRemind, onEdit, onChanged }: { plant
           <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-3xl">🌿</div>
         )}
         <div className="min-w-0 flex-1 space-y-1">
-          <h2 className="text-2xl leading-tight text-emerald-800">{plant.name}</h2>
+          <h2 className="cx-h2">{plant.name}</h2>
           {plant.locked && <p className="w-fit rounded-full bg-stone-200 px-2.5 py-0.5 text-xs font-bold text-stone-700">Tạm khóa · <Link href="/goi" className="underline">gia hạn gói</Link> để mở</p>}
           <p className="text-sm text-stone-600">
             {plant.speciesName && <Link href={`/tim-kiem?speciesId=${plant.speciesId}`} className="hover:underline">{plant.speciesName}</Link>}

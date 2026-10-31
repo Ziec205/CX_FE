@@ -26,7 +26,7 @@ export function Sparkle({ className = "h-4 w-4" }: { className?: string }) {
 }
 
 export function ProBadge() {
-  return <span className="rounded-full bg-wood-400 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-stone-900">Pro</span>;
+  return <span className="rounded-full bg-wood-400 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-stone-900">Pro</span>;
 }
 
 /** Hộp mời nâng gói, hiện thay cho tính năng bị khóa. */

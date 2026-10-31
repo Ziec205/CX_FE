@@ -88,7 +88,7 @@ function ChatInner() {
   if (needLogin) {
     return (
       <div className="mx-auto max-w-md space-y-4 rounded-3xl bg-white p-8 text-center ring-1 ring-stone-200">
-        <h1 className="text-3xl font-bold text-emerald-900">Tin nhắn</h1>
+        <h1 className="cx-h1">Tin nhắn</h1>
         <p className="text-stone-600">Đăng nhập để xem và trả lời tin nhắn với người mua, người bán.</p>
         <Link href="/dang-nhap?next=/tin-nhan" className="inline-block rounded-full bg-emerald-800 px-6 py-3 font-semibold text-white hover:bg-emerald-700">Đăng nhập</Link>
       </div>
@@ -240,8 +240,7 @@ function Thread({ conv, meId, msgs, setMsgs, error, setError, onBack }: {
                 <div className={`flex flex-col ${mine ? "items-end" : "items-start"} ${grouped ? "" : "mt-3"}`}>
                   {m.warning && <p role="alert" className="mb-1 max-w-[85%] rounded-xl bg-wood-100 px-3 py-2 text-sm text-wood-800 ring-1 ring-wood-200">{m.warning}</p>}
                   {m.type === "Offer" && m.offer ? (
-                    <OfferBubble m={m} mine={mine} canRespond={!mine && conv.role === "seller" && m.offer.status === "Pending"}
-                      canCreateOrder={conv.role === "seller" && m.offer.status === "Accepted"} onRespond={respond} />
+                    <OfferBubble m={m} mine={mine} canRespond={!mine && conv.role === "seller" && m.offer.status === "Pending"} onRespond={respond} />
                   ) : (
                     <div className={`max-w-[80%] rounded-3xl px-4 py-2.5 ${mine ? "rounded-br-lg bg-emerald-700 text-white" : "rounded-bl-lg bg-white text-stone-900 ring-1 ring-stone-200"}`}>
                       {m.type === "Text" && <p className="whitespace-pre-line break-words">{m.text}</p>}
@@ -254,7 +253,7 @@ function Thread({ conv, meId, msgs, setMsgs, error, setError, onBack }: {
                       {m.type === "Location" && <a className="font-semibold underline" target="_blank" rel="noreferrer" href={`https://www.google.com/maps?q=${m.lat},${m.lng}`}>Xem vị trí trên bản đồ</a>}
                     </div>
                   )}
-                  <span className="mt-1 px-1 text-[11px] text-stone-500">{clock(m.createdAt)}</span>
+                  <span className="mt-1 px-1 text-xs text-stone-500">{clock(m.createdAt)}</span>
                 </div>
               )}
             </div>
@@ -307,8 +306,8 @@ function Thread({ conv, meId, msgs, setMsgs, error, setError, onBack }: {
   );
 }
 
-function OfferBubble({ m, mine, canRespond, canCreateOrder, onRespond }: {
-  m: Msg; mine: boolean; canRespond: boolean; canCreateOrder: boolean; onRespond: (id: string, accept: boolean, counter?: number) => void;
+function OfferBubble({ m, mine, canRespond, onRespond }: {
+  m: Msg; mine: boolean; canRespond: boolean; onRespond: (id: string, accept: boolean, counter?: number) => void;
 }) {
   const [countering, setCountering] = useState(false);
   const [counter, setCounter] = useState("");
@@ -337,9 +336,6 @@ function OfferBubble({ m, mine, canRespond, canCreateOrder, onRespond }: {
               <button type="button" onClick={() => setCountering(false)} className="rounded-full px-3 py-2 text-stone-600 hover:bg-stone-100">Hủy</button>
             </div>
           </form>
-        )}
-        {canCreateOrder && (
-          <Link href={`/don-hang/moi?offer=${m.id}`} className="block rounded-full bg-emerald-700 py-2 text-center font-semibold text-white hover:bg-emerald-800">Tạo đơn giao dịch đảm bảo</Link>
         )}
       </div>
     </div>

@@ -52,7 +52,7 @@ export default async function SpeciesPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div>
         <Link href="/thu-vien" className="text-sm text-emerald-700 hover:underline">← Thư viện cây</Link>
-        <h1 className="mt-2 text-4xl font-extrabold text-emerald-900 sm:text-5xl">{s.commonName}</h1>
+        <h1 className="mt-2 cx-h1">{s.commonName}</h1>
         {s.scientificName && <p className="text-lg italic text-stone-500">{s.scientificName}</p>}
         {s.aliases.length > 0 && <p className="mt-1 text-stone-600">Còn gọi là: {s.aliases.join(", ")}</p>}
       </div>
@@ -64,13 +64,13 @@ export default async function SpeciesPage({ params }: Props) {
           {s.description ? s.description.split(/\n\s*\n/).map((p, i) => <p key={i}>{p}</p>) : <p className="text-stone-500">Đang cập nhật mô tả.</p>}
         </div>
         <aside className="space-y-4">
-          <dl className="space-y-2 rounded-2xl border border-stone-200 bg-white p-5 text-[15px]">
+          <dl className="space-y-2 cx-card text-[15px]">
             {facts.filter(([, v]) => v).map(([k, v]) => (
               <div key={k} className="flex justify-between gap-3"><dt className="text-stone-500">{k}</dt><dd className="text-right">{v}</dd></div>
             ))}
           </dl>
           {s.priceRefs.length > 0 && (
-            <div className="rounded-2xl border border-stone-200 bg-white p-5 text-[15px]">
+            <div className="cx-card text-[15px]">
               <p className="mb-2 font-bold">Giá tham khảo trên Chạm Xanh</p>
               {s.priceRefs.map((p) => (
                 <div key={p.sizeBand} className="flex justify-between"><span className="text-stone-500">Cao {p.sizeBand} cm</span><span>~{shortVnd(p.medianVnd)}</span></div>
@@ -83,7 +83,7 @@ export default async function SpeciesPage({ params }: Props) {
 
       <section className="space-y-4">
         <div className="flex items-baseline justify-between border-b border-stone-200 pb-3">
-          <h2 className="text-3xl text-emerald-800">Đang bán ({listings?.total ?? 0})</h2>
+          <h2 className="cx-h2">Đang bán ({listings?.total ?? 0})</h2>
           <Link href={`/tim-kiem?speciesId=${id}`} className="font-bold text-emerald-700 hover:underline">Xem tất cả</Link>
         </div>
         {listings && listings.items.length > 0 ? <ListingGrid items={listings.items} /> : <p className="text-stone-500">Chưa có tin đang bán loài này.</p>}
@@ -91,7 +91,7 @@ export default async function SpeciesPage({ params }: Props) {
 
       {posts && posts.items.length > 0 && (
         <section className="space-y-3">
-          <h2 className="text-3xl text-emerald-800">Hỏi đáp & kinh nghiệm</h2>
+          <h2 className="cx-h2">Hỏi đáp & kinh nghiệm</h2>
           <ul className="space-y-2">
             {posts.items.slice(0, 6).map((p) => (
               <li key={p.id}><Link href={`/cong-dong/${p.id}`} className="block rounded-xl border border-stone-200 bg-white p-3 hover:border-emerald-600">

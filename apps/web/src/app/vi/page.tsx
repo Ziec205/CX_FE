@@ -53,7 +53,7 @@ export default function WalletPage() {
       )}
 
       <Section title="Nạp Xu">
-        <p className="mb-3 text-xs text-stone-500">Xu dùng để đẩy tin, mua Tin Ưu tiên, gói Nhà vườn. Xu không rút ra tiền mặt và không chuyển cho người khác.</p>
+        <p className="mb-3 text-xs text-stone-500">Xu dùng để trả phí đăng tin khi đã hết lượt miễn phí trong tháng (10 Xu/tin, gói Plus/Pro 5 Xu/tin). Xu không rút ra tiền mặt và không chuyển cho người khác.</p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {pricing?.topUpPackages.map((p) => (
             <button key={p.code} onClick={() => start(p.code)} className={`rounded-xl border p-3 text-left ${p.popular ? "border-emerald-500 ring-1 ring-emerald-300" : "border-stone-200"}`}>

@@ -33,7 +33,7 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <h1 className="text-4xl font-extrabold text-emerald-900 sm:text-5xl">Cài đặt</h1>
+      <h1 className="cx-h1">Cài đặt</h1>
       {error && <Alert>{error}</Alert>}
 
       <Section title="Email nhận nhắc lịch">

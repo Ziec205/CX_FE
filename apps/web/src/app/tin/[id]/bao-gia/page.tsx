@@ -12,7 +12,7 @@ import type { ListingDetail } from "@/lib/types";
 
 interface QuoteRow {
   quote: { id: string; sellerId: string; unitPrice: number; quantity: number; note?: string | null; status: string; availableFrom?: string | null; updatedAt: string };
-  seller?: { id: string; displayName: string; flags: { hasVerifiedGarden: boolean } };
+  seller?: { id: string; displayName: string };
   photos: string[];
 }
 
@@ -60,7 +60,7 @@ export default function QuotesPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-5">
       <Link href={`/tin/${id}`} className="text-sm text-emerald-700 hover:underline">← {listing?.card.title ?? "Tin cần mua"}</Link>
-      <h1 className="text-4xl font-extrabold text-emerald-900">{isOwner ? "Báo giá nhận được" : "Gửi báo giá"}</h1>
+      <h1 className="cx-h1">{isOwner ? "Báo giá nhận được" : "Gửi báo giá"}</h1>
       {error && <Alert>{error}</Alert>}
 
       {!isOwner && listing && (
@@ -78,9 +78,9 @@ export default function QuotesPage() {
       {rows?.length === 0 && <p className="text-stone-500">{isOwner ? "Chưa có báo giá nào." : ""}</p>}
       <ul className="space-y-3">
         {rows?.map((r) => (
-          <li key={r.quote.id} className="rounded-2xl border border-stone-200 bg-white p-4">
+          <li key={r.quote.id} className="cx-card">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="font-bold">{r.seller?.displayName}{r.seller?.flags.hasVerifiedGarden && <span className="ml-1 text-xs text-emerald-700">✓ Nhà vườn</span>}</span>
+              <span className="font-bold">{r.seller?.displayName}</span>
               <span className="text-lg font-bold text-emerald-800">{vnd(r.quote.unitPrice)} × {r.quote.quantity}</span>
             </div>
             {r.quote.note && <p className="mt-1 text-stone-700">{r.quote.note}</p>}
@@ -98,9 +98,6 @@ export default function QuotesPage() {
                 <button onClick={() => act(r.quote.id, "select")} className={btn.small}>Chọn báo giá này</button>
                 <button onClick={() => act(r.quote.id, "decline")} className="text-stone-500 hover:underline">Không chọn</button>
               </>}
-              {isOwner && r.quote.status === "Selected" && r.seller?.flags.hasVerifiedGarden && (
-                <Link href={`/don-hang/moi?quote=${r.quote.id}`} className={btn.small}>🛡 Tạo đơn đảm bảo</Link>
-              )}
             </div>
           </li>
         ))}

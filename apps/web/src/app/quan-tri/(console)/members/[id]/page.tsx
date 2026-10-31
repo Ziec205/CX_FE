@@ -6,15 +6,14 @@ import { useCallback, useEffect, useState } from "react";
 import { useAdmin } from "@/admin/components/AdminContext";
 import { Alert, Card, PageTitle, btn, input } from "@/admin/components/ui";
 import { api, errorText, formatDate, formatVnd } from "@/admin/lib/api";
-import { ORDER_LABEL } from "@/admin/lib/escrow";
 
 interface Detail {
   user: { id: string; phone?: string | null; displayName: string; fullName?: string | null; status: string; activeViolationPoints: number;
-    postingRestrictedUntil?: string | null; lockedUntil?: string | null; createdAt: string; lastSeenAt?: string | null;
-    flags: { hasVerifiedGarden: boolean; hasActivePlan: boolean; isProSeller: boolean } };
+    postingRestrictedUntil?: string | null; lockedUntil?: string | null; createdAt: string; lastSeenAt?: string | null };
   violations: { id: string; points: number; reasonCode: string; listingId?: string | null; createdAt: string; expiresAt: string }[];
   listingCount: number;
-  orders: { id: string; code: string; status: string; total: number; role: string; createdAt: string }[];
+  plan: { code: string; name: string; endAt?: string | null };
+  payments: { id: string; plan: string; months: number; amountVnd: number; status: string; createdAt: string; paidAt?: string | null }[];
 }
 
 export default function MemberPage() {
@@ -56,7 +55,7 @@ export default function MemberPage() {
             <dt className="text-stone-500">Họ tên</dt><dd>{u.fullName ?? "—"}</dd>
             <dt className="text-stone-500">Tham gia</dt><dd>{formatDate(u.createdAt)}</dd>
             <dt className="text-stone-500">Hoạt động gần nhất</dt><dd>{formatDate(u.lastSeenAt)}</dd>
-            <dt className="text-stone-500">Nhà vườn</dt><dd>{u.flags.hasVerifiedGarden ? "Đã xác minh" : "Không"}{u.flags.hasActivePlan && " · có gói"}</dd>
+            <dt className="text-stone-500">Gói</dt><dd>{d.plan.name}{d.plan.endAt && ` · đến ${formatDate(d.plan.endAt)}`}</dd>
             <dt className="text-stone-500">Số tin</dt><dd>{d.listingCount}</dd>
             {u.postingRestrictedUntil && <><dt className="text-stone-500">Hạn chế đến</dt><dd>{formatDate(u.postingRestrictedUntil)}</dd></>}
             {u.lockedUntil && <><dt className="text-stone-500">Khóa đến</dt><dd>{formatDate(u.lockedUntil)}</dd></>}
@@ -93,10 +92,10 @@ export default function MemberPage() {
             </ul>
           )}
         </Card>
-        <Card title="Đơn đảm bảo gần đây">
-          {d.orders.length === 0 ? <p className="text-sm text-stone-500">Không có.</p> : (
+        <Card title="Thanh toán gói gần đây">
+          {d.payments.length === 0 ? <p className="text-sm text-stone-500">Không có.</p> : (
             <ul className="space-y-1 text-sm">
-              {d.orders.map((o) => <li key={o.id}><Link href={`/quan-tri/escrow/${o.id}`} className="font-mono text-emerald-700">{o.code}</Link> · {o.role === "buyer" ? "mua" : "bán"} · {ORDER_LABEL[o.status] ?? o.status} · {formatVnd(o.total)}</li>)}
+              {d.payments.map((x) => <li key={x.id}>{x.plan} · {x.months} tháng · {formatVnd(x.amountVnd)} · {x.status} · {formatDate(x.paidAt ?? x.createdAt)}</li>)}
             </ul>
           )}
         </Card>

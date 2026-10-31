@@ -21,7 +21,7 @@ export default async function CommunityPage({ searchParams }: { searchParams: Pr
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-4xl font-extrabold text-emerald-900">Cộng đồng</h1>
+          <h1 className="cx-h1">Cộng đồng</h1>
           <p className="mt-1 text-stone-600">Hỏi đáp chăm cây, khoe cây, chia sẻ kinh nghiệm. Không rao bán ở đây — hãy <Link href="/dang-tin" className="text-emerald-700 underline">đăng tin</Link>.</p>
         </div>
         <Link href="/cong-dong/dang-bai" className="rounded-full bg-emerald-800 px-5 py-2.5 font-bold text-stone-50 hover:bg-emerald-700">Đặt câu hỏi / Đăng bài</Link>
@@ -44,7 +44,7 @@ export default async function CommunityPage({ searchParams }: { searchParams: Pr
       <ul className="space-y-3">
         {data?.items.map((p) => (
           <li key={p.id}>
-            <Link href={`/cong-dong/${p.id}`} className="flex gap-4 rounded-2xl border border-stone-200 bg-white p-4 hover:border-emerald-600">
+            <Link href={`/cong-dong/${p.id}`} className="flex gap-4 cx-card hover:border-emerald-600">
               <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex flex-wrap items-center gap-2 text-xs">
                   <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800">{TYPE_BADGE[p.type]}</span>

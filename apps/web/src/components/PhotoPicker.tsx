@@ -37,8 +37,8 @@ export function PhotoPicker({ value, onChange, max = 12, kind = "ListingPhoto", 
           <div key={p.id} className="relative h-24 w-24 overflow-hidden rounded-lg ring-1 ring-stone-200">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={p.preview} alt="" className="h-full w-full object-cover" />
-            {i === 0 ? <span className="absolute left-1 top-1 rounded bg-emerald-600 px-1 text-[10px] text-white">Ảnh bìa</span>
-              : <button type="button" onClick={() => move(i)} className="absolute left-1 top-1 rounded bg-white/90 px-1 text-[10px]">Làm bìa</button>}
+            {i === 0 ? <span className="absolute left-1 top-1 rounded bg-emerald-600 px-1 text-xs text-white">Ảnh bìa</span>
+              : <button type="button" onClick={() => move(i)} className="absolute left-1 top-1 rounded bg-white/90 px-1 text-xs">Làm bìa</button>}
             <button type="button" aria-label="Xóa ảnh" onClick={() => onChange(value.filter((x) => x.id !== p.id))} className="absolute right-1 top-1 rounded-full bg-black/60 px-1.5 text-xs text-white">×</button>
           </div>
         ))}

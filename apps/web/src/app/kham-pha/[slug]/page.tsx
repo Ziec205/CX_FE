@@ -20,7 +20,7 @@ export default async function ArticlePage({ params }: Props) {
       <Link href="/kham-pha" className="text-sm text-emerald-700 hover:underline">← Khám phá</Link>
       <header className="space-y-3">
         <p className="text-sm font-semibold text-emerald-700">{a.publishAt && new Date(a.publishAt).toLocaleDateString("vi-VN")}</p>
-        <h1 className="text-4xl font-extrabold text-emerald-900 sm:text-5xl">{a.title}</h1>
+        <h1 className="cx-h1">{a.title}</h1>
         {a.summary && <p className="text-xl italic text-stone-600">{a.summary}</p>}
       </header>
       {cover && (

@@ -13,6 +13,8 @@ const STATUS: Record<PlanPayment["status"], string> = { Pending: "Chờ thanh to
 
 function features(p: PlanInfo): [string, boolean][] {
   return [
+    [`${p.listingsPerMonth} tin đăng mỗi tháng, mỗi tin hiển thị ${p.listingDays} ngày`, true],
+    [`Hết lượt: ${p.extraListingXu} Xu/tin (${(p.extraListingXu * 1000).toLocaleString("vi-VN")}đ)`, true],
     [`Hồ sơ vườn: ${p.gardenPlants} cây`, true],
     [`${p.aiPerDay} lượt Trợ lý AI mỗi ngày`, true],
     ["Hỏi đáp, chẩn đoán bệnh cây qua ảnh", true],
@@ -57,7 +59,7 @@ function Plans() {
   return (
     <div className="space-y-8">
       <header className="mx-auto max-w-3xl text-center">
-        <h1 className="text-4xl font-extrabold text-emerald-900 sm:text-5xl">Chọn gói cho khu vườn của bạn</h1>
+        <h1 className="cx-h1">Chọn gói cho khu vườn của bạn</h1>
         <p className="mt-3 text-lg text-stone-600">Lưu thêm cây trong Hồ sơ vườn, hỏi Trợ lý AI nhiều hơn, và để AI giúp bạn mua bán cây.</p>
         {mine && mine.plan.code !== "Free" && (
           <p className="mx-auto mt-4 w-fit rounded-full bg-emerald-50 px-4 py-2 font-semibold text-emerald-900 ring-1 ring-emerald-200">
@@ -86,7 +88,7 @@ function Plans() {
           return (
             <article key={p.code}
               className={`relative flex flex-col rounded-3xl p-6 sm:p-7 ${pro ? "bg-emerald-900 text-white shadow-xl" : "bg-white ring-1 ring-stone-200"} ${highlight === p.code ? "ring-4 ring-wood-400" : ""}`}>
-              {pro && <span className="absolute -top-3 left-6 rounded-full bg-wood-400 px-3 py-1 text-xs font-bold uppercase tracking-wide text-stone-900">Cho nhà vườn chuyên nghiệp</span>}
+              {pro && <span className="absolute -top-3 left-6 rounded-full bg-wood-400 px-3 py-1 text-xs font-bold uppercase tracking-wide text-stone-900">Cho người bán nhiều</span>}
               <h2 className={`text-2xl font-bold ${pro ? "text-white" : "text-emerald-900"}`}>{p.name}</h2>
               <p className={`mt-1 min-h-12 ${pro ? "text-emerald-100" : "text-stone-600"}`}>{p.tagline}</p>
               <p className="mt-4">
@@ -140,8 +142,8 @@ function Plans() {
       </section>
 
       {history && history.length > 0 && (
-        <section className="rounded-3xl bg-white p-6 ring-1 ring-stone-200 sm:p-7">
-          <h2 className="mb-3 text-2xl font-bold text-emerald-900">Lịch sử thanh toán</h2>
+        <section className="cx-card sm:p-7">
+          <h2 className="mb-3 cx-h2">Lịch sử thanh toán</h2>
           <ul className="divide-y divide-stone-100">
             {history.map((h) => (
               <li key={h.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-[15px]">

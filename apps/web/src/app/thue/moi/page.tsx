@@ -50,7 +50,7 @@ function NewRental() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
-      <h1 className="text-4xl font-extrabold text-emerald-900">Đặt lịch thuê cây</h1>
+      <h1 className="cx-h1">Đặt lịch thuê cây</h1>
       {listing && <Section title={listing.card.title}><p className="text-stone-600">{priceLabel(listing.card)} · Cọc {vnd(listing.card.rent?.deposit)} · Có {listing.quantity} {listing.card.unit}</p></Section>}
       {cal && cal.busyDays.length > 0 && (
         <Section title="Ngày đã kín lịch">
@@ -63,7 +63,7 @@ function NewRental() {
           </div>
         </Section>
       )}
-      <form onSubmit={submit} className="grid gap-4 rounded-2xl border border-stone-200 bg-white p-5 sm:grid-cols-2">
+      <form onSubmit={submit} className="grid gap-4 cx-card sm:grid-cols-2">
         <Label text="Từ ngày" required><input type="date" required value={start} onChange={(e) => setStart(e.target.value)} className={field} /></Label>
         <Label text="Đến ngày" required><input type="date" required min={start} value={end} onChange={(e) => setEnd(e.target.value)} className={field} /></Label>
         <Label text="Số lượng"><input type="number" min={1} max={listing?.quantity ?? 1} value={qty} onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))} className={field} /></Label>

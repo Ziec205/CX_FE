@@ -45,7 +45,7 @@ export default function AssistantPage() {
     <div className="space-y-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="flex items-center gap-3 text-4xl font-extrabold text-emerald-900 sm:text-5xl">
+          <h1 className="flex items-center gap-3 cx-h1">
             <Sparkle className="h-9 w-9 text-wood-400" />Trợ lý AI
           </h1>
           <p className="mt-1 text-stone-600">Hỏi về chăm cây, chẩn đoán bệnh qua ảnh, chọn cây và mua bán cây. Lịch sử lưu 60 ngày.</p>
@@ -67,7 +67,7 @@ export default function AssistantPage() {
               Lịch sử{list ? ` (${list.length})` : ""}
             </button>
           </div>
-          <nav aria-label="Các cuộc trò chuyện" className={`${showList ? "block" : "hidden"} max-h-[60dvh] overflow-y-auto rounded-3xl bg-white p-2 ring-1 ring-stone-200 lg:block`}>
+          <nav aria-label="Các cuộc trò chuyện" className={`${showList ? "block" : "hidden"} max-h-[60dvh] overflow-y-auto cx-card p-2 lg:block`}>
             {!list && <div className="cx-shimmer h-24 rounded-2xl" />}
             {list?.length === 0 && <p className="px-3 py-4 text-sm text-stone-500">Chưa có cuộc trò chuyện nào.</p>}
             <ul className="space-y-1">
@@ -93,7 +93,7 @@ export default function AssistantPage() {
           )}
         </aside>
 
-        <section aria-label="Trò chuyện" className="min-w-0 rounded-3xl bg-white p-4 ring-1 ring-stone-200 sm:p-5">
+        <section aria-label="Trò chuyện" className="min-w-0 cx-card p-4 sm:p-5">
           <AiChat key={chatKey} conversationId={active} onConversation={onConversation} />
         </section>
       </div>

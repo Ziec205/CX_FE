@@ -16,8 +16,8 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/dang-tin/:path*", "/tai-khoan/:path*", "/tin-nhan/:path*", "/vi/:path*", "/yeu-thich/:path*", "/nha-vuon/:path*",
-    "/vuon-cua-toi/:path*", "/thong-bao/:path*", "/don-hang/:path*", "/thue/:path*", "/cong-dong/dang-bai", "/tin/:id/bao-gia",
+    "/dang-tin/:path*", "/tai-khoan/:path*", "/tin-nhan/:path*", "/vi/:path*", "/yeu-thich/:path*",
+    "/vuon-cua-toi/:path*", "/thong-bao/:path*", "/thue/:path*", "/cong-dong/dang-bai", "/tin/:id/bao-gia",
     "/tro-ly-ai", "/tro-ly-ai/:path*", "/cai-dat", "/goi/gia-lap",
     "/quan-tri", "/quan-tri/:path*",
   ],

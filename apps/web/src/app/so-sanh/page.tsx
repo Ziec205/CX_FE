@@ -32,7 +32,7 @@ export default function ComparePage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-4xl font-extrabold text-emerald-900 sm:text-5xl">So sánh cây</h1>
+          <h1 className="cx-h1">So sánh cây</h1>
           <p className="mt-1 text-stone-600">Chọn 2–4 tin trong Chợ cây (nút &ldquo;So sánh với tin khác&rdquo; trên trang tin), rồi để AI phân tích giúp.</p>
         </div>
         {items.length > 0 && <button type="button" onClick={() => { clear(); setResult(undefined); }} className="text-sm font-semibold text-stone-600 hover:text-red-700">Bỏ chọn tất cả</button>}
@@ -62,7 +62,6 @@ export default function ComparePage() {
                   {card && (
                     <p className="text-sm text-stone-600">
                       <b className="text-emerald-800">{priceLabel(card)}</b> · {provinceName(card.provinceId)}
-                      {card.escrow && " · Giao dịch đảm bảo"}{card.seller.isVerifiedGarden && " · Nhà vườn xác minh"}
                     </p>
                   )}
                   {ai && (
@@ -87,7 +86,7 @@ export default function ComparePage() {
       {items.length > 0 && (
         <section className="space-y-3 rounded-3xl bg-emerald-50 p-5 ring-1 ring-emerald-200 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="flex items-center gap-2 text-2xl font-bold text-emerald-900"><Sparkle className="h-6 w-6 text-emerald-700" />AI so sánh <ProBadge /></h2>
+            <h2 className="flex items-center gap-2 cx-h2"><Sparkle className="h-6 w-6 text-emerald-700" />AI so sánh <ProBadge /></h2>
             {plan?.plan.marketCompare && (
               <button type="button" onClick={run} disabled={busy || items.length < 2}
                 className="cx-press inline-flex items-center gap-2 rounded-full bg-emerald-900 px-5 py-2.5 font-semibold text-white hover:bg-emerald-800 disabled:bg-stone-300">

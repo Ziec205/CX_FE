@@ -9,7 +9,7 @@ import { PlanAvatar } from "./PlanAvatar";
 
 // Tin nhắn, Hồ sơ vườn, Trợ lý AI, Thông báo đã có trên header và thanh tính năng nên không lặp lại ở đây.
 const ITEMS: [string, string][] = [
-  ["/tai-khoan", "Tài khoản & tin của tôi"], ["/goi", "Nâng cấp tài khoản"], ["/don-hang", "Đơn hàng"],
+  ["/tai-khoan", "Tài khoản & tin của tôi"], ["/goi", "Nâng cấp tài khoản"],
   ["/yeu-thich", "Tin đã lưu"], ["/vi", "Ví Xu Xanh"], ["/cai-dat", "Cài đặt"],
 ];
 

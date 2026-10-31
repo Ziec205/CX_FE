@@ -24,7 +24,6 @@ function Author({ a }: { a?: CommunityAuthor }) {
       <b>{a.name}</b>
       {a.expert && <span className="ml-1 rounded bg-sky-50 px-1.5 py-0.5 text-xs text-sky-800">Chuyên gia{a.expertTitle ? ` · ${a.expertTitle}` : ""}</span>}
       <span className="ml-1 rounded bg-emerald-50 px-1.5 py-0.5 text-xs text-emerald-800">{a.badge} · {a.points} điểm</span>
-      {a.gardenSlug && <Link href={`/vuon/${a.gardenSlug}`} className="ml-1 text-xs text-emerald-700 hover:underline">Gian hàng</Link>}
     </span>
   );
 }
@@ -91,12 +90,12 @@ export default function PostPage() {
       {error && <Alert>{error}</Alert>}
       {p.suggestListing && <Alert kind="warn">Bài này có vẻ đang rao bán. <Link href={`/dang-tin?title=${encodeURIComponent(p.title)}`} className="font-bold underline">Chuyển thành tin đăng</Link> để bán an toàn hơn.</Alert>}
       {p.status === "Hidden" && <Alert kind="warn">Bài đang bị ẩn chờ kiểm duyệt do có nhiều báo cáo.</Alert>}
-      <article className="space-y-4 rounded-2xl border border-stone-200 bg-white p-5 sm:p-6">
+      <article className="space-y-4 cx-card">
         <div className="flex flex-wrap gap-2 text-xs">
           {p.topics.map((t) => <Link key={t} href={`/cong-dong?topic=${t}`} className="text-emerald-700 hover:underline">#{t}</Link>)}
           {p.speciesIds.map((s) => <Link key={s} href={`/cong-dong?speciesId=${s}`} className="rounded bg-stone-100 px-1.5 py-0.5">{s}</Link>)}
         </div>
-        <h1 className="text-3xl leading-tight text-emerald-800">{p.title}</h1>
+        <h1 className="cx-h1">{p.title}</h1>
         <p className="text-stone-500"><Author a={p.author} /> · {timeAgo(p.createdAt)}</p>
         <div className="whitespace-pre-line text-[17px] leading-relaxed text-stone-800">{p.body}</div>
         <Photos photos={p.photos} />
@@ -108,7 +107,7 @@ export default function PostPage() {
       </article>
 
       <section className="space-y-3">
-        <h2 className="text-2xl text-emerald-800">{p.type === "Question" ? "Câu trả lời" : "Bình luận"} ({d.comments.length})</h2>
+        <h2 className="cx-h2">{p.type === "Question" ? "Câu trả lời" : "Bình luận"} ({d.comments.length})</h2>
         {d.comments.map((c) => (
           <div key={c.id} className={`space-y-2 rounded-2xl border bg-white p-4 ${c.isBest ? "border-emerald-600 ring-2 ring-emerald-100" : "border-stone-200"}`}>
             {c.isBest && <p className="text-sm font-bold text-emerald-700">✓ Câu trả lời hay nhất</p>}
@@ -122,7 +121,7 @@ export default function PostPage() {
             </div>
           </div>
         ))}
-        <form onSubmit={comment} className="space-y-2 rounded-2xl border border-stone-200 bg-white p-4">
+        <form onSubmit={comment} className="space-y-2 cx-card">
           <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={3} required maxLength={3000} className={field} placeholder={p.type === "Question" ? "Chia sẻ cách xử lý của bạn…" : "Viết bình luận…"} />
           <PhotoPicker value={photos} onChange={setPhotos} max={4} kind="CommunityPhoto" />
           <button className={btn.primary}>Gửi</button>

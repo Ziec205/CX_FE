@@ -45,7 +45,7 @@ export function MobileMenu({ links, signedIn }: { links: MenuLink[]; signedIn: b
             {links.map((l) => (
               <li key={l.href}>
                 <Link href={l.href} aria-current={active(l.href) ? "page" : undefined}
-                  className={`block rounded-xl px-4 py-3 text-[16px] ${active(l.href) ? "bg-emerald-100 font-bold text-emerald-900" : "hover:bg-stone-200/70"}`}>
+                  className={`block rounded-xl px-4 py-3 text-base ${active(l.href) ? "bg-emerald-100 font-bold text-emerald-900" : "hover:bg-stone-200/70"}`}>
                   {l.label}
                 </Link>
               </li>

@@ -5,23 +5,14 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { StatusBadge } from "@/admin/components/StatusBadge";
 import {
-  api, formatDate, formatVnd, serviceName,
+  api, formatDate,
   type ApiError, type PriceBook, type ValidationResult,
 } from "@/admin/lib/pricing";
-
-type Tab = "services" | "garden" | "topup" | "escrow";
-const TABS: { key: Tab; label: string }[] = [
-  { key: "services", label: "Dịch vụ tin" },
-  { key: "garden", label: "Gói Nhà vườn" },
-  { key: "topup", label: "Nạp Xu" },
-  { key: "escrow", label: "Phí đảm bảo" },
-];
 
 export default function PriceBookEditorPage() {
   const { id } = useParams<{ id: string }>();
   const [book, setBook] = useState<PriceBook>();
   const [active, setActive] = useState<PriceBook>();
-  const [tab, setTab] = useState<Tab>("services");
   const [validation, setValidation] = useState<ValidationResult>();
   const [message, setMessage] = useState<{ kind: "ok" | "err"; text: string }>();
   const [effectiveFrom, setEffectiveFrom] = useState("");
@@ -87,9 +78,6 @@ export default function PriceBookEditorPage() {
     if (reason) run(() => api(`admin/price-books/${id}/reject`, { method: "POST", body: JSON.stringify({ reason }) }), "Đã từ chối");
   };
 
-  const oldServicePrice = (code: string, days: number | null | undefined, label: string | null | undefined, group: string) =>
-    active?.listingServices.find((s) => s.code === code && (s.days ?? null) === (days ?? null) && (s.labelName ?? null) === (label ?? null))?.prices[group];
-
   return (
     <div className="max-w-6xl">
       <Link href="/quan-tri/pricing" className="text-sm text-stone-500 hover:text-emerald-700">← Bảng giá</Link>
@@ -104,71 +92,11 @@ export default function PriceBookEditorPage() {
       )}
       {book.rejectReason && <p className="mb-4 rounded bg-red-50 p-3 text-sm text-red-700">Bị từ chối: {book.rejectReason}</p>}
 
-      <div className="mb-4 flex gap-1 border-b border-stone-200">
-        {TABS.map((t) => (
-          <button key={t.key} onClick={() => setTab(t.key)}
-            className={`px-4 py-2 text-sm ${tab === t.key ? "border-b-2 border-emerald-600 font-medium text-emerald-700" : "text-stone-500"}`}>
-            {t.label}
-          </button>
-        ))}
-      </div>
-
       <div className="rounded-lg border border-stone-200 bg-white p-4">
-        {tab === "services" && (
-          <table className="w-full text-sm">
-            <thead className="text-left text-stone-500">
-              <tr>
-                <th className="py-2">Dịch vụ</th><th>Bật</th>
-                {book.priceGroups.map((g) => <th key={g.code}>{g.name} (Xu)</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {book.listingServices.map((s, i) => (
-                <tr key={i} className="border-t border-stone-100">
-                  <td className="py-2">{serviceName(s)}</td>
-                  <td>
-                    <input type="checkbox" disabled={!editable} checked={s.enabled}
-                      onChange={(e) => update((b) => { b.listingServices[i].enabled = e.target.checked; })} />
-                  </td>
-                  {book.priceGroups.map((g) => {
-                    const old = oldServicePrice(s.code, s.days, s.labelName, g.code);
-                    const changed = active && book.id !== active.id && old !== undefined && old !== s.prices[g.code];
-                    return (
-                      <td key={g.code}>
-                        <input type="number" min={0} disabled={!editable} value={s.prices[g.code] ?? 0}
-                          title={changed ? `Bản hiệu lực: ${old}` : undefined}
-                          className={`w-24 rounded border px-2 py-1 ${changed ? "border-amber-400 bg-amber-50" : "border-stone-300"}`}
-                          onChange={(e) => update((b) => { b.listingServices[i].prices[g.code] = Number(e.target.value); })} />
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-
-        {tab === "garden" && (
-          <table className="w-full text-sm">
-            <thead className="text-left text-stone-500"><tr><th className="py-2">Kỳ hạn</th><th>Giá (VNĐ)</th><th>Tương đương/tháng</th><th>Bật</th></tr></thead>
-            <tbody>
-              {book.gardenPlans.map((p, i) => (
-                <tr key={p.months} className="border-t border-stone-100">
-                  <td className="py-2">{p.months} tháng</td>
-                  <td><input type="number" min={0} disabled={!editable} value={p.priceVnd} className="w-32 rounded border border-stone-300 px-2 py-1"
-                    onChange={(e) => update((b) => { b.gardenPlans[i].priceVnd = Number(e.target.value); })} /></td>
-                  <td>{formatVnd(Math.round(p.priceVnd / p.months))}</td>
-                  <td><input type="checkbox" disabled={!editable} checked={p.enabled}
-                    onChange={(e) => update((b) => { b.gardenPlans[i].enabled = e.target.checked; })} /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-
-        {tab === "topup" && (
+        {(
           <>
-            <p className="mb-3 text-xs text-stone-500">Tỉ giá 1 Xu = 1.000đ được khóa, không chỉnh được (tài liệu 08 §1).</p>
+            <h2 className="mb-1 font-semibold">Gói nạp Xu</h2>
+            <p className="mb-3 text-xs text-stone-500">Phí đăng tin và giá gói Plus/Pro cấu hình trong mã (PlanModels). Tỉ giá 1 Xu = 1.000đ được khóa, không chỉnh được (tài liệu 08 §1).</p>
             <table className="w-full text-sm">
               <thead className="text-left text-stone-500"><tr><th className="py-2">Gói</th><th>Giá (VNĐ)</th><th>Xu nạp</th><th>Xu thưởng</th><th>Hạn Xu thưởng (ngày)</th><th>Bật</th></tr></thead>
               <tbody>
@@ -188,28 +116,6 @@ export default function PriceBookEditorPage() {
           </>
         )}
 
-        {tab === "escrow" && (
-          <div className="grid max-w-xl grid-cols-2 gap-4 text-sm">
-            {([
-              ["pct", "Phí (%)"], ["minVnd", "Phí tối thiểu (VNĐ)"], ["maxVnd", "Phí tối đa (VNĐ)"],
-              ["orderMinVnd", "Giá trị đơn tối thiểu (VNĐ)"], ["orderMaxVnd", "Giá trị đơn tối đa (VNĐ)"],
-            ] as const).map(([f, label]) => (
-              <label key={f} className="block">
-                {label}
-                <input type="number" min={0} step={f === "pct" ? 0.1 : 1000} disabled={!editable} value={book.escrowFee[f]}
-                  className="mt-1 w-full rounded border border-stone-300 px-2 py-1"
-                  onChange={(e) => update((b) => { b.escrowFee[f] = Number(e.target.value); })} />
-              </label>
-            ))}
-            <label className="block">
-              Bên trả phí
-              <select disabled={!editable} value={book.escrowFee.payer} className="mt-1 w-full rounded border border-stone-300 px-2 py-1"
-                onChange={(e) => update((b) => { b.escrowFee.payer = e.target.value; })}>
-                <option value="SELLER">Người bán</option><option value="BUYER">Người mua</option>
-              </select>
-            </label>
-          </div>
-        )}
       </div>
 
       {editable && (

@@ -40,7 +40,6 @@ export async function Header() {
           <Link href="/dang-tin" className="cx-press hidden rounded-full bg-emerald-800 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700 sm:inline-block">Đăng tin</Link>
           <MobileMenu signedIn={signedIn} links={[
             { href: "/thu-vien", label: "Thư viện cây" },
-            { href: "/ban-do", label: "Bản đồ nhà vườn" },
             { href: "/tim-bang-anh", label: "Tìm bằng ảnh" },
           ]} />
         </nav>

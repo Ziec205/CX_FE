@@ -71,6 +71,70 @@ h1, h2, h3, .font-display {
 }
 
 @layer components {
+/* ---------- Bộ chữ và khối dùng chung cho mọi trang ----------
+   Một thang chữ duy nhất: tiêu đề trang → tiêu đề mục → tiêu đề thẻ → chữ thường → chữ phụ.
+   Một kiểu khối: thẻ trắng viền mảnh (cx-card) và ô nền dịu bên trong (cx-soft). */
+.cx-h1 {
+  font-family: var(--font-display);
+  font-size: 2.25rem;            /* 36px; từ 640px: 48px */
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--color-emerald-900);
+}
+@media (min-width: 640px) { .cx-h1 { font-size: 3rem; } }
+.cx-h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;             /* 24px */
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--color-emerald-900);
+}
+.cx-title {
+  font-family: var(--font-display);
+  font-size: 1.125rem;           /* 18px */
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-stone-900);
+}
+.cx-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-emerald-700);
+}
+.cx-lead { font-size: 1.0625rem; line-height: 1.6; color: var(--color-stone-600); } /* 17px, câu dẫn dưới tiêu đề trang */
+.cx-body { font-size: 0.9375rem; line-height: 1.6; color: var(--color-stone-700); }  /* 15px */
+.cx-meta { font-size: 0.875rem; line-height: 1.5; color: var(--color-stone-500); }   /* 14px */
+.cx-link { font-weight: 600; color: var(--color-emerald-700); text-underline-offset: 3px; }
+.cx-link:hover { text-decoration: underline; }
+
+.cx-card {
+  border-radius: 1.5rem;
+  background: var(--color-white);
+  padding: 1.25rem;
+  box-shadow: 0 0 0 1px var(--color-stone-200);
+}
+@media (min-width: 640px) { .cx-card { padding: 1.5rem; } }
+.cx-card-flush { border-radius: 1.5rem; background: var(--color-white); box-shadow: 0 0 0 1px var(--color-stone-200); overflow: hidden; }
+.cx-soft { border-radius: 1rem; background: var(--color-stone-100); padding: 1rem; }
+.cx-chip {
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  border-radius: 9999px; padding: 0.375rem 0.875rem;
+  font-size: 0.875rem; font-weight: 500;
+  background: var(--color-white); color: var(--color-stone-800);
+  box-shadow: 0 0 0 1px var(--color-stone-300);
+}
+.cx-chip:hover { box-shadow: 0 0 0 1px var(--color-emerald-700); }
+.cx-chip[aria-pressed="true"], .cx-chip[aria-current="page"], .cx-chip.is-on {
+  background: var(--color-emerald-800); color: var(--color-white); box-shadow: none;
+}
+.cx-badge {
+  display: inline-flex; align-items: center; border-radius: 9999px; padding: 0.125rem 0.625rem;
+  font-size: 0.75rem; font-weight: 700; background: var(--color-emerald-50); color: var(--color-emerald-800);
+}
+
 /* Thẻ giá treo cành như ở nhà vườn: vàng mai, có lỗ xỏ dây. */
 .cx-tag {
   position: relative;

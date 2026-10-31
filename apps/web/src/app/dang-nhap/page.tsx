@@ -5,12 +5,11 @@ import { Suspense, useState } from "react";
 import { Alert, btn, field } from "@/components/ui";
 import { safeNext } from "@/lib/login";
 
-type Mode = "login" | "register" | "phone" | "code" | "admin";
+type Mode = "login" | "register" | "admin";
 
 /**
- * Trang đăng nhập chung:
+ * Trang đăng nhập chung cho hai vai trò:
  * - Thành viên: tên đăng nhập + mật khẩu (đăng ký chỉ cần nhập mật khẩu 2 lần, không cần SĐT/CCCD).
- * - Nhà vườn/Shop: đăng nhập bằng SĐT → OTP.
  * - Quản trị: tên đăng nhập + mật khẩu (không dùng 2FA), chuyển vào /quan-tri.
  */
 function LoginForm() {
@@ -21,9 +20,6 @@ function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [phone, setPhone] = useState("");
-  const [code, setCode] = useState("");
-  const [devCode, setDevCode] = useState<string | null>(null);
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
 
@@ -54,22 +50,13 @@ function LoginForm() {
     memberDone((await post("/api/auth/register", { username, password, confirmPassword: confirm })).user);
   });
 
-  const requestOtp = run(async () => {
-    const r = await post("/api/auth/otp/request", { phone, deviceId: getDeviceId() });
-    setDevCode(r.devCode ?? null);
-    setMode("code");
-    setBusy(false);
-  });
-
-  const verifyOtp = run(async () => memberDone((await post("/api/auth/otp/verify", { phone, code })).user));
-
   const adminLogin = run(async () => {
     await post("/api/admin-auth/login", { username: username.trim(), password, totpCode: null });
     router.replace(next.startsWith("/quan-tri") ? next : "/quan-tri");
     router.refresh();
   });
 
-  const go = (m: Mode) => { setMode(m); setError(undefined); setPassword(""); setConfirm(""); setCode(""); };
+  const go = (m: Mode) => { setMode(m); setError(undefined); setPassword(""); setConfirm(""); };
 
   const tab = (m: Mode, label: string) => (
     <button type="button" role="tab" aria-selected={mode === m} onClick={() => go(m)}
@@ -78,16 +65,16 @@ function LoginForm() {
     </button>
   );
 
-  const title = { login: "Đăng nhập", register: "Tạo tài khoản", phone: "Đăng nhập bằng số điện thoại", code: "Nhập mã OTP", admin: "Đăng nhập quản trị" }[mode];
+  const title = { login: "Đăng nhập", register: "Tạo tài khoản", admin: "Đăng nhập quản trị" }[mode];
 
   return (
-    <div className="mx-auto max-w-sm rounded-2xl border border-stone-200 bg-white p-6">
+    <div className="cx-card mx-auto max-w-sm">
       {(mode === "login" || mode === "register") ? (
         <div role="tablist" aria-label="Đăng nhập hoặc tạo tài khoản" className="mb-5 flex gap-1 rounded-full bg-stone-100 p-1">
           {tab("login", "Đăng nhập")}{tab("register", "Tạo tài khoản")}
         </div>
       ) : (
-        <h1 className="mb-1 text-xl font-semibold">{title}</h1>
+        <h1 className="cx-h2 mb-3">{title}</h1>
       )}
 
       {mode === "login" && (
@@ -117,28 +104,7 @@ function LoginForm() {
           {confirm && password !== confirm && <p className="text-sm text-red-700">Hai lần nhập mật khẩu chưa khớp.</p>}
           {error && <Alert>{error}</Alert>}
           <button disabled={busy || password !== confirm} className={`${btn.primary} w-full`}>{busy ? "Đang tạo…" : "Tạo tài khoản"}</button>
-          <p className="text-xs text-stone-500">Không cần số điện thoại hay CCCD. Chỉ Nhà vườn/Shop mới cần xác thực thêm.</p>
-        </form>
-      )}
-
-      {mode === "phone" && (
-        <form onSubmit={requestOtp} className="space-y-3">
-          <p className="text-sm text-stone-500">Dành cho Nhà vườn/Shop và tài khoản đã gắn số điện thoại.</p>
-          <input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" autoComplete="tel" required autoFocus
-            placeholder="Số điện thoại" aria-label="Số điện thoại" className={field} />
-          {error && <Alert>{error}</Alert>}
-          <button disabled={busy} className={`${btn.primary} w-full`}>{busy ? "Đang gửi…" : "Gửi mã OTP"}</button>
-        </form>
-      )}
-
-      {mode === "code" && (
-        <form onSubmit={verifyOtp} className="space-y-3">
-          <p className="text-sm">Mã OTP đã gửi tới <b>{phone}</b>. <button type="button" onClick={() => go("phone")} className="text-emerald-700 underline">Đổi số</button></p>
-          {devCode && <Alert kind="info">Môi trường phát triển — mã OTP: <b className="tracking-widest">{devCode}</b></Alert>}
-          <input value={code} onChange={(e) => setCode(e.target.value)} inputMode="numeric" autoComplete="one-time-code" maxLength={6} required
-            placeholder="Mã 6 số" aria-label="Mã OTP" className={`${field} text-center text-lg tracking-[0.5em]`} />
-          {error && <Alert>{error}</Alert>}
-          <button disabled={busy || code.length !== 6} className={`${btn.primary} w-full`}>{busy ? "Đang xác thực…" : "Xác nhận"}</button>
+          <p className="text-xs text-stone-500">Không cần số điện thoại hay CCCD.</p>
         </form>
       )}
 
@@ -153,20 +119,11 @@ function LoginForm() {
       )}
 
       <div className="mt-5 flex flex-col gap-2 border-t border-stone-100 pt-4 text-center text-sm">
-        {mode !== "login" && mode !== "register" && <button type="button" onClick={() => go("login")} className="text-emerald-700 underline">← Đăng nhập bằng tên đăng nhập</button>}
-        {mode !== "phone" && mode !== "code" && <button type="button" onClick={() => go("phone")} className="text-emerald-700 underline">Nhà vườn/Shop: đăng nhập bằng số điện thoại</button>}
+        {mode === "admin" && <button type="button" onClick={() => go("login")} className="text-emerald-700 underline">← Đăng nhập thành viên</button>}
         {mode !== "admin" && <button type="button" onClick={() => go("admin")} className="text-stone-400 hover:text-stone-600">Đăng nhập quản trị</button>}
       </div>
     </div>
   );
-}
-
-function getDeviceId() {
-  try {
-    let id = localStorage.getItem("cx.device");
-    if (!id) { id = crypto.randomUUID(); localStorage.setItem("cx.device", id); }
-    return id;
-  } catch { return undefined; }
 }
 
 export default function LoginPage() {

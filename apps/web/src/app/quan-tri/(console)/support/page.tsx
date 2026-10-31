@@ -70,7 +70,7 @@ export default function SupportAdminPage() {
           <Card title={open.subject}>
             <p className="mb-2 text-xs text-stone-500">
               Người dùng <Link href={`/quan-tri/members/${open.userId}`} className="text-emerald-700">{open.userId}</Link>
-              {open.orderId && <> · Đơn <Link href={`/quan-tri/escrow/${open.orderId}`} className="text-emerald-700">{open.orderId}</Link></>}
+              {open.orderId && <> · Đơn {open.orderId}</>}
             </p>
             <ul className="max-h-[50vh] space-y-2 overflow-auto text-sm">
               {open.messages.map((m, i) => (

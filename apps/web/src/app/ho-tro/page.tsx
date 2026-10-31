@@ -17,7 +17,7 @@ const FAQ: [string, string][] = [
   ["Làm sao tránh bị lừa khi mua cây?", "Không chuyển cọc trước cho người lạ. Ưu tiên xem cây tận mắt hoặc dùng Giao dịch đảm bảo — tiền chỉ đến người bán khi bạn nhận cây đúng mô tả."],
   ["Tin của tôi bị từ chối?", "Xem lý do trong mục Tài khoản → Tin của tôi. Sửa theo gợi ý rồi gửi duyệt lại, hoặc gửi yêu cầu hỗ trợ bên dưới."],
   ["Cây nhận về bị héo?", "Trong 48 giờ sau khi nhận, vào Đơn hàng → Khiếu nại, kèm video mở hàng liền mạch."],
-  ["Xu Xanh có rút ra tiền được không?", "Không. Xu dùng để trả phí dịch vụ trên Chạm Xanh (đẩy tin, Tin Ưu tiên, Gói Nhà vườn)."],
+  ["Xu Xanh có rút ra tiền được không?", "Không. Xu dùng để trả phí dịch vụ trên Chạm Xanh (phí đăng tin khi đã hết lượt miễn phí trong tháng)."],
 ];
 
 export default function SupportPage() {
@@ -65,7 +65,7 @@ function Support() {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="space-y-5">
-        <h1 className="text-4xl font-extrabold text-emerald-900">Trung tâm trợ giúp</h1>
+        <h1 className="cx-h1">Trung tâm trợ giúp</h1>
         <div className="space-y-2">
           {FAQ.map(([q, a]) => (
             <details key={q} className="rounded-xl border border-stone-200 bg-white p-4">
@@ -87,7 +87,7 @@ function Support() {
         </Section>
       </div>
       <div className="space-y-3">
-        <h2 className="text-2xl text-emerald-800">Yêu cầu của tôi</h2>
+        <h2 className="cx-h2">Yêu cầu của tôi</h2>
         {tickets?.length === 0 && <p className="text-stone-500">Chưa có yêu cầu nào.</p>}
         <ul className="space-y-2">
           {tickets?.map((t) => (

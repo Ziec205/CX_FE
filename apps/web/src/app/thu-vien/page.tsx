@@ -19,7 +19,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-4xl font-extrabold text-emerald-900">Thư viện cây</h1>
+        <h1 className="cx-h1">Thư viện cây</h1>
         <p className="mt-1 text-stone-600">Tra cứu theo tên thường gọi, tên khác hoặc tên khoa học — gõ không dấu cũng được.</p>
       </div>
       <form action="/thu-vien" className="flex flex-wrap gap-2">
@@ -35,7 +35,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {species?.map((s) => (
           <li key={s.id}>
-            <Link href={`/thu-vien/${s.id}`} className="block h-full rounded-2xl border border-stone-200 bg-white p-4 hover:border-emerald-600">
+            <Link href={`/thu-vien/${s.id}`} className="block h-full cx-card hover:border-emerald-600">
               <p className="text-xl text-emerald-800">{s.commonName}</p>
               {s.scientificName && <p className="text-sm italic text-stone-500">{s.scientificName}</p>}
               {s.aliases.length > 0 && <p className="mt-1 text-sm text-stone-600">Còn gọi: {s.aliases.slice(0, 3).join(", ")}</p>}

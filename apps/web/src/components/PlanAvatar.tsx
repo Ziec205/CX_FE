@@ -14,14 +14,14 @@ export function PlanAvatar({ initial, plan, size = "md" }: { initial: string; pl
     return (
       <span className="relative inline-flex shrink-0 rounded-full bg-[conic-gradient(from_200deg,#f6d365,#c8962e,#fff1b8,#e0a526,#f6d365)] p-[3px] shadow-[0_0_0_1px_rgba(161,98,7,0.35)]" title="Gói Xanh Pro">
         <span className="rounded-full bg-white p-[2px]">{face}</span>
-        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-stone-900 px-1.5 text-[9px] font-extrabold leading-4 tracking-wider text-wood-400">PRO</span>
+        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-stone-900 px-1.5 text-xs font-extrabold leading-4 tracking-wider text-wood-400">PRO</span>
       </span>
     );
   if (plan === "Plus")
     return (
       <span className="relative inline-flex shrink-0 rounded-full bg-emerald-600 p-[3px]" title="Gói Xanh Plus">
         <span className="rounded-full bg-white p-[2px]">{face}</span>
-        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-emerald-700 px-1.5 text-[9px] font-extrabold leading-4 tracking-wider text-white">PLUS</span>
+        <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full bg-emerald-700 px-1.5 text-xs font-extrabold leading-4 tracking-wider text-white">PLUS</span>
       </span>
     );
   return face;

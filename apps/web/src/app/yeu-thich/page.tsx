@@ -11,7 +11,7 @@ import type { ListingCard } from "@/lib/types";
 interface Fav { card: ListingCard; priceWhenSaved?: number; priceDropped: boolean }
 interface SavedSearch { id: string; name: string; query: Record<string, unknown>; lastNotifiedAt: string }
 interface Follow { sellerId: string; createdAt: string }
-interface PublicUser { id: string; displayName: string; flags: { hasVerifiedGarden: boolean } }
+interface PublicUser { id: string; displayName: string }
 
 export default function FavoritesPage() {
   const [items, setItems] = useState<Fav[]>();
@@ -49,7 +49,7 @@ export default function FavoritesPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-4xl font-extrabold text-emerald-900">Đã lưu</h1>
+      <h1 className="cx-h1">Đã lưu</h1>
       {error && <Alert>{error}</Alert>}
 
       <Section title={`Tìm kiếm đã lưu (${searches.length}/20)`}>
@@ -77,7 +77,7 @@ export default function FavoritesPage() {
         <ul className="flex flex-wrap gap-2">
           {sellers.map((u) => (
             <li key={u.id} className="flex items-center gap-2 rounded-full border border-stone-200 bg-white py-1 pl-4 pr-2">
-              <Link href={`/nguoi-ban/${u.id}`} className="hover:underline">{u.displayName}{u.flags.hasVerifiedGarden && " ✓"}</Link>
+              <Link href={`/nguoi-ban/${u.id}`} className="hover:underline">{u.displayName}</Link>
               <button onClick={() => unfollow(u.id)} aria-label="Bỏ theo dõi" className="rounded-full px-2 text-stone-400 hover:text-red-700">×</button>
             </li>
           ))}
@@ -89,7 +89,7 @@ export default function FavoritesPage() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {items?.map((f) => (
             <div key={f.card.id} className="relative">
-              {f.priceDropped && <span className="absolute right-2 top-2 z-10 rounded bg-emerald-800 px-1.5 py-0.5 text-[11px] font-medium text-white">Giảm giá</span>}
+              {f.priceDropped && <span className="absolute right-2 top-2 z-10 rounded bg-emerald-800 px-1.5 py-0.5 text-xs font-medium text-white">Giảm giá</span>}
               <ListingCardView l={f.card} />
               <button onClick={() => remove(f.card.id)} className="mt-1 w-full text-xs text-stone-500 hover:text-red-700">Bỏ lưu</button>
             </div>

@@ -63,8 +63,8 @@ describe("upcomingReminders", () => {
 
 describe("lưu tìm kiếm", () => {
   test("chuyển số và boolean đúng kiểu", () => {
-    const q = paramsToSavedQuery({ q: "sen da", priceMin: "100000", gardenOnly: "true", escrowOnly: "false" });
-    assert.deepEqual(q, { page: 1, pageSize: 24, q: "sen da", priceMin: 100000, gardenOnly: true, escrowOnly: false });
+    const q = paramsToSavedQuery({ q: "sen da", priceMin: "100000" });
+    assert.deepEqual(q, { page: 1, pageSize: 24, q: "sen da", priceMin: 100000 });
   });
   test("gom thuộc tính động attr.*", () => assert.deepEqual(paramsToSavedQuery({ "attr.chieuCao": "120" }).attr, { chieuCao: "120" }));
   test("bỏ page/pageSize từ URL", () => assert.equal(paramsToSavedQuery({ page: "5" }).page, 1));
@@ -72,7 +72,7 @@ describe("lưu tìm kiếm", () => {
   test("không có attr thì không tạo khóa attr", () => assert.equal("attr" in paramsToSavedQuery({ q: "x" }), false));
   test("tọa độ là số", () => assert.equal(paramsToSavedQuery({ lat: "10.5" }).lat, 10.5));
   test("đường dẫn ngược lại trang tìm kiếm", () =>
-    assert.equal(savedQueryToHref({ page: 1, pageSize: 24, q: "mai vang", gardenOnly: true, attr: { chieuCao: "120" } }), "/tim-kiem?q=mai+vang&gardenOnly=true&attr.chieuCao=120"));
+    assert.equal(savedQueryToHref({ page: 1, pageSize: 24, q: "mai vang", attr: { chieuCao: "120" } }), "/tim-kiem?q=mai+vang&attr.chieuCao=120"));
   test("khứ hồi giữ nguyên bộ lọc", () => {
     const href = savedQueryToHref(paramsToSavedQuery({ q: "bonsai", provinceId: "79", "attr.dang": "Trực" }));
     assert.deepEqual(Object.fromEntries(new URLSearchParams(href.split("?")[1])), { q: "bonsai", provinceId: "79", "attr.dang": "Trực" });

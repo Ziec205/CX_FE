@@ -16,7 +16,7 @@ export function CompareToggle({ item }: { item: CompareItem }) {
   const [full, setFull] = useState(false);
   const on = has(item.id);
   return (
-    <div className="rounded-2xl bg-white p-4 ring-1 ring-stone-200">
+    <div className="cx-card p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <button type="button" aria-pressed={on} onClick={() => setFull(!toggle(item))}
           className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ring-1 ${on ? "bg-emerald-800 text-white ring-emerald-800" : "bg-white ring-stone-300 hover:ring-emerald-700"}`}>

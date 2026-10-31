@@ -33,7 +33,7 @@ export default function RentalsPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-4xl font-extrabold text-emerald-900">Lịch thuê cây</h1>
+      <h1 className="cx-h1">Lịch thuê cây</h1>
       <div className="flex gap-2">
         {(["renter", "owner"] as const).map((r) => (
           <button key={r} onClick={() => { setItems(undefined); setRole(r); }} className={`rounded-full px-4 py-2 ${role === r ? "bg-emerald-800 text-white" : "border border-stone-300 bg-white"}`}>
@@ -43,7 +43,7 @@ export default function RentalsPage() {
       </div>
       {error && <Alert>{error}</Alert>}
       {items?.length === 0 && <p className="text-stone-500">Chưa có lịch thuê.</p>}
-      <ul className="divide-y divide-stone-100 overflow-hidden rounded-2xl border border-stone-200 bg-white">
+      <ul className="divide-y divide-stone-100 overflow-hidden cx-card-flush">
         {items?.map((r) => (
           <li key={r.id}>
             <Link href={`/thue/${r.id}`} className="flex flex-wrap items-center justify-between gap-2 p-4 hover:bg-stone-50">

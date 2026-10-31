@@ -2,7 +2,7 @@ export function PageTitle({ title, subtitle, action }: { title: string; subtitle
   return (
     <div className="mb-6 flex items-start justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-semibold">{title}</h1>
+        <h1 className="font-display text-2xl font-bold text-emerald-900">{title}</h1>
         {subtitle && <p className="text-sm text-stone-500">{subtitle}</p>}
       </div>
       {action}

@@ -25,7 +25,7 @@ export function NotificationBell() {
         <path d="M10 20a2 2 0 0 0 4 0" strokeLinecap="round" />
       </svg>
       {count > 0 && (
-        <span className="absolute -right-2 -top-1.5 min-w-5 rounded-full bg-red-600 px-1 text-center text-[11px] font-bold leading-5 text-white">
+        <span className="absolute -right-2 -top-1.5 min-w-5 rounded-full bg-red-600 px-1 text-center text-xs font-bold leading-5 text-white">
           {count > 99 ? "99+" : count}
         </span>
       )}

@@ -5,7 +5,6 @@ import { Alert, Card, PageTitle } from "@/admin/components/ui";
 import { api, errorText } from "@/admin/lib/api";
 
 const INFO: Record<string, [string, string]> = {
-  escrow: ["Giao dịch đảm bảo", "Chỉ bật khi đã ký hợp đồng đối tác trung gian thanh toán và kế toán thuế xác nhận (BR-ESC-05)."],
   community: ["Cộng đồng", "Hỏi đáp, khoe cây, chia sẻ kinh nghiệm."],
   "ai.identify": ["AI gợi ý loài khi đăng tin", "Cần cấu hình nhà cung cấp (Ai:Provider, Ai:ApiKey) trên server."],
   "search.image": ["Tìm bằng ảnh", "Dùng chung nhà cung cấp AI nhận diện; khách 5 lượt/ngày."],

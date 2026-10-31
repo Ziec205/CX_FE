@@ -8,7 +8,7 @@ import { publicGet } from "@/lib/server";
 import type { SearchResult } from "@/lib/types";
 import { ReviewBox, type ReviewList } from "./ReviewBox";
 
-interface PublicUser { id: string; displayName: string; provinceId?: string | null; flags: { hasVerifiedGarden: boolean; hasActivePlan: boolean; isProSeller: boolean }; createdAt: string }
+interface PublicUser { id: string; displayName: string; provinceId?: string | null; createdAt: string }
 interface Stats { responseRate?: number | null; avgResponseMinutes?: number | null; sample: number }
 
 type Props = { params: Promise<{ id: string }> };
@@ -31,13 +31,10 @@ export default async function SellerPage({ params }: Props) {
 
   return (
     <div className="space-y-6">
-      <section className="flex flex-wrap items-start justify-between gap-4 rounded-2xl border border-stone-200 bg-white p-6">
+      <section className="flex flex-wrap items-start justify-between gap-4 cx-card">
         <div className="space-y-1">
-          <h1 className="text-3xl text-emerald-800">{user.displayName}</h1>
+          <h1 className="cx-h1">{user.displayName}</h1>
           <div className="flex flex-wrap gap-2 text-sm">
-            {user.flags.hasVerifiedGarden ? <span className="rounded bg-emerald-50 px-2 py-0.5 text-emerald-800">Nhà vườn/Shop đã xác minh</span>
-              : user.flags.isProSeller ? <span className="rounded bg-stone-100 px-2 py-0.5">Bán chuyên</span>
-              : <span className="rounded bg-stone-100 px-2 py-0.5">Cá nhân</span>}
             {user.provinceId && <span className="text-stone-600">{provinceName(user.provinceId)}</span>}
             <span className="text-stone-600">Tham gia {new Date(user.createdAt).toLocaleDateString("vi-VN")}</span>
           </div>
@@ -50,7 +47,7 @@ export default async function SellerPage({ params }: Props) {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-2xl text-emerald-800">Tin đang đăng ({listings?.total ?? 0})</h2>
+        <h2 className="cx-h2">Tin đang đăng ({listings?.total ?? 0})</h2>
         {listings && listings.items.length > 0 ? <ListingGrid items={listings.items} /> : <p className="text-stone-500">Chưa có tin nào.</p>}
       </section>
 

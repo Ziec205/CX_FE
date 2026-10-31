@@ -1,5 +1,5 @@
 const NUM = new Set(["priceMin", "priceMax", "lat", "lng", "radiusKm"]);
-const BOOL = new Set(["gardenOnly", "escrowOnly", "realPhotoOnly"]);
+const BOOL = new Set(["realPhotoOnly"]);
 
 /** Tham số URL trang tìm kiếm → ListingQuery để lưu tìm kiếm (03 §5.4). */
 export function paramsToSavedQuery(params: Record<string, string>) {

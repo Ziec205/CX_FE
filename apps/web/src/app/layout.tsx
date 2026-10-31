@@ -39,8 +39,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
               <Link href="/cong-dong" className="hover:text-white">Cộng đồng</Link>
               <Link href="/thu-vien" className="hover:text-white">Thư viện cây</Link>
               <Link href="/tim-bang-anh" className="hover:text-white">Tìm bằng ảnh</Link>
-              <Link href="/ban-do" className="hover:text-white">Bản đồ nhà vườn</Link>
-              <Link href="/nha-vuon" className="hover:text-white">Dành cho Nhà vườn/Shop</Link>
               <Link href="/tro-ly-ai" className="hover:text-white">Trợ lý AI</Link>
               <Link href="/goi" className="hover:text-white">Gói Xanh Plus / Pro</Link>
               <Link href="/vi" className="hover:text-white">Ví Xu Xanh</Link>

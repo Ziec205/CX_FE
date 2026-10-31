@@ -12,7 +12,8 @@ import { api, errorText, type ApiError } from "@/lib/api";
 import { priceLabel } from "@/lib/format";
 import { MAX_USES_PER_LISTING, PLANT_USES } from "@/lib/plantUses";
 import { provinceName, PROVINCES } from "@/lib/provinces";
-import type { AttributeDefinition, Category, CategoryTree, ListingDetail, Me, Species } from "@/lib/types";
+import Link from "next/link";
+import type { AttributeDefinition, Category, CategoryTree, ListingDetail, ListingQuota, Me, Species } from "@/lib/types";
 
 type ListingType = "Sell" | "Buy" | "Rent" | "Give";
 const TYPES: [ListingType, string, string][] = [
@@ -32,7 +33,7 @@ export default function PostListingPage() {
 /** Khối form có đánh số: các bước đăng tin thực sự là một trình tự. */
 function Step({ n, title, hint, id, children }: { n: number; title: string; hint?: string; id: string; children: React.ReactNode }) {
   return (
-    <section id={id} aria-labelledby={`${id}-t`} className="scroll-mt-40 rounded-3xl bg-white p-5 ring-1 ring-stone-200 sm:p-7">
+    <section id={id} aria-labelledby={`${id}-t`} className="scroll-mt-40 cx-card">
       <div className="mb-5 flex items-start gap-3">
         <span aria-hidden className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-800 font-display font-bold text-white">{n}</span>
         <div>
@@ -83,7 +84,9 @@ function PostListingForm() {
   const [coords, setCoords] = useState<{ lat: number; lng: number }>();
   const [locating, setLocating] = useState(false);
   const [pickup, setPickup] = useState<string[]>(["PICKUP"]);
-  const [escrow, setEscrow] = useState(false);
+  const [quota, setQuota] = useState<ListingQuota>();
+  /** Số Xu cần trả khi đã hết lượt đăng miễn phí trong tháng: hiện bước xác nhận trước khi trừ ví. */
+  const [feeXu, setFeeXu] = useState<number>();
   const [error, setError] = useState<string[]>();
   const [busy, setBusy] = useState(false);
   const [pendingAttrs, setPendingAttrs] = useState<Record<string, unknown>>();
@@ -97,6 +100,8 @@ function PostListingForm() {
       setMe(m); setTree(t);
       if (!editId) setProvinceId(m.provinceId ?? "");
     }, (e) => { if (!cancelled) setError([errorText(e)]); });
+    // Hạn mức đăng tin tháng này, để báo trước khi tin bị tính Xu.
+    if (!editId) api<ListingQuota>("me/listing-quota").then((q) => { if (!cancelled) setQuota(q); }, () => {});
     return () => { cancelled = true; };
   }, [editId]);
 
@@ -117,7 +122,7 @@ function PostListingForm() {
       setNeededBy(d.neededBy ? d.neededBy.slice(0, 10) : "");
       if (c.rent) setRent({ unit: c.rent.unit, pricePerUnit: String(c.rent.pricePerUnit), deposit: String(c.rent.deposit), minUnits: String(c.rent.minUnits) });
       setWant(d.wantInExchange ?? ""); setQuantity(String(d.quantity)); setUnit(c.unit); setProvinceId(c.provinceId);
-      setPickup(d.pickupOptions); setEscrow(c.escrow); setUses(d.uses ?? []);
+      setPickup(d.pickupOptions); setUses(d.uses ?? []);
       if (d.lat != null && d.lng != null) setCoords({ lat: d.lat, lng: d.lng });
       setPhotos(d.photoUrls.map((u) => ({ id: u.split("/")[2], preview: u.replace("/full.webp", "/thumb.webp") })));
       setPendingAttrs(d.attributes);
@@ -168,7 +173,7 @@ function PostListingForm() {
   if (!me) return error ? <Alert>{error[0]}</Alert> : <div className="mx-auto max-w-3xl space-y-4">{[0, 1, 2].map((i) => <div key={i} className="cx-shimmer h-40 rounded-3xl" />)}</div>;
   if (!me.canPost) return (
     <div className="mx-auto max-w-lg space-y-4">
-      <h1 className="text-4xl font-extrabold text-emerald-900">Đăng tin</h1>
+      <h1 className="cx-h1">Đăng tin</h1>
       <ProfileGate me={me} onDone={(m) => { setMe(m); setProvinceId(m.provinceId ?? ""); }} />
     </div>
   );
@@ -186,9 +191,9 @@ function PostListingForm() {
   const num = (s: string) => (s === "" ? null : Number(s));
   const showErrors = (list: string[]) => { setError(list); requestAnimationFrame(() => errorRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })); };
 
-  async function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent, acceptFeeXu?: number) {
     e.preventDefault();
-    setError(undefined); setNotice(undefined);
+    setError(undefined); setNotice(undefined); setFeeXu(undefined);
     const problems = checklist.filter(([, ok]) => !ok).map(([label]) => label);
     if (type === "Sell" && priceMode === "Negotiable" && Number(refMin) > Number(refMax)) problems.push("Khoảng giá: số \"từ\" phải nhỏ hơn số \"đến\"");
     if (problems.length) return showErrors(problems.map((p) => `Còn thiếu: ${p.toLowerCase()}`));
@@ -204,7 +209,7 @@ function PostListingForm() {
       rent: type === "Rent" ? { unit: rent.unit, pricePerUnit: Number(rent.pricePerUnit), deposit: Number(rent.deposit || 0), minUnits: Number(rent.minUnits || 1) } : null,
       wantInExchange: type === "Give" ? wantInExchange : null,
       quantity: Number(quantity) || 1, unit, attributes: attrs, uses, provinceId, lat: coords?.lat ?? null, lng: coords?.lng ?? null,
-      pickupOptions: pickup, escrowEnabled: escrow, mediaIds: photos.map((p) => p.id), verificationMediaId: verification[0]?.id ?? null,
+      pickupOptions: pickup, mediaIds: photos.map((p) => p.id), verificationMediaId: verification[0]?.id ?? null,
     };
     try {
       if (editId) {
@@ -215,11 +220,20 @@ function PostListingForm() {
         } else router.push(r.status === "Active" ? `/tin/${r.id}` : "/tai-khoan");
         return;
       }
-      const r = await api<{ id: string; status: string; rejectReason?: string }>("listings", { method: "POST", json: { listing, submit: true } });
+      const r = await api<{ id: string; status: string; rejectReason?: string }>("listings", { method: "POST", json: { listing, submit: true, acceptFeeXu } });
       if (r.status === "Active") router.push(`/tin/${r.id}`);
       else router.push(`/tai-khoan?posted=${r.status}`);
     } catch (err) {
-      const d = (err as ApiError).details;
+      const ae = err as ApiError;
+      if (ae.code === "LISTING_FEE_REQUIRED") {
+        // Hết lượt miễn phí tháng này: hỏi người dùng có trả Xu không, không tự trừ.
+        setFeeXu((ae.details as { xu: number }).xu);
+        api<ListingQuota>("me/listing-quota").then(setQuota, () => {});
+        setBusy(false);
+        errorRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+      const d = ae.details;
       showErrors(Array.isArray(d) ? d.map((x) => (x as { message: string }).message) : [errorText(err)]);
       setBusy(false);
     }
@@ -235,7 +249,7 @@ function PostListingForm() {
 
   return (
     <form onSubmit={submit} noValidate className="mx-auto max-w-6xl">
-      <h1 className="mb-6 text-4xl font-extrabold text-emerald-900 sm:text-5xl">{editId ? "Sửa tin" : "Đăng tin"}</h1>
+      <h1 className="mb-6 cx-h1">{editId ? "Sửa tin" : "Đăng tin"}</h1>
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="min-w-0 space-y-5">
@@ -275,7 +289,7 @@ function PostListingForm() {
                   ))}
                 </div>
                 {root && (
-                  <div className="mt-3 flex flex-wrap gap-2 rounded-2xl bg-stone-50 p-3">
+                  <div className="mt-3 flex flex-wrap gap-2 cx-soft">
                     {root.children.map((s) => (
                       <button type="button" key={s.id} aria-pressed={categoryId === s.id} onClick={() => { setCategoryId(s.id); setSpecies(undefined); }}
                         className={`rounded-full px-3.5 py-1.5 text-sm ring-1 ${categoryId === s.id ? "bg-wood-400 font-semibold text-stone-900 ring-wood-400" : "bg-white ring-stone-300 hover:ring-emerald-700"}`}>{s.name}</button>
@@ -428,7 +442,7 @@ function PostListingForm() {
                 ) : (
                   <button type="button" onClick={locate} disabled={locating} className={`${btn.secondary} w-full`}>{locating ? "Đang lấy vị trí…" : "Dùng vị trí hiện tại"}</button>
                 )}
-                <p className="mt-1 text-sm text-stone-500">{me.flags.hasActivePlan ? "Nhà vườn/Shop: hiện đúng vị trí vườn." : "Người bán cá nhân: vị trí được làm tròn khoảng 1 km để giữ kín địa chỉ nhà."}</p>
+                <p className="mt-1 text-sm text-stone-500">Vị trí được làm tròn khoảng 1 km để giữ kín địa chỉ nhà.</p>
               </div>
             </div>
             <div role="group" aria-labelledby="pickup-label" className="mt-5">
@@ -440,23 +454,33 @@ function PostListingForm() {
                 })}
               </div>
             </div>
-            {type === "Sell" && me.flags.hasVerifiedGarden && (
-              <label className="mt-5 flex items-start gap-3 rounded-2xl bg-emerald-50 p-4">
-                <input type="checkbox" checked={escrow} onChange={(e) => setEscrow(e.target.checked)} className="mt-1 h-4 w-4 accent-emerald-700" />
-                <span><b className="block">Nhận Giao dịch đảm bảo</b><span className="text-sm text-stone-600">Chạm Xanh giữ tiền của người mua đến khi họ nhận cây, rồi mới chuyển cho bạn.</span></span>
-              </label>
-            )}
           </Step>
 
           <div ref={errorRef} className="space-y-3">
             {error && <Alert><ul className="list-disc space-y-0.5 pl-4">{error.map((e) => <li key={e}>{e}</li>)}</ul></Alert>}
             {notice && <Alert kind="ok">{notice}</Alert>}
+            {feeXu != null && quota && (
+              <div className="cx-card space-y-3 bg-wood-50 ring-wood-200">
+                <p className="cx-title">Bạn đã dùng hết {quota.monthlyQuota} tin miễn phí tháng này</p>
+                <p className="cx-body">
+                  Tin này tính phí <b>{feeXu} Xu</b> ({(feeXu * 1000).toLocaleString("vi-VN")}đ), trừ vào ví Xu. Ví đang có <b>{quota.walletBalance} Xu</b>.
+                  {quota.plan === "Free" && <> Gói Xanh Plus có 30 tin mỗi tháng, tin thêm chỉ 5 Xu.</>}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {quota.walletBalance >= feeXu
+                    ? <button type="button" disabled={busy} onClick={(e) => submit(e, feeXu)} className={btn.primary}>Trả {feeXu} Xu và đăng tin</button>
+                    : <Link href="/vi" className={btn.primary}>Nạp Xu</Link>}
+                  {quota.plan !== "Pro" && <Link href="/goi" className={btn.secondary}>Xem gói Plus / Pro</Link>}
+                  <button type="button" onClick={() => setFeeXu(undefined)} className={btn.ghost}>Để sau</button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Xem trước + việc còn thiếu. Điện thoại: nằm cuối form, nút đăng dính dưới đáy. */}
         <aside className="space-y-4 lg:sticky lg:top-36 lg:self-start">
-          <div className="rounded-3xl bg-white p-4 ring-1 ring-stone-200">
+          <div className="cx-card p-4">
             <p className="mb-3 text-sm font-semibold text-stone-600">Tin sẽ hiện trên chợ như thế này</p>
             <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-emerald-100">
               {photos[0] ? (
@@ -470,7 +494,21 @@ function PostListingForm() {
             <p className="text-sm text-stone-500">{provinceId ? provinceName(provinceId) : "Chưa chọn tỉnh"}</p>
           </div>
 
-          <div className="rounded-3xl bg-white p-5 ring-1 ring-stone-200">
+          {quota && !editId && (
+            <div className="cx-card">
+              <p className="cx-eyebrow">Gói {quota.planName} · tháng này</p>
+              <p className="cx-title mt-1">
+                {quota.remaining > 0 ? <>Còn {quota.remaining}/{quota.monthlyQuota} tin miễn phí</> : <>Tin tiếp theo: {quota.nextCostXu} Xu</>}
+              </p>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-stone-100" aria-hidden>
+                <div className="h-full rounded-full bg-emerald-600" style={{ width: `${Math.min(100, (quota.usedThisMonth / Math.max(1, quota.monthlyQuota)) * 100)}%` }} />
+              </div>
+              <p className="cx-meta mt-2">Tin hiển thị {quota.listingDays} ngày. Hết lượt miễn phí thì mỗi tin {quota.extraListingXu} Xu ({(quota.extraListingXu * 1000).toLocaleString("vi-VN")}đ).</p>
+              {quota.plan !== "Pro" && <Link href="/goi" className="cx-link mt-1 inline-block text-sm">Đăng nhiều hơn với gói Plus / Pro</Link>}
+            </div>
+          )}
+
+          <div className="cx-card">
             <p className="mb-2 font-display text-lg font-bold">{remaining === 0 ? "Đủ thông tin để đăng" : `Còn ${remaining} mục cần điền`}</p>
             <ul className="space-y-1.5 text-sm">
               {checklist.map(([label, ok, target]) => (

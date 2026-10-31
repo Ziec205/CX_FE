@@ -42,9 +42,9 @@ function SimulatedCheckout() {
         {payment && (
           <>
             <p className="text-stone-500">Thanh toán gói</p>
-            <h1 className="text-3xl font-extrabold text-emerald-900">{payment.plan === "Pro" ? "Xanh Pro" : "Xanh Plus"} · {payment.months} tháng</h1>
+            <h1 className="cx-h1">{payment.plan === "Pro" ? "Xanh Pro" : "Xanh Plus"} · {payment.months} tháng</h1>
             <p className="mt-2 font-display text-4xl font-extrabold">{vnd(payment.amountVnd)}</p>
-            <div aria-hidden className="mx-auto my-6 grid h-44 w-44 grid-cols-7 gap-1 rounded-2xl bg-stone-50 p-3 ring-1 ring-stone-200">
+            <div aria-hidden className="mx-auto my-6 grid h-44 w-44 grid-cols-7 gap-1 cx-soft ring-1 ring-stone-200">
               {Array.from({ length: 49 }, (_, i) => <span key={i} className={(i * 7 + payment.orderCode) % 3 === 0 ? "rounded-sm bg-stone-900" : ""} />)}
             </div>
             <p className="text-sm text-stone-500">Mã đơn {payment.orderCode}</p>

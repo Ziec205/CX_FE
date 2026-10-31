@@ -45,7 +45,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
       </div>
       <div className="order-3 min-w-0 space-y-4 lg:col-start-1 lg:row-start-2">
         <div className="space-y-5">
-          <dl className="grid rounded-2xl border border-stone-200 bg-white p-5 grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
+          <dl className="grid cx-card grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-3">
             {species && <div><dt className="text-stone-500">Loài</dt><dd><Link href={`/thu-vien/${species.id}`} className="text-emerald-700 hover:underline">{species.commonName}</Link></dd></div>}
             {category && <div><dt className="text-stone-500">Danh mục</dt><dd><Link href={`/tim-kiem?categoryId=${category.id}`} className="hover:underline">{category.name}</Link></dd></div>}
             {l.type !== "Buy" && <div><dt className="text-stone-500">Còn</dt><dd>{l.available} {l.unit}</dd></div>}
@@ -57,7 +57,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
             {d.neededBy && <div><dt className="text-stone-500">Cần trước</dt><dd>{new Date(d.neededBy).toLocaleDateString("vi-VN")}</dd></div>}
           </dl>
 
-          <h2 className="text-2xl font-bold text-emerald-900">Mô tả</h2>
+          <h2 className="cx-h2">Mô tả</h2>
           <p className="whitespace-pre-line text-base leading-relaxed text-stone-700">{d.description}</p>
           {d.wantInExchange && <p className="mt-2 text-sm"><b>Muốn đổi lấy:</b> {d.wantInExchange}</p>}
           <p className="mt-3 text-sm"><b>Hình thức nhận:</b> {d.pickupOptions.map((p) => PICKUP[p] ?? p).join(" · ")}</p>
@@ -71,7 +71,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
 
         {species && (
           <div className="rounded-2xl bg-emerald-50 p-6 text-[15px]">
-            <h2 className="mb-3 text-2xl text-emerald-800">Về cây {species.commonName}{species.scientificName && <i className="font-normal text-stone-500"> ({species.scientificName})</i>}</h2>
+            <h2 className="mb-3 cx-h2">Về cây {species.commonName}{species.scientificName && <i className="font-normal text-stone-500"> ({species.scientificName})</i>}</h2>
             <ul className="space-y-1">
               {species.aliases.length > 0 && <li>Tên khác: {species.aliases.join(", ")}</li>}
               {species.light && <li>Ánh sáng: {species.light}</li>}
@@ -88,7 +88,6 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
             <span className="rounded-full bg-emerald-100 px-3 py-1 font-bold text-emerald-700">{TYPE_LABEL[l.type]}</span>
             {l.status === "SoldOut" && <span className="rounded-full bg-stone-200 px-3 py-1 font-bold">Đã bán hết</span>}
             {l.realPhoto && <span className="rounded-full bg-wood-100 px-3 py-1 font-bold text-wood-800">Ảnh chụp thực tế</span>}
-            {l.escrow && <span className="rounded-full bg-emerald-800 px-3 py-1 font-bold text-stone-50">Giao dịch đảm bảo</span>}
           </div>
           <h1 className="text-3xl font-bold text-stone-900 lg:text-4xl">{l.title}</h1>
           <p><span className="cx-tag text-2xl lg:text-3xl">{priceLabel(l)}</span></p>

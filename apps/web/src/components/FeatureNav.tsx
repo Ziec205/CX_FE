@@ -71,7 +71,7 @@ export function FeatureTabBar() {
           return (
             <li key={f.key}>
               <Link href={f.href} aria-current={on ? "page" : undefined}
-                className={`flex flex-col items-center gap-1 py-2 text-[11px] font-semibold ${on ? "text-emerald-800" : f.key === "water" ? "text-water-700" : "text-stone-600"}`}>
+                className={`flex flex-col items-center gap-1 py-2 text-xs font-semibold ${on ? "text-emerald-800" : f.key === "water" ? "text-water-700" : "text-stone-600"}`}>
                 <span className={`flex h-8 w-12 items-center justify-center rounded-full ${market ? "bg-wood-400 text-stone-900" : on ? "bg-emerald-100" : ""}`}>
                   <Icon d={f.icon} />
                 </span>

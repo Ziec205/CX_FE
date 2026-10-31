@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 type SP = Record<string, string | string[] | undefined>;
 
 /** Tham số được giữ lại trên URL. Chợ cây luôn là tin Bán. */
-const KEYS = ["q", "rootCategoryId", "categoryId", "use", "provinceId", "priceMin", "priceMax", "postedWithinDays", "sort", "lat", "lng", "radiusKm", "gardenOnly", "realPhotoOnly", "escrowOnly"];
+const KEYS = ["q", "rootCategoryId", "categoryId", "use", "provinceId", "priceMin", "priceMax", "postedWithinDays", "sort", "lat", "lng", "radiusKm", "realPhotoOnly"];
 
 const POSTED: [string, string][] = [["", "Mọi lúc"], ["1", "24 giờ qua"], ["3", "3 ngày"], ["7", "7 ngày"], ["30", "30 ngày"]];
 const PRICE_PRESETS: [string, string, string][] = [
@@ -54,7 +54,7 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
     ?? categories?.find((c) => c.children.some((s) => s.id === v("categoryId")));
   const leaf = root?.children.find((s) => s.id === v("categoryId"));
   const sort = v("sort");
-  const activeCount = ["q", "use", "provinceId", "priceMin", "priceMax", "postedWithinDays", "lat", "gardenOnly", "realPhotoOnly", "escrowOnly"].filter((k) => v(k)).length;
+  const activeCount = ["q", "use", "provinceId", "priceMin", "priceMax", "postedWithinDays", "lat", "realPhotoOnly"].filter((k) => v(k)).length;
 
   const filterForm = (
     <form action="/cho-cay" className="space-y-4 border-t border-stone-100 p-4 text-sm">
@@ -111,15 +111,13 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
       </fieldset>
 
       <div className="space-y-2">
-        <label className="flex items-center gap-2"><input type="checkbox" name="gardenOnly" value="true" defaultChecked={v("gardenOnly") === "true"} />Chỉ Nhà vườn/Shop</label>
         <label className="flex items-center gap-2"><input type="checkbox" name="realPhotoOnly" value="true" defaultChecked={v("realPhotoOnly") === "true"} />Ảnh chụp thực tế</label>
-        <label className="flex items-center gap-2"><input type="checkbox" name="escrowOnly" value="true" defaultChecked={v("escrowOnly") === "true"} />Có Giao dịch đảm bảo</label>
       </div>
 
       <button className="w-full rounded-full bg-emerald-800 py-2.5 font-bold text-stone-50 hover:bg-emerald-700">Áp dụng</button>
       <Suspense><NearMeButton basePath="/cho-cay" /></Suspense>
       {activeCount > 0 && (
-        <Link href={href({ q: "", use: "", provinceId: "", priceMin: "", priceMax: "", postedWithinDays: "", lat: "", lng: "", radiusKm: "", sort: "", gardenOnly: "", realPhotoOnly: "", escrowOnly: "" })}
+        <Link href={href({ q: "", use: "", provinceId: "", priceMin: "", priceMax: "", postedWithinDays: "", lat: "", lng: "", radiusKm: "", sort: "", realPhotoOnly: "" })}
           className="block text-center text-emerald-800 underline">Xóa bộ lọc</Link>
       )}
     </form>
@@ -160,13 +158,13 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
       <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
         <aside className="space-y-4">
           {/* Điện thoại: thu gọn, mở khi cần (tự mở nếu đang có bộ lọc). Máy tính: luôn hiện ở cột trái. */}
-          <details open={activeCount > 0} className="rounded-2xl border border-stone-200 bg-white lg:hidden">
+          <details open={activeCount > 0} className="cx-card-flush lg:hidden">
             <summary className="flex cursor-pointer list-none items-center justify-between p-4 font-bold text-emerald-900">
               <span>Bộ lọc {activeCount > 0 && <span className="rounded-full bg-emerald-800 px-2 text-xs text-stone-50">{activeCount}</span>}</span><span aria-hidden className="text-stone-400">▾</span>
             </summary>
             {filterForm}
           </details>
-          <div className="hidden rounded-2xl border border-stone-200 bg-white lg:block">
+          <div className="hidden cx-card-flush lg:block">
             <p className="flex items-center justify-between p-4 font-bold text-emerald-900">Bộ lọc{activeCount > 0 && <span className="rounded-full bg-emerald-800 px-2 text-xs text-stone-50">{activeCount}</span>}</p>
             {filterForm}
           </div>
@@ -185,12 +183,6 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
           </div>
 
           {!result && <p className="rounded-2xl bg-red-50 p-4 text-red-800">Không tải được danh sách tin. Máy chủ có thể đang khởi động, hãy tải lại trang sau ít phút.</p>}
-          {result && result.priority.length > 0 && (
-            <div className="rounded-2xl bg-wood-100 p-4 ring-1 ring-wood-200">
-              <p className="mb-3 font-display text-lg font-bold text-wood-800">Tin ưu tiên</p>
-              <ListingGrid items={result.priority} morph={false} />
-            </div>
-          )}
           {result && <MarketFeed key={query} query={query} initial={result} groupByDate={!sort} />}
         </div>
       </div>

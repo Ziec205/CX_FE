@@ -84,7 +84,7 @@ function Message({ tone, title, children }: { tone: "ok" | "wait" | "err"; title
   const color = { ok: "bg-emerald-50 ring-emerald-200", wait: "bg-wood-100 ring-wood-200", err: "bg-white ring-stone-200" }[tone];
   return (
     <div className={`mx-auto max-w-lg rounded-3xl p-8 text-center ring-1 ${color}`}>
-      <h1 className="text-3xl font-extrabold text-emerald-900">{title}</h1>
+      <h1 className="cx-h1">{title}</h1>
       <div className="mt-3 text-[15px] text-stone-700">{children}</div>
     </div>
   );
