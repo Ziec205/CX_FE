@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
+import { PayQr } from "@/components/PayQr";
 import { useMyPlan } from "@/components/PlanGate";
 import { api, errorText, type ApiError } from "@/lib/api";
 import { vnd } from "@/lib/format";
@@ -36,6 +37,7 @@ function Plans() {
   const [history, setHistory] = useState<PlanPayment[]>();
   const [busy, setBusy] = useState<PlanCode>();
   const [error, setError] = useState<string>();
+  const [qr, setQr] = useState<PlanPayment>();
 
   useEffect(() => {
     api<{ plans: PlanInfo[] }>("plans").then((r) => setPlans(r.plans), (e) => setError(errorText(e)));
@@ -48,7 +50,9 @@ function Plans() {
     setBusy(code); setError(undefined);
     try {
       const pay = await api<PlanPayment>("plans/checkout", { method: "POST", json: { plan: code, months, returnOrigin: window.location.origin } });
-      if (pay.checkoutUrl) window.location.assign(pay.checkoutUrl);
+      // Có mã QR: hiện ngay trên trang (vẫn có nút mở trang PayOS); không có thì sang trang thanh toán như cũ.
+      if (pay.qrCode) { setQr(pay); setBusy(undefined); }
+      else if (pay.checkoutUrl) window.location.assign(pay.checkoutUrl);
     } catch (e) {
       setError((e as ApiError).status === 401 ? "Vui lòng đăng nhập để mua gói." : errorText(e));
       setBusy(undefined);
@@ -58,6 +62,7 @@ function Plans() {
   const current = mine?.plan.code ?? "Free";
   return (
     <div className="space-y-8">
+      {qr && <PayQr payment={qr} onClose={() => setQr(undefined)} />}
       <header className="mx-auto max-w-3xl text-center">
         <h1 className="cx-h1">Chọn gói cho khu vườn của bạn</h1>
         <p className="mt-3 text-lg text-stone-600">Lưu thêm cây trong Hồ sơ vườn, hỏi Trợ lý AI nhiều hơn, và để AI giúp bạn mua bán cây.</p>
@@ -151,7 +156,8 @@ function Plans() {
                 <span className="flex items-center gap-3 text-sm text-stone-500">
                   {new Date(h.createdAt).toLocaleString("vi-VN", { dateStyle: "short", timeStyle: "short" })}
                   <span className={`rounded-full px-2.5 py-0.5 font-semibold ${h.status === "Paid" ? "bg-emerald-50 text-emerald-800" : h.status === "Pending" ? "bg-wood-100 text-wood-800" : "bg-stone-100 text-stone-600"}`}>{STATUS[h.status]}</span>
-                  {h.status === "Pending" && h.checkoutUrl && new Date(h.expiresAt) > new Date() && <a href={h.checkoutUrl} className="font-semibold text-emerald-800 underline">Thanh toán tiếp</a>}
+                  {h.status === "Pending" && h.qrCode && new Date(h.expiresAt) > new Date() && <button type="button" onClick={() => setQr(h)} className="font-semibold text-emerald-800 underline">Hiện mã QR</button>}
+                  {h.status === "Pending" && !h.qrCode && h.checkoutUrl && new Date(h.expiresAt) > new Date() && <a href={h.checkoutUrl} className="font-semibold text-emerald-800 underline">Thanh toán tiếp</a>}
                 </span>
               </li>
             ))}

@@ -60,7 +60,11 @@ export interface CareReminder {
 }
 export interface MyPlant {
   id: string; name: string; speciesId?: string | null; speciesName?: string | null; location?: string | null; acquiredAt?: string | null;
-  note?: string | null; createdAt: string; photos: MediaDto[]; reminders: CareReminder[];
+  note?: string | null; createdAt: string; reminders: CareReminder[];
+  /** Ảnh minh họa loài trong danh mục. Ảnh cây thật chỉ lưu trên điện thoại (app Chạm Xanh), máy chủ không giữ. */
+  speciesImageUrl?: string | null;
+  /** Luôn rỗng (giữ để tương thích). */
+  photos: MediaDto[];
   /** Vượt số cây của gói hiện tại (gói đã hết hạn): xem/xóa được, không sửa, nhắc lịch tạm dừng. */
   locked: boolean;
 }
@@ -91,6 +95,8 @@ export interface ListingQuota {
 export interface MyPlan { plan: PlanInfo; endAt?: string | null; usage: { gardenPlants: number; aiToday: number; aiRemaining: number } }
 export interface PlanPayment {
   id: string; plan: PlanCode; months: number; amountVnd: number; orderCode: number; gateway: string; checkoutUrl?: string | null;
+  /** Chuỗi VietQR của PayOS để hiện mã QR ngay trên trang/app. */
+  qrCode?: string | null;
   status: "Pending" | "Paid" | "Cancelled" | "Expired"; createdAt: string; expiresAt: string; paidAt?: string | null;
   appliedPlan?: PlanCode | null; appliedEndAt?: string | null;
 }

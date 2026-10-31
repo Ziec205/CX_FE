@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { EmailForm } from "@/components/EmailForm";
-import { PhotoPicker, type UploadedPhoto } from "@/components/PhotoPicker";
 import { UpgradeHint, useMyPlan } from "@/components/PlanGate";
 import { SpeciesPicker, type PickedSpecies } from "@/components/SpeciesPicker";
 import { Alert, Label, Section, btn, field } from "@/components/ui";
@@ -135,7 +134,6 @@ function PlantForm({ plant, onClose, onSaved }: { plant?: MyPlant; onClose: () =
   const [location, setLocation] = useState(plant?.location ?? "");
   const [acquiredAt, setAcquiredAt] = useState(plant?.acquiredAt?.slice(0, 10) ?? "");
   const [note, setNote] = useState(plant?.note ?? "");
-  const [photos, setPhotos] = useState<UploadedPhoto[]>(plant?.photos.map((m) => ({ id: m.id, preview: m.urls.thumb })) ?? []);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
   const [planError, setPlanError] = useState(false);
@@ -145,7 +143,7 @@ function PlantForm({ plant, onClose, onSaved }: { plant?: MyPlant; onClose: () =
     setBusy(true); setError(undefined); setPlanError(false);
     const json = {
       name, speciesId: species?.id ?? null, location: location || null, note: note || null,
-      acquiredAt: acquiredAt ? new Date(acquiredAt).toISOString() : null, mediaIds: photos.map((p) => p.id),
+      acquiredAt: acquiredAt ? new Date(acquiredAt).toISOString() : null,
     };
     try {
       await api(plant ? `me/garden/plants/${plant.id}` : "me/garden/plants", { method: plant ? "PUT" : "POST", json });
@@ -161,7 +159,7 @@ function PlantForm({ plant, onClose, onSaved }: { plant?: MyPlant; onClose: () =
         <Label text="Vị trí đặt"><input value={location} onChange={(e) => setLocation(e.target.value)} className={field} placeholder="Ban công, sân thượng…" /></Label>
         <Label text="Ngày bắt đầu trồng"><input type="date" value={acquiredAt} onChange={(e) => setAcquiredAt(e.target.value)} className={field} /></Label>
         <div className="sm:col-span-2"><Label text="Ghi chú"><textarea value={note} onChange={(e) => setNote(e.target.value)} rows={3} maxLength={2000} className={field} /></Label></div>
-        <div className="sm:col-span-2"><Label text="Ảnh cây"><PhotoPicker value={photos} onChange={setPhotos} max={10} kind="PlantPhoto" /></Label></div>
+        <p className="text-sm text-stone-500 sm:col-span-2">Ảnh cây được lưu ngay trên điện thoại khi bạn dùng app Chạm Xanh. Trên web, cây hiện ảnh minh họa của loài.</p>
         {error && <div className="sm:col-span-2">{planError ? <UpgradeHint plan="Plus">{error}</UpgradeHint> : <Alert>{error}</Alert>}</div>}
         <div className="flex gap-2 sm:col-span-2">
           <button disabled={busy} className={btn.primary}>{busy ? "Đang lưu…" : "Lưu"}</button>
@@ -194,13 +192,13 @@ function PlantCard({ plant, highlighted, canRemind, onEdit, onChanged }: { plant
     try { await api(`me/garden/plants/${plant.id}/reminders/${r.id}`, { method: "DELETE" }); onChanged(); } catch (e) { setError(errorText(e)); }
   }
 
-  const cover = plant.photos[0];
+  const cover = plant.speciesImageUrl;
   return (
     <article id={`plant-${plant.id}`} className={`overflow-hidden rounded-2xl border bg-white ${highlighted ? "border-emerald-600 ring-2 ring-emerald-200" : "border-stone-200"} ${plant.locked ? "opacity-60 grayscale-[0.6]" : ""}`}>
       <div className="flex gap-4 p-4">
         {cover ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={cover.urls.card} alt="" className="h-28 w-28 shrink-0 rounded-xl object-cover" />
+          <img src={cover} alt={plant.speciesName ?? ""} className="h-28 w-28 shrink-0 rounded-xl object-cover" />
         ) : (
           <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-3xl">🌿</div>
         )}
@@ -219,14 +217,6 @@ function PlantCard({ plant, highlighted, canRemind, onEdit, onChanged }: { plant
           </div>
         </div>
       </div>
-      {plant.photos.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto px-4 pb-3">
-          {plant.photos.slice(1).map((m) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img key={m.id} src={m.urls.thumb} alt="" className="h-14 w-14 rounded-lg object-cover" />
-          ))}
-        </div>
-      )}
       <div className="border-t border-water-100 bg-water-50 p-4">
         <div className="mb-2 flex items-center justify-between">
           <h3 className="font-sans text-base font-bold tracking-normal text-water-700">Lời nhắc chăm cây</h3>
