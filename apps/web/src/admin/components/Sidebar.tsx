@@ -27,6 +27,7 @@ const NAV: { group: string; items: { href: string; label: string; perm: string }
   { group: "Hệ thống", items: [
     { href: "/quan-tri/features", label: "Bật/tắt tính năng", perm: "admin.manage" },
     { href: "/quan-tri/admins", label: "Tài khoản quản trị", perm: "admin.manage" },
+    { href: "/quan-tri/agent-tokens", label: "Token trợ lý AI", perm: "admin.manage" },
     { href: "/quan-tri/audit", label: "Nhật ký audit", perm: "reports.view" },
   ] },
 ];
