@@ -188,6 +188,9 @@ function PlantCard({ plant, highlighted, canRemind, onEdit, onChanged }: { plant
       onChanged();
     } catch (e) { setError(errorText(e)); }
   }
+  async function markDone(r: CareReminder) {
+    try { await api(`me/garden/plants/${plant.id}/reminders/${r.id}/done`, { method: "POST" }); onChanged(); } catch (e) { setError(errorText(e)); }
+  }
   async function delReminder(r: CareReminder) {
     try { await api(`me/garden/plants/${plant.id}/reminders/${r.id}`, { method: "DELETE" }); onChanged(); } catch (e) { setError(errorText(e)); }
   }
@@ -232,8 +235,10 @@ function PlantCard({ plant, highlighted, canRemind, onEdit, onChanged }: { plant
               <div>
                 <b>{KIND_LABEL[r.kind]}</b> · {repeatText(r)}
                 <div className="text-xs text-stone-500">{plant.locked ? "Tạm dừng do cây bị khóa" : r.enabled && r.nextAt ? `Lần tới: ${when(r.nextAt)}` : "Đang tắt"}{r.note && ` · ${r.note}`}</div>
+                {r.lastDoneAt && <div className="text-xs font-semibold text-water-700">✓ Đã làm {when(r.lastDoneAt.endsWith("Z") ? r.lastDoneAt : r.lastDoneAt + "Z")}</div>}
               </div>
               <div className="flex gap-2">
+                {!plant.locked && r.enabled && <button onClick={() => markDone(r)} className="rounded-full bg-water-500 px-3 py-1 font-semibold text-white hover:bg-water-700">Đã làm</button>}
                 {!plant.locked && <button onClick={() => setAdding(r)} className="text-emerald-700 hover:underline">Sửa</button>}
                 {!plant.locked && (r.enabled || r.repeat !== "None") && <button onClick={() => toggle(r)} className="text-stone-600 hover:underline">{r.enabled ? "Tắt" : "Bật"}</button>}
                 <button onClick={() => delReminder(r)} className="text-red-700 hover:underline">Xóa</button>

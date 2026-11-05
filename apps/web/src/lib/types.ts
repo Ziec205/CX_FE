@@ -57,6 +57,8 @@ export type ReminderRepeat = "None" | "Daily" | "Weekly" | "Monthly" | "Yearly";
 export interface CareReminder {
   id: string; plantId: string; kind: ReminderKind; note?: string | null; anchorAt: string; repeat: ReminderRepeat; interval: number;
   nextAt?: string | null; lastFiredAt?: string | null; enabled: boolean;
+  /** Lần bấm "Đã làm" gần nhất (trên web hoặc app Chạm Xanh). */
+  lastDoneAt?: string | null;
 }
 export interface MyPlant {
   id: string; name: string; speciesId?: string | null; speciesName?: string | null; location?: string | null; acquiredAt?: string | null;
