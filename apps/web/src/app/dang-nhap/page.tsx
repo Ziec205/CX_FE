@@ -58,28 +58,14 @@ function LoginForm() {
 
   const go = (m: Mode) => { setMode(m); setError(undefined); setPassword(""); setConfirm(""); };
 
-  const tab = (m: Mode, label: string) => (
-    <button type="button" role="tab" aria-selected={mode === m} onClick={() => go(m)}
-      className={`flex-1 rounded-full py-2 text-[15px] font-bold transition ${mode === m ? "bg-white text-emerald-800 shadow-sm" : "text-stone-500 hover:text-emerald-800"}`}>
-      {label}
-    </button>
-  );
-
   const title = { login: "Đăng nhập", register: "Tạo tài khoản", admin: "Đăng nhập quản trị" }[mode];
 
   return (
-    <div className="cx-card mx-auto max-w-sm">
-      {(mode === "login" || mode === "register") ? (
-        <div role="tablist" aria-label="Đăng nhập hoặc tạo tài khoản" className="mb-5 flex gap-1 rounded-full bg-stone-100 p-1">
-          {tab("login", "Đăng nhập")}{tab("register", "Tạo tài khoản")}
-        </div>
-      ) : (
-        <h1 className="cx-h2 mb-3">{title}</h1>
-      )}
+    <div className="mx-auto max-w-sm py-8">
+      <h1 className="mb-6 text-center text-2xl font-bold text-stone-900">{title}</h1>
 
       {mode === "login" && (
         <form onSubmit={login} className="space-y-3">
-          <h1 className="sr-only">Đăng nhập</h1>
           <input value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoCapitalize="none" required autoFocus
             placeholder="Tên đăng nhập" aria-label="Tên đăng nhập" className={field} />
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required
@@ -91,7 +77,6 @@ function LoginForm() {
 
       {mode === "register" && (
         <form onSubmit={register} className="space-y-3">
-          <h1 className="sr-only">Tạo tài khoản</h1>
           <div>
             <input value={username} onChange={(e) => setUsername(e.target.value.toLowerCase())} autoComplete="username" autoCapitalize="none" required autoFocus
               minLength={4} maxLength={30} pattern="[a-z0-9._]{4,30}" placeholder="Tên đăng nhập" aria-label="Tên đăng nhập" aria-describedby="username-hint" className={field} />
@@ -118,9 +103,11 @@ function LoginForm() {
         </form>
       )}
 
-      <div className="mt-5 flex flex-col gap-2 border-t border-stone-100 pt-4 text-center text-sm">
+      <div className="mt-6 flex flex-col gap-3 text-center text-sm">
+        {mode === "login" && <p className="text-stone-600">Bạn chưa có tài khoản? <button type="button" onClick={() => go("register")} className="font-bold text-emerald-600 hover:underline">Đăng ký ngay</button></p>}
+        {mode === "register" && <p className="text-stone-600">Đã có tài khoản? <button type="button" onClick={() => go("login")} className="font-bold text-emerald-600 hover:underline">Đăng nhập</button></p>}
         {mode === "admin" && <button type="button" onClick={() => go("login")} className="text-emerald-700 underline">← Đăng nhập thành viên</button>}
-        {mode !== "admin" && <button type="button" onClick={() => go("admin")} className="text-stone-400 hover:text-stone-600">Đăng nhập quản trị</button>}
+        {mode !== "admin" && <button type="button" onClick={() => go("admin")} className="text-stone-500 hover:text-stone-700">Đăng nhập quản trị</button>}
       </div>
     </div>
   );

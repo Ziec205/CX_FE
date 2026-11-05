@@ -9,34 +9,34 @@
 
   --color-white: #ffffff;
 
-  --color-emerald-50: #e9f3ea;
-  --color-emerald-100: #d3e8d6;
-  --color-emerald-200: #a9d2b0;
-  --color-emerald-300: #7cb98a;
-  --color-emerald-400: #4f9c63;
-  --color-emerald-500: #2f8249;
-  --color-emerald-600: #1f6b3a;
-  --color-emerald-700: #19582f;
-  --color-emerald-800: #144726;
-  --color-emerald-900: #10361e;
-  --color-emerald-950: #0a2414;
+  --color-emerald-50: #eef6ea;
+  --color-emerald-100: #c9e8bf;
+  --color-emerald-200: #a8d39c;
+  --color-emerald-300: #83b878;
+  --color-emerald-400: #5e9a54;
+  --color-emerald-500: #437f3b;
+  --color-emerald-600: #376c31;
+  --color-emerald-700: #2d5a27;
+  --color-emerald-800: #264d21;
+  --color-emerald-900: #1e3e1a;
+  --color-emerald-950: #132a11;
 
-  --color-stone-50: #eef2ea;
-  --color-stone-100: #e3e9de;
-  --color-stone-200: #d3dccd;
-  --color-stone-300: #bcc8b5;
-  --color-stone-400: #8f9c89;
-  --color-stone-500: #66725f;
-  --color-stone-600: #4f5a49;
-  --color-stone-700: #3b4536;
-  --color-stone-800: #283126;
-  --color-stone-900: #14281b;
-  --color-stone-950: #0b170f;
+  --color-stone-50: #f8f7f6;
+  --color-stone-100: #efedec;
+  --color-stone-200: #dcdfd6;
+  --color-stone-300: #c2c9bb;
+  --color-stone-400: #8e958a;
+  --color-stone-500: #656b60;
+  --color-stone-600: #4f5548;
+  --color-stone-700: #42493e;
+  --color-stone-800: #2c312a;
+  --color-stone-900: #1a1c19;
+  --color-stone-950: #0f110e;
 
   /* "wood" giữ tên cũ để các trang không phải sửa, nay là thang vàng mai. */
   --color-wood-100: #fdf3cf;
-  --color-wood-200: #f9e08a;
-  --color-wood-400: #f2c230;
+  --color-wood-200: #c9e8bf;
+  --color-wood-400: #add44c;
   --color-wood-600: #8a6400;
   --color-wood-800: #5a4000;
 
@@ -50,7 +50,7 @@
 
 @layer base {
 body {
-  background: var(--color-stone-50);
+  background: var(--color-white);
   color: var(--color-stone-900);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -80,7 +80,7 @@ h1, h2, h3, .font-display {
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.02em;
-  color: var(--color-emerald-900);
+  color: var(--color-stone-900);
 }
 @media (min-width: 640px) { .cx-h1 { font-size: 3rem; } }
 .cx-h2 {
@@ -88,7 +88,7 @@ h1, h2, h3, .font-display {
   font-size: 1.5rem;             /* 24px */
   font-weight: 700;
   line-height: 1.15;
-  color: var(--color-emerald-900);
+  color: var(--color-stone-900);
 }
 .cx-title {
   font-family: var(--font-display);
@@ -111,13 +111,13 @@ h1, h2, h3, .font-display {
 .cx-link:hover { text-decoration: underline; }
 
 .cx-card {
-  border-radius: 1.5rem;
+  border-radius: 1rem;
   background: var(--color-white);
   padding: 1.25rem;
-  box-shadow: 0 0 0 1px var(--color-stone-200);
+  box-shadow: 0 0 0 1px var(--color-stone-300);
 }
 @media (min-width: 640px) { .cx-card { padding: 1.5rem; } }
-.cx-card-flush { border-radius: 1.5rem; background: var(--color-white); box-shadow: 0 0 0 1px var(--color-stone-200); overflow: hidden; }
+.cx-card-flush { border-radius: 1rem; background: var(--color-white); box-shadow: 0 0 0 1px var(--color-stone-300); overflow: hidden; }
 .cx-soft { border-radius: 1rem; background: var(--color-stone-100); padding: 1rem; }
 .cx-chip {
   display: inline-flex; align-items: center; gap: 0.375rem;
@@ -131,6 +131,7 @@ h1, h2, h3, .font-display {
   background: var(--color-emerald-800); color: var(--color-white); box-shadow: none;
 }
 /* Theo Figma trang Khám phá; app dùng cùng giá trị (theme.dart). */
+textarea.rounded-full { border-radius: 1rem; }
 .cx-chip-soft {
   flex-shrink: 0; border-radius: 9999px; padding: 0.5rem 1rem;
   font-size: 0.875rem; font-weight: 500; line-height: 1.25rem;

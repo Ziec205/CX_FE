@@ -10,7 +10,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: { default: "Chạm Xanh — Chợ cây trồng", template: "%s | Chạm Xanh" },
-  icons: { icon: "/logo.webp" },
+  icons: { icon: "/logo.png" },
   description: "Mua bán, thuê, trao đổi cây cảnh, bonsai, cây giống và vật tư làm vườn gần bạn, từ người bán tin cậy.",
 };
 

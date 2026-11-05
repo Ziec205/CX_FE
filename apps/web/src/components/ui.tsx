@@ -1,12 +1,12 @@
 export const btn = {
-  primary: "cx-press inline-flex items-center justify-center rounded-full bg-emerald-700 px-5 py-2.5 text-[15px] font-semibold text-white hover:bg-emerald-800 disabled:bg-stone-300 disabled:text-stone-600",
-  secondary: "cx-press inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-[15px] font-semibold text-emerald-900 ring-1 ring-stone-300 hover:ring-emerald-700 disabled:opacity-40",
+  primary: "cx-press inline-flex items-center justify-center rounded-full bg-wood-400 px-5 py-2.5 text-[15px] font-semibold text-stone-900 hover:brightness-95 disabled:bg-stone-300 disabled:text-stone-600",
+  secondary: "cx-press inline-flex items-center justify-center rounded-full bg-stone-100 px-5 py-2.5 text-[15px] font-semibold text-stone-900 ring-1 ring-stone-300 hover:ring-emerald-700 disabled:opacity-40",
   danger: "inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-[15px] font-semibold text-red-700 ring-1 ring-red-300 hover:bg-red-50 disabled:opacity-40",
   small: "rounded-full bg-white px-3 py-1.5 text-sm font-medium ring-1 ring-stone-300 hover:ring-emerald-700 disabled:opacity-40",
   ghost: "inline-flex items-center justify-center rounded-full px-4 py-2.5 text-[15px] font-semibold text-stone-600 hover:bg-stone-100 hover:text-stone-900",
 };
 
-export const field = "w-full rounded-2xl border border-stone-300 bg-white px-4 py-2.5 text-[15px] placeholder:text-stone-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-100";
+export const field = "w-full rounded-full border border-stone-300 bg-stone-50 px-4 py-2.5 text-[15px] placeholder:text-stone-400 focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-100";
 
 export function Alert({ kind = "err", children }: { kind?: "ok" | "err" | "warn" | "info"; children: React.ReactNode }) {
   const cls = { ok: "bg-emerald-50 text-emerald-800", err: "bg-red-50 text-red-800", warn: "bg-wood-100 text-wood-800", info: "bg-emerald-50 text-emerald-900" }[kind];
