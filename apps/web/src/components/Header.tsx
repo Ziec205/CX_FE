@@ -34,7 +34,7 @@ export async function Header() {
           ) : (
             <Link href="/dang-nhap" className="font-semibold hover:text-emerald-700">Đăng nhập</Link>
           )}
-          <Link href="/dang-tin" className="cx-press hidden rounded-full bg-emerald-800 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700 sm:inline-block">Đăng tin</Link>
+          <Link href="/dang-tin" className="cx-press hidden rounded-full bg-wood-400 px-5 py-2.5 font-semibold text-stone-900 hover:brightness-95 sm:inline-block">Đăng tin</Link>
           <MobileMenu signedIn={signedIn} links={[
             { href: "/thu-vien", label: "Thư viện cây" },
             { href: "/tim-bang-anh", label: "Tìm bằng ảnh" },

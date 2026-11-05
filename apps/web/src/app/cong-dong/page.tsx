@@ -24,7 +24,7 @@ export default async function CommunityPage({ searchParams }: { searchParams: Pr
           <h1 className="cx-h1">Cộng đồng</h1>
           <p className="mt-1 text-stone-600">Hỏi đáp chăm cây, khoe cây, chia sẻ kinh nghiệm. Không rao bán ở đây — hãy <Link href="/dang-tin" className="text-emerald-700 underline">đăng tin</Link>.</p>
         </div>
-        <Link href="/cong-dong/dang-bai" className="rounded-full bg-emerald-800 px-5 py-2.5 font-bold text-stone-50 hover:bg-emerald-700">Đặt câu hỏi / Đăng bài</Link>
+        <Link href="/cong-dong/dang-bai" className="rounded-full bg-wood-400 px-5 py-2.5 font-bold text-stone-900 hover:brightness-95">Đặt câu hỏi / Đăng bài</Link>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">

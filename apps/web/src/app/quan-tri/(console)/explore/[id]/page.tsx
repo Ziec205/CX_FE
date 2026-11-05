@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Alert, Card, PageTitle, btn, input } from "@/admin/components/ui";
 import { api, errorText } from "@/admin/lib/api";
+import { CHIPS } from "@/lib/explore";
 
 interface Photo { id: string; urls: Record<string, string> }
 interface Article {
@@ -107,7 +108,7 @@ export default function ArticleEditor() {
                   <img src={p.urls.thumb} alt="" className="h-full w-full object-cover" />
                   {i === 0 && <span className="absolute left-1 top-1 rounded bg-emerald-600 px-1 text-[10px] text-white">Bìa</span>}
                   <div className="absolute bottom-0 flex w-full justify-between bg-black/50 px-1 text-xs text-white">
-                    <button onClick={() => move(i, -1)} aria-label="Lên">◀</button>
+                    <button type="button" onClick={() => move(i, -1)} aria-label="Lên">◀</button>
                     <button onClick={() => setPhotos(photos.filter((x) => x.id !== p.id))} aria-label="Xóa">✕</button>
                     <button onClick={() => move(i, 1)} aria-label="Xuống">▶</button>
                   </div>
@@ -138,6 +139,16 @@ export default function ArticleEditor() {
                   </select>
                 </label>
                 <label className="block">Thẻ (cách nhau dấu phẩy)<input value={tags} onChange={(e) => setTags(e.target.value)} className={`${input} mt-1 w-full`} /></label>
+              </div>
+              {!speciesId && <Alert kind="warn">Chưa gắn loài: trang chi tiết sẽ không có ô thông tin chăm sóc và &quot;Cây cùng họ&quot;.</Alert>}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-stone-500">Thẻ gợi ý (chip lọc ở Khám phá):</span>
+                {Object.keys(CHIPS).map((c) => {
+                  const list = tags.split(",").map((t) => t.trim()).filter(Boolean);
+                  const on = list.includes(c);
+                  return <button type="button" key={c} aria-pressed={on} onClick={() => setTags((on ? list.filter((t) => t !== c) : [...list, c]).join(", "))}
+                    className={`rounded-full px-3 py-1 text-xs font-medium ${on ? "bg-[#2d5a27] text-white" : "bg-[#c9e8bf] text-[#4f6a49]"}`}>{c}</button>;
+                })}
               </div>
             </div>
           </Card>

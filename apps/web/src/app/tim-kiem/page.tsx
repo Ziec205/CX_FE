@@ -70,7 +70,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             <select name="radiusKm" defaultValue={v("radiusKm") || "20"} className={field}>
               {[5, 10, 20, 50, 100].map((r) => <option key={r} value={r}>Trong {r} km</option>)}
             </select></>}
-          <button className="w-full rounded-lg bg-emerald-600 py-2 font-medium text-white">Lọc</button>
+          <button className="w-full rounded-lg bg-wood-400 py-2 font-medium text-stone-900">Lọc</button>
           <Suspense><NearMeButton /></Suspense>
         </form>
       </aside>

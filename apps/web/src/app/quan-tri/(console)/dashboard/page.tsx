@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAdmin } from "@/admin/components/AdminContext";
-import { Alert, Card, PageTitle, btn, input } from "@/admin/components/ui";
+import { Alert, Card, ListState, PageTitle, btn, input } from "@/admin/components/ui";
 import { api, errorText, formatVnd } from "@/admin/lib/api";
 
 interface Dashboard {
@@ -74,7 +74,7 @@ export default function DashboardPage() {
 
       <Card title="Thanh khoản theo danh mục × tỉnh (30 ngày)">
         <p className="mb-2 text-xs text-stone-500">Tỉ lệ tin có ít nhất một hội thoại được người bán trả lời.</p>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto"><table className="w-full text-sm">
           <thead><tr className="text-left text-stone-500"><th className="py-1">Danh mục</th><th>Tỉnh</th><th className="text-right">Tin</th><th className="text-right">Thanh khoản</th></tr></thead>
           <tbody>
             {liq?.slice(0, 30).map((r) => (
@@ -84,7 +84,8 @@ export default function DashboardPage() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
+        <ListState loading={!liq && !error} empty={liq?.length === 0} text="Chưa đủ dữ liệu thanh khoản." />
       </Card>
 
       {can("reports.view") && (

@@ -92,12 +92,12 @@ export default function PriceBookEditorPage() {
       )}
       {book.rejectReason && <p className="mb-4 rounded bg-red-50 p-3 text-sm text-red-700">Bị từ chối: {book.rejectReason}</p>}
 
-      <div className="rounded-lg border border-stone-200 bg-white p-4">
+      <div className="rounded-2xl border border-stone-300 bg-white p-4">
         {(
           <>
             <h2 className="mb-1 font-semibold">Gói nạp Xu</h2>
             <p className="mb-3 text-xs text-stone-500">Phí đăng tin và giá gói Plus/Pro cấu hình trong mã (PlanModels). Tỉ giá 1 Xu = 1.000đ được khóa, không chỉnh được (tài liệu 08 §1).</p>
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto"><table className="w-full text-sm">
               <thead className="text-left text-stone-500"><tr><th className="py-2">Gói</th><th>Giá (VNĐ)</th><th>Xu nạp</th><th>Xu thưởng</th><th>Hạn Xu thưởng (ngày)</th><th>Bật</th></tr></thead>
               <tbody>
                 {book.topUpPackages.map((p, i) => (
@@ -112,7 +112,7 @@ export default function PriceBookEditorPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </>
         )}
 
@@ -139,7 +139,7 @@ export default function PriceBookEditorPage() {
           <>
             <button onClick={save} disabled={!dirty} className="rounded border border-stone-300 px-4 py-2 text-sm disabled:opacity-40">Lưu nháp</button>
             <button onClick={validate} className="rounded border border-stone-300 px-4 py-2 text-sm">Kiểm tra</button>
-            <button onClick={submit} className="rounded bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">Gửi duyệt</button>
+            <button onClick={submit} className="inline-block rounded-full bg-wood-400 px-4 py-2 text-sm font-bold text-stone-900 hover:brightness-95 disabled:opacity-40">Gửi duyệt</button>
           </>
         )}
         {book.status === "PendingApproval" && (

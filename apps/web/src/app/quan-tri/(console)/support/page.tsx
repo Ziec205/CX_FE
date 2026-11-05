@@ -51,7 +51,7 @@ export default function SupportAdminPage() {
             <option value="">Đang mở</option>
             {Object.entries(STATUS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
           </select>
-          <ul className="divide-y divide-stone-100 rounded-lg border border-stone-200 bg-white text-sm">
+          <ul className="divide-y divide-stone-100 rounded-2xl border border-stone-300 bg-white text-sm">
             {rows?.map((t) => {
               const overdue = t.status === "Open" && new Date(t.dueAt).getTime() < now;
               return (

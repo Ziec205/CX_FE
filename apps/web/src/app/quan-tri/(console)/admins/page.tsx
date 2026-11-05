@@ -39,7 +39,7 @@ export default function AdminsPage() {
       {msg && <Alert kind={msg.kind}>{msg.text}</Alert>}
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto"><table className="w-full text-sm">
             <thead className="text-left text-stone-500"><tr><th className="py-2">Tên đăng nhập</th><th>Tên</th><th>Vai trò</th><th>2FA</th></tr></thead>
             <tbody>
               {rows.map((r) => (
@@ -50,7 +50,7 @@ export default function AdminsPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         </Card>
         <Card title="Tạo tài khoản">
           <form onSubmit={create} className="space-y-2 text-sm">

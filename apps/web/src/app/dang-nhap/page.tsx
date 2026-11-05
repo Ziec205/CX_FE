@@ -20,6 +20,7 @@ function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [totp, setTotp] = useState("");
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
 
@@ -51,7 +52,7 @@ function LoginForm() {
   });
 
   const adminLogin = run(async () => {
-    await post("/api/admin-auth/login", { username: username.trim(), password, totpCode: null });
+    await post("/api/admin-auth/login", { username: username.trim(), password, totpCode: totp.trim() || null });
     router.replace(next.startsWith("/quan-tri") ? next : "/quan-tri");
     router.refresh();
   });
@@ -98,6 +99,7 @@ function LoginForm() {
           <p className="text-sm text-stone-500">Dành cho đội vận hành Chạm Xanh.</p>
           <input value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" required placeholder="Tên đăng nhập" aria-label="Tên đăng nhập" className={field} />
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" required placeholder="Mật khẩu" aria-label="Mật khẩu" className={field} />
+          <input value={totp} onChange={(e) => setTotp(e.target.value)} inputMode="numeric" autoComplete="one-time-code" maxLength={6} placeholder="Mã 2FA (nếu đã bật)" aria-label="Mã 2FA" className={field} />
           {error && <Alert>{error}</Alert>}
           <button disabled={busy} className={`${btn.primary} w-full`}>{busy ? "Đang đăng nhập…" : "Đăng nhập"}</button>
         </form>

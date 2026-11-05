@@ -76,7 +76,7 @@ export default function CampaignsPage() {
           <div className="mt-3 flex gap-2"><button onClick={save} className={btn.primary}>Lưu</button><button onClick={() => setEdit(undefined)} className={btn.secondary}>Hủy</button></div>
         </Card>
       )}
-      <table className="w-full rounded-lg border border-stone-200 bg-white text-sm">
+      <div className="overflow-x-auto"><table className="w-full rounded-2xl border border-stone-300 bg-white text-sm">
         <thead className="bg-stone-50 text-left text-stone-500"><tr><th className="p-2">Tên</th><th>Thời gian</th><th>Trạng thái</th><th /></tr></thead>
         <tbody>
           {rows?.map((c) => {
@@ -94,7 +94,7 @@ export default function CampaignsPage() {
             );
           })}
         </tbody>
-      </table>
+      </table></div>
     </div>
   );
 }

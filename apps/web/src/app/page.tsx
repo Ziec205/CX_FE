@@ -32,7 +32,7 @@ export default async function Home() {
             <button className="cx-press h-11 rounded-full bg-wood-400 px-6 font-semibold text-stone-900 hover:bg-wood-200">Tìm trong chợ</button>
           </form>
           {categories && (
-            <nav aria-label="Danh mục chợ cây" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
+            <nav aria-label="Danh mục chợ cây" className="-mx-4 flex gap-2 cx-hscroll overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
               {categories.map((c) => (
                 <Link key={c.id} href={`/cho-cay?rootCategoryId=${c.id}`}
                   className="cx-press shrink-0 rounded-full bg-emerald-800 px-4 py-2 text-[15px] font-semibold text-white hover:bg-emerald-700">{c.name}</Link>
@@ -116,7 +116,7 @@ export default async function Home() {
             ) : (
               <p className="text-stone-600">Hỏi cây bị vàng lá, khoe chậu mới, chia sẻ cách chăm.</p>
             )}
-            <Link href="/cong-dong/dang-bai" className="mt-auto self-start rounded-full bg-emerald-800 px-5 py-2 font-semibold text-white hover:bg-emerald-700">Đặt câu hỏi</Link>
+            <Link href="/cong-dong/dang-bai" className="mt-auto self-start rounded-full bg-wood-400 px-5 py-2 font-semibold text-stone-900 hover:brightness-95">Đặt câu hỏi</Link>
           </div>
         </div>
       </section>

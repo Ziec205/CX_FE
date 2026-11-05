@@ -170,7 +170,7 @@ export function AiChat({ conversationId, onConversation, compact = false }: {
             placeholder={uploading ? "Đang tải ảnh…" : "Hỏi về cây của bạn…"}
             className="max-h-32 min-h-11 flex-1 resize-none rounded-3xl border border-stone-300 bg-white px-4 py-2.5 text-[15px] focus:border-emerald-600 focus:outline-none" />
           <button type="submit" disabled={sending || uploading || (!text.trim() && photos.length === 0)} aria-label="Gửi"
-            className="cx-press flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-800 text-white hover:bg-emerald-700 disabled:bg-stone-300">
+            className="cx-press flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-wood-400 text-stone-900 hover:brightness-95 disabled:bg-stone-300">
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10l12.6 2-12.6 2z" /></svg>
           </button>
         </div>

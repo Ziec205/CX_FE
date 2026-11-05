@@ -43,8 +43,8 @@ export default function ModerationQueuePage() {
         </select>
       </div>
       {error && <Alert>{error}</Alert>}
-      <div className="overflow-hidden rounded-lg border border-stone-200 bg-white">
-        <table className="w-full text-sm">
+      <div className="overflow-hidden rounded-2xl border border-stone-300 bg-white">
+        <div className="overflow-x-auto"><table className="w-full text-sm">
           <thead className="bg-stone-50 text-left text-stone-500">
             <tr><th className="px-4 py-2">Hàng chờ</th><th className="px-4 py-2">Loại</th><th className="px-4 py-2">Tin</th>
               <th className="px-4 py-2">Giá</th><th className="px-4 py-2">Rủi ro</th><th className="px-4 py-2">Hạn SLA</th></tr>
@@ -69,7 +69,7 @@ export default function ModerationQueuePage() {
               );
             })}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   );

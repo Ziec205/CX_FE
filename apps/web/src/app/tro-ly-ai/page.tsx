@@ -62,7 +62,7 @@ export default function AssistantPage() {
       <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
         <aside className="space-y-3">
           <div className="flex gap-2">
-            <button type="button" onClick={startNew} className="cx-press flex-1 rounded-full bg-emerald-800 px-4 py-2.5 font-semibold text-white hover:bg-emerald-700">+ Cuộc trò chuyện mới</button>
+            <button type="button" onClick={startNew} className="cx-press flex-1 rounded-full bg-wood-400 px-4 py-2.5 font-semibold text-stone-900 hover:brightness-95">+ Cuộc trò chuyện mới</button>
             <button type="button" onClick={() => setShowList((s) => !s)} aria-expanded={showList} className="rounded-full bg-white px-4 py-2.5 text-sm font-semibold ring-1 ring-stone-300 lg:hidden">
               Lịch sử{list ? ` (${list.length})` : ""}
             </button>

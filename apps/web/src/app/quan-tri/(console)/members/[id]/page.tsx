@@ -31,6 +31,7 @@ export default function MemberPage() {
   useEffect(load, [load]);
 
   async function sanction() {
+    if (action !== "unlock" && !confirm("Áp dụng xử lý này cho tài khoản?")) return;
     try {
       await api(`admin/members/${id}/sanction`, { method: "POST", json: { action, days, points: action === "warn" ? points : null, reason } });
       setMsg({ kind: "ok", text: "Đã áp dụng" }); setReason(""); load();
@@ -47,7 +48,7 @@ export default function MemberPage() {
   const u = d.user;
   return (
     <div className="max-w-6xl space-y-4">
-      <PageTitle title={u.displayName} subtitle={`${u.phone ?? "Chưa có SĐT"} · ${u.status} · ${u.activeViolationPoints} điểm vi phạm`} action={<Link href="/quan-tri/members" className={btn.secondary}>← Danh sách</Link>} />
+      <PageTitle title={u.displayName} subtitle={`${u.phone ?? "Chưa có SĐT"} · ${({ Active: "Hoạt động", Restricted: "Hạn chế", Locked: "Khóa", Banned: "Cấm vĩnh viễn", Deleted: "Đã xóa" } as Record<string, string>)[u.status] ?? u.status} · ${u.activeViolationPoints} điểm vi phạm`} action={<Link href="/quan-tri/members" className={btn.secondary}>← Danh sách</Link>} />
       {msg && <Alert kind={msg.kind}>{msg.text}</Alert>}
       <div className="grid gap-4 lg:grid-cols-2">
         <Card title="Hồ sơ">

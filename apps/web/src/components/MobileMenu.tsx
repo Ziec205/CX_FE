@@ -53,7 +53,7 @@ export function MobileMenu({ links, signedIn }: { links: MenuLink[]; signedIn: b
           </ul>
         </nav>
         <div className="space-y-3 border-t border-stone-200 p-5">
-          <Link href="/dang-tin" className="block rounded-full bg-emerald-800 py-3 text-center font-bold text-stone-50 hover:bg-emerald-700">Đăng tin</Link>
+          <Link href="/dang-tin" className="block rounded-full bg-wood-400 py-3 text-center font-bold text-stone-900 hover:brightness-95">Đăng tin</Link>
           {!signedIn && <Link href="/dang-nhap" className="block rounded-full border border-emerald-800/30 bg-white py-3 text-center font-bold text-emerald-900">Đăng nhập / Tạo tài khoản</Link>}
         </div>
       </dialog>

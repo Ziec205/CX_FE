@@ -46,7 +46,7 @@ export function PayQr({ payment, onClose }: { payment: PlanPayment; onClose: () 
         <p className="mt-2 text-sm font-semibold text-wood-800">{status === "Pending" ? "Đang chờ thanh toán…" : status === "Paid" ? "Đã nhận tiền!" : "Đơn đã hết hạn hoặc bị hủy"}</p>
         {error && <p role="alert" className="mt-2 text-sm text-red-700">{error}</p>}
         <div className="mt-5 flex flex-col gap-2">
-          {payment.checkoutUrl && <a href={payment.checkoutUrl} className="rounded-full bg-emerald-800 py-3 font-semibold text-white hover:bg-emerald-700">Mở trang thanh toán PayOS</a>}
+          {payment.checkoutUrl && <a href={payment.checkoutUrl} className="rounded-full bg-wood-400 py-3 font-semibold text-stone-900 hover:brightness-95">Mở trang thanh toán PayOS</a>}
           <button type="button" onClick={onClose} className="rounded-full py-2 font-semibold text-stone-600 hover:text-stone-900">Đóng</button>
         </div>
       </div>

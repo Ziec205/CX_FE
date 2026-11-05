@@ -116,10 +116,10 @@ function Plans() {
                   <p className={`rounded-full py-3 text-center font-semibold ${isCurrent ? "bg-stone-100 text-stone-700" : "text-stone-500"}`}>{isCurrent ? "Gói hiện tại" : "Luôn miễn phí"}</p>
                 ) : mine === null ? (
                   <Link href={`/dang-nhap?next=${encodeURIComponent(`/goi?chon=${p.code}`)}`}
-                    className={`block rounded-full py-3 text-center font-semibold ${pro ? "bg-wood-400 text-stone-900 hover:bg-wood-200" : "bg-emerald-800 text-white hover:bg-emerald-700"}`}>Đăng nhập để mua</Link>
+                    className={`block rounded-full py-3 text-center font-semibold ${pro ? "bg-wood-400 text-stone-900 hover:brightness-95" : "bg-wood-400 text-stone-900 hover:brightness-95"}`}>Đăng nhập để mua</Link>
                 ) : (
                   <button type="button" onClick={() => buy(p.code)} disabled={!!busy || lower || mine === undefined}
-                    className={`cx-press w-full rounded-full py-3 font-semibold disabled:opacity-50 ${pro ? "bg-wood-400 text-stone-900 hover:bg-wood-200" : "bg-emerald-800 text-white hover:bg-emerald-700"}`}>
+                    className={`cx-press w-full rounded-full py-3 font-semibold disabled:opacity-50 ${pro ? "bg-wood-400 text-stone-900 hover:brightness-95" : "bg-wood-400 text-stone-900 hover:brightness-95"}`}>
                     {busy === p.code ? "Đang mở trang thanh toán…" : lower ? "Đang dùng gói cao hơn" : isCurrent ? `Gia hạn ${months === 12 ? "12 tháng" : "1 tháng"}`
                       : current === "Plus" && pro ? "Nâng lên Xanh Pro" : `Mua ${p.name}`}
                   </button>

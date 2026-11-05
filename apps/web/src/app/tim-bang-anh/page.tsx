@@ -40,7 +40,7 @@ export default function ImageSearchPage() {
         <p className="mt-1 text-stone-600">Chụp cây bạn thấy ngoài đường hay nhà bạn bè — Chạm Xanh gợi ý tên loài và tin đang bán.</p>
       </div>
       <div className="flex flex-wrap items-center gap-4">
-        <label className="cursor-pointer rounded-full bg-emerald-800 px-6 py-3 font-bold text-stone-50 hover:bg-emerald-700">
+        <label className="cursor-pointer rounded-full bg-wood-400 px-6 py-3 font-bold text-stone-900 hover:brightness-95">
           Chụp / chọn ảnh
           <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => { search(e.target.files?.[0]); e.target.value = ""; }} />
         </label>

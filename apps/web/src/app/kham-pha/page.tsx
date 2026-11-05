@@ -27,7 +27,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
       </header>
 
       {chips.length > 0 && (
-        <nav aria-label="Lọc bài" className="-mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+        <nav aria-label="Lọc bài" className="-mx-4 flex gap-2 cx-hscroll overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
           {chips.map((c) => (
             <Link key={c} href={chip === c ? "/kham-pha" : `/kham-pha?loai=${encodeURIComponent(c)}`} aria-current={chip === c ? "page" : undefined} className="cx-chip-soft">{c}</Link>
           ))}

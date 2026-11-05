@@ -6,7 +6,7 @@ import { shortVnd, vnd } from "@/lib/format";
 import type { AiListingDraft, AiPriceSuggestion, MyPlan } from "@/lib/types";
 import { ProBadge, Sparkle, UpgradeHint } from "./PlanGate";
 
-const aiBtn = "cx-press inline-flex items-center gap-2 rounded-full bg-emerald-900 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800 disabled:bg-stone-300 disabled:text-stone-600";
+const aiBtn = "cx-press inline-flex items-center gap-2 rounded-full bg-wood-400 px-4 py-2 text-sm font-semibold text-stone-900 hover:brightness-95 disabled:bg-stone-300 disabled:text-stone-600";
 
 /** "AI viết giúp": xem ảnh đã tải lên và ghi chú ngắn, viết tiêu đề + mô tả (gói Pro). */
 export function AiWriteHelper({ plan, mediaIds, categoryId, hasText, onResult }: {

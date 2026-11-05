@@ -90,7 +90,7 @@ function ChatInner() {
       <div className="mx-auto max-w-md space-y-4 rounded-3xl bg-white p-8 text-center ring-1 ring-stone-200">
         <h1 className="cx-h1">Tin nhắn</h1>
         <p className="text-stone-600">Đăng nhập để xem và trả lời tin nhắn với người mua, người bán.</p>
-        <Link href="/dang-nhap?next=/tin-nhan" className="inline-block rounded-full bg-emerald-800 px-6 py-3 font-semibold text-white hover:bg-emerald-700">Đăng nhập</Link>
+        <Link href="/dang-nhap?next=/tin-nhan" className="inline-block rounded-full bg-wood-400 px-6 py-3 font-semibold text-stone-900 hover:brightness-95">Đăng nhập</Link>
       </div>
     );
   }
@@ -296,7 +296,7 @@ function Thread({ conv, meId, msgs, setMsgs, error, setError, onBack }: {
               onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); sendText(); } }}
               placeholder={uploading ? "Đang gửi ảnh…" : "Nhắn tin…"}
               className="max-h-32 min-h-11 min-w-0 flex-1 resize-none rounded-3xl border border-stone-300 bg-stone-50 px-4 py-2.5 focus:border-emerald-600 focus:outline-none [field-sizing:content]" />
-            <button disabled={!text.trim() || sending} aria-label="Gửi tin nhắn" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-white hover:bg-emerald-800 disabled:bg-stone-300">
+            <button disabled={!text.trim() || sending} aria-label="Gửi tin nhắn" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-wood-400 text-stone-900 hover:brightness-95 disabled:bg-stone-300">
               <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden><path d="M3.4 20.4l17.4-7.5a1 1 0 000-1.8L3.4 3.6a1 1 0 00-1.4 1.1L4 11l9 1-9 1-2 6.3a1 1 0 001.4 1.1z" /></svg>
             </button>
           </form>
@@ -322,7 +322,7 @@ function OfferBubble({ m, mine, canRespond, onRespond }: {
         <p className="text-stone-600">{OFFER_STATUS[o.status] ?? o.status}</p>
         {canRespond && !countering && (
           <div className="flex gap-2">
-            <button onClick={() => onRespond(m.id, true)} className="flex-1 rounded-full bg-emerald-700 py-2 font-semibold text-white hover:bg-emerald-800">Đồng ý</button>
+            <button onClick={() => onRespond(m.id, true)} className="flex-1 rounded-full bg-wood-400 py-2 font-semibold text-stone-900 hover:brightness-95">Đồng ý</button>
             <button onClick={() => setCountering(true)} className="flex-1 rounded-full py-2 font-semibold ring-1 ring-stone-300 hover:bg-stone-50">Trả giá khác</button>
           </div>
         )}

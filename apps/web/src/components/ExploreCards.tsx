@@ -20,7 +20,7 @@ export function PlantCard({ a }: { a: Article }) {
 
 export function CardRow({ items }: { items: Article[] }) {
   return (
-    <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 lg:grid-cols-5">
+    <div className="-mx-4 flex snap-x gap-3 cx-hscroll overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 lg:grid-cols-5">
       {items.map((a) => <PlantCard key={a.id} a={a} />)}
     </div>
   );

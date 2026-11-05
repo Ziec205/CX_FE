@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAdmin } from "./AdminContext";
 
@@ -20,6 +21,7 @@ const NAV: { group: string; items: { href: string; label: string; perm: string }
   ] },
   { group: "Doanh thu", items: [
     { href: "/quan-tri/pricing", label: "Bảng giá & phí", perm: "pricing.view" },
+    { href: "/quan-tri/plans", label: "Gói & thanh toán", perm: "reports.view" },
     { href: "/quan-tri/wallets", label: "Ví Xu người dùng", perm: "wallet.adjust" },
   ] },
   { group: "Hệ thống", items: [
@@ -33,6 +35,7 @@ export function Sidebar() {
   const { me, can } = useAdmin();
   const path = usePathname();
   const router = useRouter();
+  const [open, setOpen] = useState(false);
 
   async function logout() {
     await fetch("/api/admin-auth/logout", { method: "POST" });
@@ -40,8 +43,15 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="flex w-60 shrink-0 flex-col border-r border-stone-200 bg-white p-4">
-      <div className="mb-6 text-lg font-semibold text-emerald-700">🌿 Chạm Xanh Admin</div>
+    <aside className="flex shrink-0 flex-col border-b border-stone-300 bg-white p-4 md:sticky md:top-0 md:h-screen md:w-60 md:overflow-y-auto md:border-b-0 md:border-r">
+      <div className="flex items-center justify-between md:mb-6">
+        <div className="flex items-center gap-2 text-lg font-bold text-stone-900">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="" className="h-7 w-7 object-contain" /> Chạm Xanh Admin
+        </div>
+        <button onClick={() => setOpen(!open)} aria-expanded={open} className="rounded-full bg-[#efedec] px-3 py-1 text-sm md:hidden">{open ? "Đóng" : "Menu"}</button>
+      </div>
+      <div className={`${open ? "mt-4 flex" : "hidden"} flex-1 flex-col md:flex`}>
       <nav className="flex-1 space-y-4 text-sm">
         {NAV.map((g) => {
           const items = g.items.filter((i) => can(i.perm));
@@ -50,8 +60,8 @@ export function Sidebar() {
             <div key={g.group}>
               <p className="px-2 pb-1 text-xs font-medium uppercase text-stone-400">{g.group}</p>
               {items.map((i) => (
-                <Link key={i.href} href={i.href}
-                  className={`block rounded px-2 py-1.5 ${path.startsWith(i.href) ? "bg-emerald-50 font-medium text-emerald-800" : "hover:bg-stone-50"}`}>
+                <Link key={i.href} href={i.href} onClick={() => setOpen(false)}
+                  className={`block rounded-full px-3 py-1.5 ${path.startsWith(i.href) ? "bg-[#c9e8bf] font-semibold text-[#2d5a27]" : "hover:bg-stone-50"}`}>
                   {i.label}
                 </Link>
               ))}
@@ -69,6 +79,7 @@ export function Sidebar() {
           </div>
         </div>
       )}
+      </div>
     </aside>
   );
 }

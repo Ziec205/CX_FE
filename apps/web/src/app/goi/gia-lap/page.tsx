@@ -50,7 +50,7 @@ function SimulatedCheckout() {
             <p className="text-sm text-stone-500">Mã đơn {payment.orderCode}</p>
             {payment.status === "Pending" ? (
               <div className="mt-6 flex flex-col gap-2">
-                <button type="button" onClick={pay} disabled={busy} className="cx-press rounded-full bg-emerald-800 py-3 font-semibold text-white hover:bg-emerald-700 disabled:bg-stone-300">
+                <button type="button" onClick={pay} disabled={busy} className="cx-press rounded-full bg-wood-400 py-3 font-semibold text-stone-900 hover:brightness-95 disabled:bg-stone-300">
                   {busy ? "Đang xác nhận…" : "Xác nhận đã chuyển khoản (giả lập)"}
                 </button>
                 <button type="button" onClick={() => router.replace(`/goi/ket-qua?thanhToan=${payment.id}&ma=${payment.orderCode}&huy=1`)} className="py-2 font-semibold text-stone-600 hover:text-red-700">Hủy</button>

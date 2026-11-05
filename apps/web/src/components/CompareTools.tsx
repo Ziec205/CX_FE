@@ -70,7 +70,7 @@ export function MarketCheck({ listingId }: { listingId: string }) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="flex items-center gap-2 font-semibold text-emerald-900"><Sparkle className="h-5 w-5 text-emerald-700" />So tin với chợ <ProBadge /></span>
         <button type="button" onClick={run} disabled={busy}
-          className="cx-press inline-flex items-center gap-2 rounded-full bg-emerald-900 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800 disabled:bg-stone-300">
+          className="cx-press inline-flex items-center gap-2 rounded-full bg-wood-400 px-4 py-2 text-sm font-semibold text-stone-900 hover:brightness-95 disabled:bg-stone-300">
           <Sparkle />{busy ? "Đang xem chợ…" : r ? "Phân tích lại" : "Phân tích"}
         </button>
       </div>

@@ -44,15 +44,15 @@ export default function PricingListPage() {
             {active ? `Đang hiệu lực: v${active.version} từ ${formatDate(active.effectiveFrom)}` : "Chưa có bảng giá hiệu lực"}
           </p>
         </div>
-        <button onClick={() => createDraft()} className="rounded bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+        <button onClick={() => createDraft()} className="inline-block rounded-full bg-wood-400 px-4 py-2 text-sm font-bold text-stone-900 hover:brightness-95 disabled:opacity-40">
           + Tạo phiên bản mới
         </button>
       </div>
 
       {error && <p className="mb-4 rounded bg-red-50 p-3 text-sm text-red-700">{error}</p>}
 
-      <div className="overflow-hidden rounded-lg border border-stone-200 bg-white">
-        <table className="w-full text-sm">
+      <div className="overflow-hidden rounded-2xl border border-stone-300 bg-white">
+        <div className="overflow-x-auto"><table className="w-full text-sm">
           <thead className="bg-stone-50 text-left text-stone-500">
             <tr>
               <th className="px-4 py-2">Phiên bản</th><th className="px-4 py-2">Trạng thái</th>
@@ -78,7 +78,7 @@ export default function PricingListPage() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       </div>
     </div>
   );

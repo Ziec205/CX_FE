@@ -28,7 +28,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
           <option value="">Mọi nhóm cây</option>
           {live.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
-        <button className="h-11 rounded-full bg-emerald-800 px-6 font-bold text-stone-50">Tìm</button>
+        <button className="h-11 rounded-full bg-wood-400 px-6 font-bold text-stone-900 hover:brightness-95">Tìm</button>
       </form>
       {!species && <p className="text-red-700">Không tải được dữ liệu từ máy chủ.</p>}
       {species?.length === 0 && <p className="text-stone-500">Không tìm thấy loài phù hợp.</p>}

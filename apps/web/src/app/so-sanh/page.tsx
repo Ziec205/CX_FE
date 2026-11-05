@@ -89,7 +89,7 @@ export default function ComparePage() {
             <h2 className="flex items-center gap-2 cx-h2"><Sparkle className="h-6 w-6 text-emerald-700" />AI so sánh <ProBadge /></h2>
             {plan?.plan.marketCompare && (
               <button type="button" onClick={run} disabled={busy || items.length < 2}
-                className="cx-press inline-flex items-center gap-2 rounded-full bg-emerald-900 px-5 py-2.5 font-semibold text-white hover:bg-emerald-800 disabled:bg-stone-300">
+                className="cx-press inline-flex items-center gap-2 rounded-full bg-wood-400 px-5 py-2.5 font-semibold text-stone-900 hover:brightness-95 disabled:bg-stone-300">
                 <Sparkle />{busy ? "AI đang phân tích…" : items.length < 2 ? "Chọn thêm ít nhất 1 tin" : shown ? "Phân tích lại" : `So sánh ${items.length} tin`}
               </button>
             )}

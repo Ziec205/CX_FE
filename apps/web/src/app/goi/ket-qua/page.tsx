@@ -57,7 +57,7 @@ function PaymentResult() {
       <Message tone="ok" title={`Đã kích hoạt ${payment.appliedPlan === "Pro" ? "Xanh Pro" : name}!`}>
         <p>Cảm ơn bạn đã thanh toán {vnd(payment.amountVnd)}. Gói có hiệu lực đến <b>{vnDate(payment.appliedEndAt)}</b>.</p>
         <div className="mt-5 flex flex-wrap justify-center gap-2">
-          <Link href="/vuon-cua-toi" className="rounded-full bg-emerald-800 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700">Mở Hồ sơ vườn</Link>
+          <Link href="/vuon-cua-toi" className="rounded-full bg-wood-400 px-5 py-2.5 font-semibold text-stone-900 hover:brightness-95">Mở Hồ sơ vườn</Link>
           <Link href="/tro-ly-ai" className="rounded-full bg-white px-5 py-2.5 font-semibold text-emerald-900 ring-1 ring-stone-300 hover:ring-emerald-700">Hỏi Trợ lý AI</Link>
           <Link href="/" className="rounded-full bg-white px-5 py-2.5 font-semibold text-emerald-900 ring-1 ring-stone-300 hover:ring-emerald-700">Về trang chủ</Link>
         </div>
@@ -75,7 +75,7 @@ function PaymentResult() {
   return (
     <Message tone="err" title={payment.status === "Cancelled" ? "Đã hủy thanh toán" : "Link thanh toán đã hết hạn"}>
       <p>Bạn chưa bị trừ tiền. Có thể chọn lại gói bất kỳ lúc nào.</p>
-      <Link href="/goi" className="mt-4 inline-block rounded-full bg-emerald-800 px-5 py-2.5 font-semibold text-white hover:bg-emerald-700">Xem các gói</Link>
+      <Link href="/goi" className="mt-4 inline-block rounded-full bg-wood-400 px-5 py-2.5 font-semibold text-stone-900 hover:brightness-95">Xem các gói</Link>
     </Message>
   );
 }

@@ -114,7 +114,7 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
         <label className="flex items-center gap-2"><input type="checkbox" name="realPhotoOnly" value="true" defaultChecked={v("realPhotoOnly") === "true"} />Ảnh chụp thực tế</label>
       </div>
 
-      <button className="w-full rounded-full bg-emerald-800 py-2.5 font-bold text-stone-50 hover:bg-emerald-700">Áp dụng</button>
+      <button className="w-full rounded-full bg-wood-400 py-2.5 font-bold text-stone-900 hover:brightness-95">Áp dụng</button>
       <Suspense><NearMeButton basePath="/cho-cay" /></Suspense>
       {activeCount > 0 && (
         <Link href={href({ q: "", use: "", provinceId: "", priceMin: "", priceMax: "", postedWithinDays: "", lat: "", lng: "", radiusKm: "", sort: "", realPhotoOnly: "" })}
@@ -135,7 +135,7 @@ export default async function MarketPage({ searchParams }: { searchParams: Promi
             {result ? `${result.total.toLocaleString("vi-VN")} tin` : "—"} · tin mới đăng hiển thị trước
           </p>
         </div>
-        <Link href="/dang-tin" className="rounded-full bg-emerald-800 px-5 py-2.5 font-bold text-stone-50 hover:bg-emerald-700">Đăng bán cây</Link>
+        <Link href="/dang-tin" className="rounded-full bg-wood-400 px-5 py-2.5 font-bold text-stone-900 hover:brightness-95">Đăng bán cây</Link>
       </header>
 
       {/* Danh mục cấp 1 */}

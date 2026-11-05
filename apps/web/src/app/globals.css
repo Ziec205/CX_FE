@@ -272,3 +272,11 @@ textarea.rounded-full { border-radius: 1rem; }
 @keyframes cx-fade-out { to { opacity: 0; } }
 @keyframes cx-rise-in { from { opacity: 0; translate: 0 12px; } }
 @keyframes cx-shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
+
+/* Hàng cuộn ngang: ẩn thanh cuộn, thẻ đầu không dính mép khi bắt điểm cuộn. */
+.cx-hscroll { scrollbar-width: none; scroll-padding-inline: 1rem; }
+.cx-hscroll::-webkit-scrollbar { display: none; }
+
+/* Bảng trong console quản trị: giãn dòng đều, tiêu đề rõ. */
+.cx-admin th { padding: 0.625rem 0.75rem; font-weight: 600; white-space: nowrap; }
+.cx-admin td { padding: 0.625rem 0.75rem; }

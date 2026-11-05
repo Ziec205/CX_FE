@@ -59,7 +59,7 @@ export function AiLauncher({ signedIn }: { signedIn: boolean }) {
             <div className="flex flex-1 flex-col items-center justify-center gap-4 px-4 text-center">
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-700"><Sparkle className="h-7 w-7" /></span>
               <p className="text-stone-700">Đăng nhập để hỏi Trợ lý AI. Tài khoản miễn phí có <b>3 lượt mỗi ngày</b>, gói Xanh Plus và Xanh Pro có nhiều lượt hơn.</p>
-              <Link href={`/dang-nhap?next=${encodeURIComponent(pathname)}`} className="rounded-full bg-emerald-800 px-6 py-2.5 font-semibold text-white hover:bg-emerald-700">Đăng nhập</Link>
+              <Link href={`/dang-nhap?next=${encodeURIComponent(pathname)}`} className="rounded-full bg-wood-400 px-6 py-2.5 font-semibold text-stone-900 hover:brightness-95">Đăng nhập</Link>
               <Link href="/goi" className="text-sm font-semibold text-emerald-800 underline">Xem các gói</Link>
             </div>
           )}

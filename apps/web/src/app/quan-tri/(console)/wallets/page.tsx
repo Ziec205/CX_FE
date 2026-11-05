@@ -63,7 +63,7 @@ export default function WalletsPage() {
 
       {pending.length > 0 && (
         <Card title={`Yêu cầu chờ duyệt (${pending.length})`} className="mb-4">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto"><table className="w-full text-sm">
             <tbody>
               {pending.map((p) => (
                 <tr key={p.id} className="border-t border-stone-100">
@@ -73,11 +73,11 @@ export default function WalletsPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         </Card>
       )}
 
-      <form onSubmit={(e) => { e.preventDefault(); lookup(); }} className="mb-4 flex gap-2">
+      <form onSubmit={(e) => { e.preventDefault(); lookup(); }} className="mb-4 flex flex-wrap gap-2">
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="SĐT hoặc mã người dùng" className={`${input} w-72`} />
         <button className={btn.secondary}>Tra cứu</button>
       </form>
@@ -86,7 +86,7 @@ export default function WalletsPage() {
         <div className="grid gap-4 lg:grid-cols-3">
           <Card title={`${user.displayName} · ${user.phone ?? "Chưa có SĐT"}`} className="lg:col-span-2">
             <p className="mb-2 text-sm">Số dư: <b>{live.reduce((s, l) => s + l.remaining, 0)} Xu</b>{wallet.wallet.frozen && <span className="ml-2 text-red-700">(đang đóng băng)</span>}</p>
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto"><table className="w-full text-sm">
               <thead className="text-left text-stone-500"><tr><th className="py-1">Thời gian</th><th>Loại</th><th>Số Xu</th><th>Ghi chú</th></tr></thead>
               <tbody>
                 {wallet.ledger.map((e) => (
@@ -96,7 +96,7 @@ export default function WalletsPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </Card>
           <Card title="Điều chỉnh">
             <form onSubmit={adjust} className="space-y-2 text-sm">
