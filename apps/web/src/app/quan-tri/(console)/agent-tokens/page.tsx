@@ -5,7 +5,7 @@ import { Alert, Card, ListState, PageTitle, Pill, btn, input } from "@/admin/com
 import { useAdmin } from "@/admin/components/AdminContext";
 import { api, errorText } from "@/admin/lib/api";
 
-interface TokenRow { id: string; name: string; permissions: string[]; createdAt: string; expiresAt: string; revokedAt: string | null; lastUsedAt: string | null }
+interface TokenRow { id: string; name: string; permissions: string[]; createdAt: string; expiresAt: string; revokedAt: string | null; lastUsedAt: string | null; canReveal: boolean }
 
 /** Khớp Perm.All ở BE (Common/Auth/Permissions.cs). */
 const PERMS: [string, string][] = [
@@ -19,6 +19,40 @@ const FULL_ACCESS_DAYS = 30;
 const EMPTY_FORM = { name: "", permissions: [] as string[], days: 90 };
 const permLabel = (p: string) => PERMS.find(([k]) => k === p)?.[1] ?? p;
 const when = (s: string | null) => (s ? new Date(s).toLocaleString("vi-VN") : "Chưa dùng");
+
+/** Ô token: mặc định che, bấm con mắt mới lấy token từ máy chủ (mỗi lần xem được ghi audit). */
+function TokenSecret({ row, live }: { row: TokenRow; live: boolean }) {
+  const [value, setValue] = useState<string>();
+  const [error, setError] = useState<string>();
+  const [copied, setCopied] = useState(false);
+  if (!live) return <code className="block rounded-xl bg-stone-100 p-3 text-sm text-stone-500">Token không còn hiệu lực</code>;
+  if (!row.canReveal) return <code className="block rounded-xl bg-stone-100 p-3 text-sm text-stone-500">Token cũ không xem lại được. Hãy thu hồi và tạo token mới.</code>;
+  async function toggle() {
+    setError(undefined);
+    if (value) { setValue(undefined); setCopied(false); return; }
+    try { setValue((await api<{ token: string }>(`admin/agent-tokens/${row.id}/reveal`, { method: "POST" })).token); }
+    catch (e) { setError(errorText(e)); }
+  }
+  async function copy() {
+    if (!value) return;
+    try { await navigator.clipboard.writeText(value); setCopied(true); }
+    catch { setError("Không sao chép được, hãy chọn và sao chép thủ công."); }
+  }
+  return (
+    <div>
+      <div className="flex items-center gap-2 rounded-xl bg-stone-100 p-2 pl-3">
+        <code className="min-w-0 flex-1 break-all text-sm">{value ?? "••••••••••••••••••••••••••••••••"}</code>
+        {value && <button type="button" onClick={copy} className="shrink-0 px-2 text-sm font-semibold text-emerald-700">{copied ? "Đã chép" : "Sao chép"}</button>}
+        <button type="button" onClick={toggle} aria-label={value ? "Ẩn token" : "Hiện token"} aria-pressed={!!value} className="shrink-0 rounded-full p-2 text-stone-600 hover:bg-stone-200">
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" /><circle cx="12" cy="12" r="3" />{value && <path d="M4 4l16 16" />}
+          </svg>
+        </button>
+      </div>
+      {error && <p className="mt-1 text-sm text-red-700">{error}</p>}
+    </div>
+  );
+}
 
 export default function AgentTokensPage() {
   const { can } = useAdmin();
@@ -78,7 +112,7 @@ export default function AgentTokensPage() {
       {msg && <Alert kind={msg.kind}>{msg.text}</Alert>}
       {created && (
         <Card title={`Token của ${created.name}`} className="mb-4">
-          <Alert kind="warn">Token chỉ hiện một lần. Hãy sao chép ngay; đóng khung này hoặc tải lại trang sẽ không xem lại được.</Alert>
+          <Alert kind="warn">Hãy lưu token ở nơi an toàn. Bạn có thể xem lại bằng nút con mắt khi token còn hiệu lực; mỗi lần xem đều được ghi nhật ký.</Alert>
           <code className="block break-all rounded-xl bg-stone-100 p-3 text-sm">{created.token}</code>
           <div className="mt-3 flex gap-2">
             <button onClick={copy} className={btn.primary}>{copied ? "Đã sao chép" : "Sao chép"}</button>
@@ -89,27 +123,26 @@ export default function AgentTokensPage() {
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <ListState loading={loading} empty={rows.length === 0} text="Chưa có token nào." />
-          {rows.length > 0 && (
-            <div className="overflow-x-auto"><table className="w-full text-sm">
-              <thead className="text-left text-stone-500"><tr><th className="py-2">Tên</th><th>Quyền</th><th>Hạn</th><th>Dùng lần cuối</th><th>Trạng thái</th><th /></tr></thead>
-              <tbody>
-                {rows.map((t) => {
-                  const expired = new Date(t.expiresAt).getTime() < now;
-                  const live = !t.revokedAt && !expired;
-                  return (
-                    <tr key={t.id} className="border-t border-stone-100">
-                      <td className="py-2 font-medium">{t.name}</td>
-                      <td>{t.permissions.map(permLabel).join(", ")}</td>
-                      <td>{new Date(t.expiresAt).toLocaleDateString("vi-VN")}</td>
-                      <td>{when(t.lastUsedAt)}</td>
-                      <td>{t.revokedAt ? <Pill value="Revoked" label="Đã thu hồi" /> : expired ? <Pill value="Expired" label="Hết hạn" /> : <Pill value="Active" label="Đang dùng" />}</td>
-                      <td className="text-right">{live && <button onClick={() => revoke(t)} className={btn.danger}>Thu hồi</button>}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table></div>
-          )}
+          <div className="space-y-3">
+            {rows.map((t) => {
+              const expired = new Date(t.expiresAt).getTime() < now;
+              const live = !t.revokedAt && !expired;
+              return (
+                <article key={t.id} className="space-y-3 rounded-2xl border border-stone-200 p-4 text-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <h3 className="min-w-0 break-words text-base font-bold text-stone-900">{t.name}</h3>
+                    <div className="flex items-center gap-2">
+                      {t.revokedAt ? <Pill value="Revoked" label="Đã thu hồi" /> : expired ? <Pill value="Expired" label="Hết hạn" /> : <Pill value="Active" label="Đang dùng" />}
+                      {live && <button onClick={() => revoke(t)} className={btn.danger}>Thu hồi</button>}
+                    </div>
+                  </div>
+                  <TokenSecret row={t} live={live} />
+                  <p className="text-stone-500">Hạn {new Date(t.expiresAt).toLocaleDateString("vi-VN")} · Dùng lần cuối: {when(t.lastUsedAt)}</p>
+                  <p className="text-stone-700">{t.permissions.length === PERMS.length ? "Toàn quyền" : t.permissions.map(permLabel).join(", ")}</p>
+                </article>
+              );
+            })}
+          </div>
         </Card>
         <Card title="Tạo token">
           <form onSubmit={create} className="space-y-3 text-sm">
