@@ -10,6 +10,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: { default: "Chạm Xanh — Chợ cây trồng", template: "%s | Chạm Xanh" },
+  icons: { icon: "/logo.webp" },
   description: "Mua bán, thuê, trao đổi cây cảnh, bonsai, cây giống và vật tư làm vườn gần bạn, từ người bán tin cậy.",
 };
 
@@ -18,11 +19,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   return (
     <html lang="vi">
       <head>
-        {/* Be Vietnam Pro vẽ riêng cho dấu tiếng Việt; Bricolage Grotesque cho tiêu đề. */}
+        {/* Be Vietnam Pro cho cả tiêu đề và nội dung, giống app. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" />
       </head>
       <body className="min-h-screen antialiased">
         <SiteChrome header={<Header />} tabBar={<FeatureTabBar />} assistant={<><CompareBar /><AiLauncher signedIn={signedIn} /></>} footer={

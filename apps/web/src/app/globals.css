@@ -5,7 +5,7 @@
    Ghi đè thang emerald/stone/wood của Tailwind để mọi trang dùng chung một bộ màu. */
 @theme {
   --font-sans: "Be Vietnam Pro", "Segoe UI", sans-serif;
-  --font-display: "Bricolage Grotesque", "Be Vietnam Pro", sans-serif;
+  --font-display: "Be Vietnam Pro", "Segoe UI", sans-serif;
 
   --color-white: #ffffff;
 
@@ -130,6 +130,14 @@ h1, h2, h3, .font-display {
 .cx-chip[aria-pressed="true"], .cx-chip[aria-current="page"], .cx-chip.is-on {
   background: var(--color-emerald-800); color: var(--color-white); box-shadow: none;
 }
+/* Theo Figma trang Khám phá; app dùng cùng giá trị (theme.dart). */
+.cx-chip-soft {
+  flex-shrink: 0; border-radius: 9999px; padding: 0.5rem 1rem;
+  font-size: 0.875rem; font-weight: 500; line-height: 1.25rem;
+  background: #c9e8bf; color: #4f6a49;
+}
+.cx-chip-soft[aria-current="page"] { background: var(--color-emerald-700); color: var(--color-white); }
+.cx-plant-card { display: block; overflow: hidden; border-radius: 1rem; background: var(--color-white); border: 1px solid #c2c9bb; }
 .cx-badge {
   display: inline-flex; align-items: center; border-radius: 9999px; padding: 0.125rem 0.625rem;
   font-size: 0.75rem; font-weight: 700; background: var(--color-emerald-50); color: var(--color-emerald-800);

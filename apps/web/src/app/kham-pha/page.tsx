@@ -1,78 +1,69 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHeader } from "@/components/ui";
+import { CardRow } from "@/components/ExploreCards";
+import { CHIPS, matches } from "@/lib/explore";
 import { publicGet } from "@/lib/server";
 import type { Article } from "@/lib/types";
 
-export const metadata: Metadata = { title: "Khám phá", description: "Mỗi ngày một loài cây ít người biết, do đội ngũ Chạm Xanh tuyển chọn." };
+export const metadata: Metadata = { title: "Khám phá", description: "Tìm loại cây phù hợp nhất cho không gian của bạn, do đội ngũ Chạm Xanh tuyển chọn." };
 
-const day = (a: Article) => a.publishAt && new Date(a.publishAt).toLocaleDateString("vi-VN", { day: "numeric", month: "long", year: "numeric" });
-const img = (a: Article, size: string) => a.cover?.urls[size] ?? a.cover?.urls.card;
-
-/** Trang 1: bài mới nhất làm "Cây của ngày" khổ lớn, phần còn lại là lưới thẻ cùng kiểu với Chợ cây. */
-export default async function ExplorePage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
-  const page = Math.max(1, Number((await searchParams).page ?? 1) || 1);
-  const data = await publicGet<{ items: Article[]; total: number; pageSize: number }>(`/api/explore?page=${page}&pageSize=13`, 300);
-  const pages = data ? Math.ceil(data.total / data.pageSize) : 1;
-  const [featured, ...rest] = page === 1 ? data?.items ?? [] : [undefined, ...(data?.items ?? [])];
+/** Theo Figma: lời chào + chip, hai hàng thẻ cây, danh sách bài đọc thêm. */
+export default async function ExplorePage({ searchParams }: { searchParams: Promise<{ loai?: string }> }) {
+  const chip = (await searchParams).loai;
+  const data = await publicGet<{ items: Article[] }>("/api/explore?page=1&pageSize=50", 300);
+  const all = data?.items ?? [];
+  const chips = Object.keys(CHIPS).filter((c) => all.some((a) => matches(a, c)));
+  const items = chip && CHIPS[chip] ? all.filter((a) => matches(a, chip)) : all;
+  const first = items.slice(0, 5), second = items.slice(5, 9), rest = items.slice(9);
 
   return (
-    <div className="space-y-8">
-      <PageHeader eyebrow="Mỗi ngày một loài cây" title="Khám phá" lead="Những loài cây ít người biết, cách nhận ra và cách chăm, do đội ngũ Chạm Xanh tuyển chọn." />
+    <div className="space-y-6">
+      <header className="flex items-start justify-between gap-4">
+        <div className="space-y-2">
+          <h1 className="cx-h1">Chào bạn đến với Chạm Xanh</h1>
+          <p className="cx-lead">Tìm loại cây phù hợp nhất cho không gian của bạn.</p>
+        </div>
+        <Link href="/cho-cay" className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-stone-100 text-center text-[11px] font-semibold leading-tight text-stone-700">Chợ cây</Link>
+      </header>
 
-      {!data && <p className="cx-card text-red-700">Không tải được dữ liệu từ máy chủ.</p>}
-      {data?.items.length === 0 && <p className="cx-card cx-body">Chưa có bài viết nào.</p>}
-
-      {featured && (
-        <Link href={`/kham-pha/${featured.slug}`} className="cx-card-flush group grid md:grid-cols-[3fr_2fr]">
-          <div className="relative aspect-[4/3] bg-emerald-100 md:aspect-auto md:min-h-80">
-            {featured.cover && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={img(featured, "full")} alt="" className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]" />
-            )}
-          </div>
-          <div className="flex flex-col justify-center gap-3 p-6 sm:p-8">
-            <span className="cx-badge self-start bg-wood-100 text-wood-800">Cây của ngày</span>
-            <h2 className="cx-h2 group-hover:underline sm:text-3xl">{featured.title}</h2>
-            {featured.summary && <p className="cx-body line-clamp-4">{featured.summary}</p>}
-            <p className="cx-meta">{day(featured)}</p>
-            <span className="cx-link mt-1">Đọc bài →</span>
-          </div>
-        </Link>
+      {chips.length > 0 && (
+        <nav aria-label="Lọc bài" className="-mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+          {chips.map((c) => (
+            <Link key={c} href={chip === c ? "/kham-pha" : `/kham-pha?loai=${encodeURIComponent(c)}`} aria-current={chip === c ? "page" : undefined} className="cx-chip-soft">{c}</Link>
+          ))}
+        </nav>
       )}
 
+      {!data && <p className="cx-card text-red-700">Không tải được dữ liệu từ máy chủ.</p>}
+      {data && items.length === 0 && <p className="cx-card cx-body">Chưa có bài viết nào.</p>}
+
+      {first.length > 0 && <CardRow items={first} />}
+      {second.length > 0 && (
+        <section className="space-y-3">
+          <h2 className="cx-h2">Góc xanh cho bạn</h2>
+          <CardRow items={second} />
+        </section>
+      )}
       {rest.length > 0 && (
-        <section aria-label="Bài trước đó" className="space-y-4">
-          {page === 1 && <h2 className="cx-h2">Bài trước đó</h2>}
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {rest.map((a) => a && (
-              <Link key={a.id} href={`/kham-pha/${a.slug}`} className="cx-card-flush cx-reveal group flex flex-col">
-                <div className="aspect-[4/3] overflow-hidden bg-emerald-100">
+        <section className="space-y-3">
+          <h2 className="cx-h2">Đọc thêm</h2>
+          <div className="grid gap-3 md:grid-cols-2">
+            {rest.map((a) => (
+              <Link key={a.id} href={`/kham-pha/${a.slug}`} className="cx-plant-card group !flex items-center gap-4 p-3">
+                <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-emerald-100">
                   {a.cover && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={img(a, "card")} alt="" className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
+                    <img src={a.cover.urls.thumb} alt="" className="h-full w-full object-cover" />
                   )}
                 </div>
-                <div className="flex flex-1 flex-col gap-1.5 p-5">
-                  <h3 className="cx-title group-hover:underline">{a.title}</h3>
-                  {a.summary && <p className="cx-body line-clamp-2">{a.summary}</p>}
-                  <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-2">
-                    <span className="cx-meta mr-1">{day(a)}</span>
-                    {a.tags.slice(0, 2).map((t) => <span key={t} className="cx-badge">{t}</span>)}
-                  </div>
+                <div className="min-w-0">
+                  <h3 className="line-clamp-2 font-sans text-sm font-bold text-stone-900 group-hover:underline">{a.title}</h3>
+                  {a.summary && <p className="mt-1 line-clamp-2 text-xs text-stone-600">{a.summary}</p>}
                 </div>
               </Link>
             ))}
           </div>
         </section>
-      )}
-
-      {pages > 1 && (
-        <nav aria-label="Trang" className="flex flex-wrap justify-center gap-2">
-          {Array.from({ length: pages }, (_, i) => i + 1).map((p) => (
-            <Link key={p} href={`/kham-pha?page=${p}`} aria-current={p === page ? "page" : undefined} className="cx-chip min-w-10 justify-center">{p}</Link>
-          ))}
-        </nav>
       )}
     </div>
   );

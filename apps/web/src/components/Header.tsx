@@ -11,11 +11,8 @@ export async function Header() {
     <header className="sticky top-0 z-30 border-b border-stone-200 bg-stone-50 md:bg-stone-50/95 md:backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-5 gap-y-3 px-4 py-3 sm:px-6 lg:px-10">
         <Link href="/" className="flex items-center gap-2 font-display text-2xl font-extrabold tracking-tight text-emerald-800">
-          <svg viewBox="0 0 32 32" className="h-8 w-8" aria-hidden>
-            <path d="M16 29V15" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-            <path d="M16 16C16 8 21 4 28 4c0 7-5 12-12 12z" fill="currentColor" />
-            <path d="M16 19c0-5-3.5-8.5-10-8.5 0 5 3.5 8.5 10 8.5z" fill="var(--color-wood-400)" />
-          </svg>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.webp" alt="" className="h-8 w-auto" />
           Chạm Xanh
         </Link>
         <form action="/tim-kiem" className="order-last flex w-full items-center gap-2 md:order-none md:w-auto md:flex-1 lg:max-w-lg">
